@@ -1,18 +1,13 @@
-let canvas: HTMLCanvasElement;
+import {Game} from './gfx/Game'
+import {IntroScene} from "./scenes/IntroScene";
 
 function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    draw();
+    Game.canvas.width = window.innerWidth;
+    Game.canvas.height = window.innerHeight;
 }
 
 function draw() {
-    //TODO: Put game here
-    let ctx = canvas.getContext("2d");
-    ctx.fillStyle = "red";
-    ctx.fillRect(0, 50, canvas.width, canvas.height / 2);
-    ctx.fillStyle = "blue";
-    ctx.fillRect(300, 0, canvas.width / 3, canvas.height);
+    Game.render();
 }
 
 window.addEventListener("load", function() {
@@ -23,7 +18,9 @@ window.addEventListener("load", function() {
         "  \\___ \\| | '_ ` _ \\| | | | | __/ _` | '_ \\  | |/ _ \\ \n" +
         "  ____) | | | | | | | |_| | | || (_| | | | |_| | (_) |\n" +
         " |_____/|_|_| |_| |_|\\__,_|_|\\__\\__,_|_| |_(_)_|\\___/\n");
-    canvas = document.getElementById("canvas") as HTMLCanvasElement;
+    Game.initialize();
+    Game.scene = new IntroScene();
+
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
 });
