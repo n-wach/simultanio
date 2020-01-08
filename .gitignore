@@ -1,3 +1,6 @@
 *.pyc
-secrets.sh
-
+/server/secrets.sh
+/client/node_modules
+/client/package-lock.json
+/client/dist/
+.idea/
