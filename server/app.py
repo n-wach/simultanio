@@ -10,6 +10,5 @@ if os.environ.get("SERVER_NAME") is not None:
 
 @app.route("/", methods=["GET"])
 def hello():
-    print("Got request:", request)
-    return "Coming soon: A new RTS game brought to you by the wonderful people at UCSB CCS"
+    return render_template("../client/index.html")
 
