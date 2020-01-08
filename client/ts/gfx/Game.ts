@@ -12,7 +12,12 @@ export class Game {
 
     static render(): void {
         if (this.scene) {
-            this.scene.render();
+            this.scene.render(this.ctx);
         }
+    }
+
+    static setScene(scene: Scene) {
+        this.scene = scene;
+        scene.initialize();
     }
 }

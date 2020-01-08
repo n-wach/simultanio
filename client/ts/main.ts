@@ -19,7 +19,7 @@ window.addEventListener("load", function() {
         "  ____) | | | | | | | |_| | | || (_| | | | |_| | (_) |\n" +
         " |_____/|_|_| |_| |_|\\__,_|_|\\__\\__,_|_| |_(_)_|\\___/\n");
     Game.initialize();
-    Game.scene = new IntroScene();
+    Game.setScene(new IntroScene());
 
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
