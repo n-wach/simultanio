@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <title>Simultan.io</title>
     <script>exports = {}</script>
-    <!--TODO: Change this to url_for when flask is ready-->
-    <script src="../client/dist/bundle.js"></script>
+    <script src="{{ url_for('js_bundle') }}"></script>
     <style>
         .full {
             width: 100%;
