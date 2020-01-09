@@ -1,5 +1,9 @@
 import {Game} from './gfx/Game'
 import {IntroScene} from "./scenes/IntroScene";
+import * as io from 'socket.io-client';
+import Socket = SocketIOClient.Socket;
+
+export let socket: Socket;
 
 function resizeCanvas() {
     Game.canvas.width = window.innerWidth;
@@ -18,6 +22,11 @@ window.addEventListener("load", function() {
         "  \\___ \\| | '_ ` _ \\| | | | | __/ _` | '_ \\  | |/ _ \\ \n" +
         "  ____) | | | | | | | |_| | | || (_| | | | |_| | (_) |\n" +
         " |_____/|_|_| |_| |_|\\__,_|_|\\__\\__,_|_| |_(_)_|\\___/\n");
+    socket = io();
+    socket.on("connect", function() {
+        console.log("Websocket Connected");
+    });
+
     Game.initialize();
     Game.scene = new IntroScene();
 
