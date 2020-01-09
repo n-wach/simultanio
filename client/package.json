@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "bundle": "tsc; browserify dist/main.js -o dist/bundle.js"
+    "bundle": "tsc && browserify dist/main.js -o dist/bundle.js"
   },
   "keywords": [],
   "author": "",
