@@ -1,2 +1,1 @@
-npm run recompile-typescript
-npm run browserify
+npm run bundle

@@ -5,9 +5,10 @@ Written in Typescript for HTML5 Canvas
 
 To build:
 
-`npm install package.json`
-`npm run recompile-typescript`
-`npm run browserify`
+```bash
+npm install package.json
+npm run bundle
+```
 
 View by running the Server locally as described below.
 

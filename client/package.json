@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "browserify": "browserify dist/main.js -o dist/bundle.js",
-    "recompile-typescript": "tsc"
+    "bundle": "tsc && browserify dist/main.js -o dist/bundle.js"
   },
   "keywords": [],
   "author": "",

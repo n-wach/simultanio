@@ -6,8 +6,10 @@ function resizeCanvas() {
     Game.canvas.height = window.innerHeight;
 }
 
-function draw() {
+function loop() {
+    Game.update();
     Game.render();
+    window.requestAnimationFrame(loop);
 }
 
 window.addEventListener("load", function() {
@@ -19,8 +21,9 @@ window.addEventListener("load", function() {
         "  ____) | | | | | | | |_| | | || (_| | | | |_| | (_) |\n" +
         " |_____/|_|_| |_| |_|\\__,_|_|\\__\\__,_|_| |_(_)_|\\___/\n");
     Game.initialize();
-    Game.scene = new IntroScene();
+    Game.setScene(new IntroScene());
 
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
+    loop();
 });
