@@ -6,8 +6,10 @@ function resizeCanvas() {
     Game.canvas.height = window.innerHeight;
 }
 
-function draw() {
+function loop() {
+    Game.update();
     Game.render();
+    window.requestAnimationFrame(loop);
 }
 
 window.addEventListener("load", function() {
@@ -23,4 +25,5 @@ window.addEventListener("load", function() {
 
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
+    loop();
 });

@@ -10,6 +10,12 @@ export class Game {
         this.ctx = this.canvas.getContext("2d");
     }
 
+    static update() {
+        if (this.scene) {
+            this.scene.update();
+        }
+    }
+
     static render(): void {
         if (this.scene) {
             this.scene.render(this.ctx);

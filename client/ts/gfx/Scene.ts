@@ -7,6 +7,12 @@ export class Scene {
         this.sprites = [];
     }
 
+    update() {
+        for (let sprite of this.sprites) {
+            sprite.update();
+        }
+    }
+
     render(ctx: CanvasRenderingContext2D): void {
         for (let sprite of this.sprites) {
             ctx.drawImage(sprite.graphic, sprite.pos.x, sprite.pos.y);
