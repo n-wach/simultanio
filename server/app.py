@@ -1,11 +1,13 @@
 import os
 
-from flask import Flask, render_template, send_file
-from flask_socketio import SocketIO, emit
+from flask import Flask, render_template, send_file, request
+from flask_socketio import *
+import server.matchmaking
 
 app = Flask(__name__, static_url_path='', static_folder='../client/dist', template_folder="../client/templates")
 
 socketio = SocketIO(app)
+game_rooms = []
 
 app.secret_key = os.environ.get("SECRET_KEY")
 if os.environ.get("SERVER_NAME") is not None:
@@ -22,7 +24,5 @@ def js_bundle():
     return send_file("../client/dist/bundle.js")
 
 
-@socketio.on('connect')
-def client_connected():
-    print('new client')
+server.matchmaking.init_namespace(socketio)
 
