@@ -1082,8 +1082,6 @@ dextrorse
 dextrous
 diarch
 dicey
-dickey
-dicky
 diet
 diffuse
 diffused
@@ -1968,7 +1966,6 @@ heelless
 hefty
 heinous
 heirless
-hellish
 helmless
 helpful
 helpless
@@ -2703,8 +2700,6 @@ newsy
 nicer
 nicest
 nifty
-niggard
-niggling
 nightless
 nightlong
 nightly
@@ -3183,8 +3178,6 @@ rabic
 rabid
 racemed
 racing
-racist
-racy
 raddled
 raffish
 raging
