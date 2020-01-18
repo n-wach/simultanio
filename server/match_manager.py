@@ -15,7 +15,9 @@ class MatchManager:
         match.start()
 
     def list_matches(self):
-        return [match.to_dict() for match in self.matches]
+        return {
+            "matches": [match.get_listing() for match in self.matches]
+        }
 
     def join_match(self, match_id):
         for match in self.matches:

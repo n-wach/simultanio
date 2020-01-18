@@ -8,21 +8,22 @@ class Match:
     def __init__(self, socketio, manager):
         self.socketio = socketio
         self.manager = manager
-        self.name = generate_name()
+        self.name = random_adjective().capitalize() + random_noun().capitalize()
         self.match_id = "match_{}".format(id(self))
         self.player_sids = []
 
-    def to_dict(self):
+    def get_listing(self):
         return {
             "name": self.name,
             "id": self.match_id,
-            "player_count": len(self.player_sids)
+            "player_count": len(self.player_sids),
+            "max_players": 4,
         }
 
     def join(self):
         self.player_sids.append(request.sid)
         join_room(self.match_id)
-        emit("join match", self.to_dict())
+        emit("join match", self.get_listing())
 
     def leave(self):
         self.player_sids.remove(request.sid)
@@ -38,7 +39,4 @@ class Match:
         print(self.name, "end")
         self.manager.matches.remove(self)
 
-
-def generate_name():
-    return random_adjective().capitalize() + random_noun().capitalize()
 
