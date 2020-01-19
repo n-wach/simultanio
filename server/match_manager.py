@@ -27,8 +27,9 @@ class MatchManager:
 
     def get_user_match(self):
         for match in self.matches:
-            if request.sid in match.player_sids:
-                return match
+            for player in match.game.players:
+                if player.sid == request.sid:
+                    return match
 
     def leave_match(self):
         match = self.get_user_match()

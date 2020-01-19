@@ -1,15 +1,46 @@
 class Tile:
-    def __init__(self, passable=True, matter_source=False):
+    LAND = "land"
+    WATER = "water"
+    MATTER_SOURCE = "matter_source"
+    UNKNOWN = "unknown"
+
+    def __init__(self, passable, matter_source):
         self.passable = passable
         self.matter_source = matter_source
-        self.entities = []
+
+    def get_name(self):
+        return Tile.UNKNOWN
+
+
+class Land(Tile):
+    def __init__(self):
+        super(Land, self).__init__(passable=True, matter_source=False)
+
+    def get_name(self):
+        return Tile.LAND
+
+
+class Water(Tile):
+    def __init__(self):
+        super(Water, self).__init__(passable=False, matter_source=False)
+
+    def get_name(self):
+        return Tile.WATER
+
+
+class MatterSource(Tile):
+    def __init__(self):
+        super(MatterSource, self).__init__(passable=True, matter_source=True)
+
+    def get_name(self):
+        return Tile.MATTER_SOURCE
 
 
 class Terrain:
     def __init__(self, width, height):
         self.width = width
         self.height = height
-        self.tiles = tuple(tuple(Tile() for _ in range(height)) for __ in range(width))
+        self.tiles = tuple(tuple(Land() for _ in range(height)) for __ in range(width))
 
     def tile_at(self, x, y):
         """
@@ -50,5 +81,7 @@ class Terrain:
         if y < self.height - 1:
             yield (x, y + 1)
 
-    def update_fog(self):
-        pass
+    def get_player_grid(self, player):
+        return [[self.tiles[x][y].get_name() for y in range(self.height)] for x in range(self.width)]
+
+

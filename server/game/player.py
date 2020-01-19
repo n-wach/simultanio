@@ -26,11 +26,9 @@ class Player:
             "id": self.id,
         }
 
-    def act(self):
+    def tick(self, dt):
         # Human player will act based on WS events received since last call
         # AI player will act using AI
         pass
 
-    def send_update(self, update_object):
-        emit("game update", update_object, room=self.sid)
 
