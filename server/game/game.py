@@ -21,7 +21,19 @@ class Game:
         self.terrain.update_fog()
 
         for player in self.players:
-            player.send_update()
+            update = self.get_player_update(player)
+            player.send_update(update)
+
+    def get_player_update(self):
+
+        return {
+            "listing": None,
+            "duration": None,
+            "players": [],
+            "terrain": [],
+            "entities": [],
+            "status": None
+        }
 
     def add_player(self):
         self.players.append(Player())

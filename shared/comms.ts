@@ -44,8 +44,8 @@ export type Terrain = {
 }
 
 export type Player = {
-    storedEnergy: number,
-    storedMatter: number,
+    stored_energy: number,
+    stored_matter: number,
     color: Color,
     id: number,
 }

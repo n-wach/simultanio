@@ -11,13 +11,14 @@ class Match:
         self.name = random_adjective().capitalize() + random_noun().capitalize()
         self.match_id = "match_{}".format(id(self))
         self.player_sids = []
+        self.max_players = 4
 
     def get_listing(self):
         return {
             "name": self.name,
             "id": self.match_id,
             "player_count": len(self.player_sids),
-            "max_players": 4,
+            "max_players": self.max_players,
         }
 
     def join(self):
