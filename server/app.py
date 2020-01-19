@@ -26,7 +26,7 @@ def index():
 
 @app.route("/js/bundle.js")
 def js_bundle():
-    return send_file("../client/dist/bundle.js")
+    return send_file(os.path.join("..", "client", "dist", "bundle.js"))
 
 
 @socketio.on("connect")

@@ -8,7 +8,7 @@ export let socket: Socket;
 function resizeCanvas() {
     Game.canvas.width = window.innerWidth;
     Game.canvas.height = window.innerHeight;
-    draw();
+    loop();
 }
 
 class Button {
@@ -54,13 +54,15 @@ class Button {
     }
 }
 
-function draw() {
+function loop() {
+    Game.update();
     Game.ctx.clearRect(0, 0, Game.canvas.width, Game.canvas.height);
     Game.render();
     let ctx = Game.ctx;
     for(let button of buttons) {
         button.draw(ctx);
     }
+    window.requestAnimationFrame(loop);
 }
 
 let inMatch = false;
@@ -119,7 +121,7 @@ window.addEventListener("load", function() {
     setupSocket();
 
     Game.initialize();
-    Game.scene = new IntroScene();
+    Game.setScene(new IntroScene());
     Game.canvas.addEventListener("click", function (event) {
         for(let button of buttons) {
             button.handleClick(event.offsetX, event.offsetY);
@@ -139,4 +141,5 @@ window.addEventListener("load", function() {
 
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
+    loop();
 });
