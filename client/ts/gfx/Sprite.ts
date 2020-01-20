@@ -1,7 +1,7 @@
 import {Vec2} from "./Vec2";
 
 export class Sprite {
-    public graphic: ImageBitmap;
+    public graphic: ImageData;
     public pos: Vec2;
 
     update() {

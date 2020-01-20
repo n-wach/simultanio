@@ -15,7 +15,7 @@ export class Scene {
 
     render(ctx: CanvasRenderingContext2D): void {
         for (let sprite of this.sprites) {
-            ctx.drawImage(sprite.graphic, sprite.pos.x, sprite.pos.y);
+            ctx.putImageData(sprite.graphic, sprite.pos.x, sprite.pos.y);
         }
     }
 
