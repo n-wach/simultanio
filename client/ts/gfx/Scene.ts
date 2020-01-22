@@ -27,6 +27,10 @@ export abstract class Scene {
         this.renderables.push(ren);
     }
 
+    clear(): void {
+        this.renderables = [];
+    }
+
     remove(ren: Renderable): void {
         this.renderables.splice(this.renderables.indexOf(ren), 1);
     }

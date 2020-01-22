@@ -6,6 +6,7 @@ import {Game} from "../gfx/Game";
 import {Match, MatchList, MatchListing} from "../comms";
 import {Button} from "../gfx/ui/Button";
 import { Block } from "../game/Block";
+import {PlayScene} from "./PlayScene";
 
 export class LobbyScene extends Scene {
     socketio: SocketIOClient.Socket;
@@ -14,6 +15,7 @@ export class LobbyScene extends Scene {
         super();
         this.socketio = socketio;
         this.socketio.on("list matches", (matchList: MatchList) => {
+            this.clear();
             this.add(new Button("Create Match", 100, 20, 400, 70, () => {
                 this.socketio.emit("create match");
             }));
@@ -21,14 +23,14 @@ export class LobbyScene extends Scene {
                 let x = 100;
                 let y = 100 + i * 80;
                 let match = matchList.matches[i];
-                this.add(new Button("Join " + match.name + " (" + match.player_count + "/" + match.max_player + " players)",
+                this.add(new Button("Join " + match.name + " (" + match.player_count + "/" + match.max_players + " players)",
                     x, y, 400, 70, () => {
                         this.socketio.emit("join match", match.id);
                     }));
             }
         });
-        this.socketio.on("join match", function (match: Match) {
-            //add game scene passing match and socketio
+        this.socketio.on("join match", (match: Match) => {
+            Game.setScene(new PlayScene(this.socketio, match));
         });
     }
     destroy() {
@@ -47,9 +49,5 @@ export class LobbyScene extends Scene {
         console.log(sqr.graphic);
 
         this.add(sqr);
-    }
-
-    render(ctx: CanvasRenderingContext2D): void {
-        super.render(ctx);
     }
 }
