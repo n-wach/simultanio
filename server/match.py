@@ -30,11 +30,12 @@ class Match:
             return
         self.game.add_player(request.sid)
         join_room(self.match_id)
-        emit("join match", self.get_listing())
+        emit("join match", self.game.get_player_update(self.game.players[0]))  # TODO update to cur player
 
     def leave(self):
         self.game.remove_player(request.sid)
         leave_room(self.match_id)
+        emit("leave match")
 
     def start(self):
         self.socketio.start_background_task(self.logic_loop)

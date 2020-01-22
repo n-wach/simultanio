@@ -66,5 +66,3 @@ class Game:
         for player in self.players:
             update = self.get_player_update(player)
             socketio.emit("game update", update, room=player.sid)
-
-
