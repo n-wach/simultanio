@@ -1,29 +1,29 @@
-import {Sprite} from "./Sprite";
+import { Renderable } from "./Renderable";
 
 export class Scene {
-    sprites: Sprite[];
+    renderables: Renderable[];
 
     initialize() {
-        this.sprites = [];
+        this.renderables = [];
     }
 
     update() {
-        for (let sprite of this.sprites) {
-            sprite.update();
+        for (let renderable of this.renderables) {
+            renderable.update();
         }
     }
 
     render(ctx: CanvasRenderingContext2D): void {
-        for (let sprite of this.sprites) {
-            ctx.putImageData(sprite.graphic, sprite.pos.x, sprite.pos.y);
+        for (let renderable of this.renderables) {
+            renderable.render(ctx);
         }
     }
 
-    addSprite(spr: Sprite): void {
-        this.sprites.push(spr);
+    add(ren: Renderable): void {
+        this.renderables.push(ren);
     }
 
-    removeSprite(spr: Sprite): void {
-        this.sprites.splice(this.sprites.indexOf(spr), 1);
+    remove(ren: Renderable): void {
+        this.renderables.splice(this.renderables.indexOf(ren), 1);
     }
 }
