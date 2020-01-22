@@ -21,11 +21,6 @@ export class PlayScene extends Scene {
         });
     }
 
-    update() {
-        super.update();
-
-    }
-
     initialize() {
         super.initialize();
 
