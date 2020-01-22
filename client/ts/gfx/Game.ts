@@ -27,6 +27,9 @@ export class Game {
     }
 
     static setScene(scene: Scene) {
+        if (this.scene != null) {
+            this.scene.destroy();
+        }
         this.scene = scene;
         scene.initialize();
     }

@@ -1,10 +1,14 @@
 import { Renderable } from "./Renderable";
 
-export class Scene {
+export abstract class Scene {
     renderables: Renderable[];
 
     initialize() {
         this.renderables = [];
+    }
+
+    destroy() {
+        // TODO: ...
     }
 
     update() {
