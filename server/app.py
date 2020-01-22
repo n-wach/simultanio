@@ -67,20 +67,6 @@ def leave_match():
     emit_available_matches(True)
 
 
-@socketio.on("mousemove")
-def mouse_move(loc):
-    match = match_manager.get_user_match()
-    if match is None:
-        return
-    colors = ["red", "orange", "yellow", "green", "blue"]
-    color = colors[match.player_sids.index(request.sid) % len(colors)]
-    emit("mousemove", {
-        "x": loc["x"],
-        "y": loc["y"],
-        "color": color
-    }, room=match.match_id)
-
-
 def emit_available_matches(broadcast=False):
     emit("list matches", match_manager.list_matches(),
          room="lobby", broadcast=broadcast)

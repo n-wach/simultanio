@@ -88,7 +88,6 @@ function setupSocket() {
                socket.emit("join match", lobbies[i].id);
            }));
        }
-       draw();
     });
     socket.on("join match", function(match) {
         inMatch = true;
@@ -98,7 +97,6 @@ function setupSocket() {
             inMatch = false;
             socket.emit("leave match");
         })];
-        draw();
     });
     socket.on("mousemove", function(message) {
         let x = message.x;
@@ -125,18 +123,12 @@ window.addEventListener("load", function() {
     Game.canvas.addEventListener("click", function (event) {
         for(let button of buttons) {
             button.handleClick(event.offsetX, event.offsetY);
-            draw();
         }
     });
     Game.canvas.addEventListener("mousemove", function (event) {
         for(let button of buttons) {
             button.handleMove(event.offsetX, event.offsetY);
-            draw();
         }
-        socket.emit("mousemove", {
-            x: event.offsetX,
-            y: event.offsetY,
-        });
     });
 
     resizeCanvas();
