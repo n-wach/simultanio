@@ -56,7 +56,6 @@ class Button {
 
 function loop() {
     Game.update();
-    Game.ctx.clearRect(0, 0, Game.canvas.width, Game.canvas.height);
     Game.render();
     let ctx = Game.ctx;
     for(let button of buttons) {
