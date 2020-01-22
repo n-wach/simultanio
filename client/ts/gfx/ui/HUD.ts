@@ -15,7 +15,6 @@ export class HUD extends Renderable {
 
     render(ctx: CanvasRenderingContext2D): void {
         let w = ctx.canvas.width;
-        let h = ctx.canvas.height;
 
         ctx.fillStyle = "grey";
         ctx.fillRect(0, 0, w, 30);
@@ -42,5 +41,18 @@ export class HUD extends Renderable {
         ctx.textBaseline = "middle";
         ctx.fillText("Matter: " + matter, w - 105, 15, 100);
 
+        let your_color = this.playScene.match.you.color;
+        ctx.fillStyle = your_color;
+        ctx.font = "20px Arial";
+        ctx.textAlign = "right";
+        ctx.textBaseline = "middle";
+        ctx.fillText(your_color + " (you)", w - 5, 30 + 20, 100);
+
+        for(let i = 0; i < this.playScene.match.other_players.length; i++) {
+            let y = 50 + 25 + i * 25;
+            let other_player = this.playScene.match.other_players[i];
+            ctx.fillStyle = other_player.color;
+            ctx.fillText(other_player.color, w - 5, y, 100);
+        }
     }
 }

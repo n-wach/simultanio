@@ -31,7 +31,7 @@ export class PlayScene extends Scene {
 
         this.add(new HUD(this));
 
-        this.add(new Button("Leave " + this.match.listing.name, 5, 5, 100, 20, () => {
+        this.add(new Button("Leave", 5, 5, 100, 20, () => {
             this.socketio.emit("leave match");
         }));
     }
