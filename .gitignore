@@ -5,3 +5,4 @@
 /client/dist/
 .idea/
 venv/
+.vscode
