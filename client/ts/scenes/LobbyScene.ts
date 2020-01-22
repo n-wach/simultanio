@@ -5,6 +5,7 @@ import { RenderCanvas } from "../gfx/RenderCanvas";
 import {Game} from "../gfx/Game";
 import {Match, MatchList, MatchListing} from "../comms";
 import {Button} from "../gfx/ui/Button";
+import { Block } from "../game/Block";
 
 export class LobbyScene extends Scene {
     socketio: SocketIOClient.Socket;
@@ -39,11 +40,7 @@ export class LobbyScene extends Scene {
     initialize(): void {
         super.initialize();
 
-        let sqr = new Sprite();
-        let tex = new RenderCanvas(16, 16);
-        let ctx = tex.get2dContext();
-        ctx.fillRect(0, 0, 16, 16);
-        sqr.graphic = tex.toBitmap();
+        let sqr = new Block();
         sqr.pos = new Vec2(10, 10);
 
         console.log('yee');
