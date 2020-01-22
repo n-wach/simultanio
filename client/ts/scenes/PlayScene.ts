@@ -1,8 +1,9 @@
 import {Scene} from "../gfx/Scene";
-import {Match, MatchList} from "../comms";
+import {Match, MatchList, TerrainTile} from "../comms";
 import {Button} from "../gfx/ui/Button";
 import {LobbyScene} from "./LobbyScene";
 import {Game} from "../gfx/Game";
+import {HUD} from "../gfx/ui/HUD";
 
 export class PlayScene extends Scene {
     socketio: SocketIOClient.Socket;
@@ -28,7 +29,9 @@ export class PlayScene extends Scene {
     initialize() {
         super.initialize();
 
-        this.add(new Button("Leave " + this.match.listing.name, 100, 100, 400, 80, () => {
+        this.add(new HUD(this));
+
+        this.add(new Button("Leave " + this.match.listing.name, 5, 5, 100, 20, () => {
             this.socketio.emit("leave match");
         }));
     }
@@ -41,5 +44,26 @@ export class PlayScene extends Scene {
 
     render(ctx: CanvasRenderingContext2D): void {
         super.render(ctx);
+
+        for(let x = 0; x < this.match.terrain.width; x++) {
+            for(let y = 0; y < this.match.terrain.height; y++) {
+                let tile = this.match.terrain.grid[x][y];
+                switch(tile) {
+                    case TerrainTile.LAND:
+                        ctx.fillStyle = "white";
+                        break;
+                    case TerrainTile.WATER:
+                        ctx.fillStyle = "blue";
+                        break;
+                    case TerrainTile.MATTER_SOURCE:
+                        ctx.fillStyle = "pink";
+                        break;
+                    case TerrainTile.UNKNOWN:
+                        ctx.fillStyle = "black";
+                        break;
+                }
+                ctx.fillRect(100 + x * 10, 100 + y * 10, 10, 10);
+            }
+        }
     }
 }

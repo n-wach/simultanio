@@ -62,7 +62,8 @@ export type Entity = {
 export type Match = {
     listing: MatchListing,
     duration: number,
-    players: Player[],
+    you: Player,
+    other_players: Player[],
     terrain: Terrain,
     entities: Entity[],
     status: MatchStatus,

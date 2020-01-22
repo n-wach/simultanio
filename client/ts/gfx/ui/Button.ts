@@ -43,9 +43,9 @@ export class Button extends Renderable {
         }
         ctx.fillRect(this.x, this.y, this.w, this.h);
         ctx.fillStyle = "white";
-        ctx.font = "30px Arial";
+        ctx.font = (this.h - 10) + "px Arial";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
-        ctx.fillText(this.text, this.x + this.w / 2, this.y + this.h / 2);
+        ctx.fillText(this.text, this.x + this.w / 2, this.y + this.h / 2, this.w - 10);
     }
 }

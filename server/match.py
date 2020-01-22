@@ -28,9 +28,9 @@ class Match:
     def join(self):
         if len(self.game.players) >= self.max_players:
             return
-        self.game.add_player(request.sid)
+        player = self.game.add_player(request.sid)
         join_room(self.match_id)
-        emit("join match", self.game.get_player_update(self.game.players[0]))  # TODO update to cur player
+        emit("join match", self.game.get_player_update(player))  # TODO update to cur player
 
     def leave(self):
         self.game.remove_player(request.sid)

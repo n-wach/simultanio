@@ -51,16 +51,14 @@ def noise(weight_blur, width, height):
 
 
 class Terrain:
-    def __init__(self, width, height):
+    def __init__(self, width, height, weight_blur=None, bias=0.51, source_chance=0.99):
+        # get random noise and smooth it a bit
+        if weight_blur is None:
+            weight_blur = ((0.3, 4), (0.7, 9))
+
+        vals = noise(weight_blur, width, height)
         self.width = width
         self.height = height
-        self.tiles = tuple(tuple(Land() for _ in range(height)) for __ in range(width))
-
-    @staticmethod
-    def gen_terrain(width, height, weight_blur=[(0.3, 4), (0.7, 9)], bias=0.51, source_chance=0.99):
-        # get random noise and smooth it a bit
-        vals = noise(weight_blur, width, height)
-        terrain = Terrain(width, height)
 
         def place_tile(val):
             if val < bias:
@@ -69,9 +67,8 @@ class Terrain:
                 return Land()
             return Water()
 
-        terrain.tiles = tuple(tuple(place_tile(vals[x, y]) for y in range(height)) for x in range(width))
+        self.tiles = tuple(tuple(place_tile(vals[x, y]) for y in range(height)) for x in range(width))
         # TODO guarantee large paths between bases
-        return terrain
 
     def tile_at(self, x, y):
         """

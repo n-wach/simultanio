@@ -23,7 +23,8 @@ export class Game {
     }
 
     static render(): void {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.fillStyle = "black";
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         if (this.scene) {
             this.scene.render(this.ctx);
         }

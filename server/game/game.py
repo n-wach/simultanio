@@ -32,7 +32,8 @@ class Game:
         return {
             "listing": self.match.get_listing(),
             "duration": self.duration,
-            "players": [player.as_dict() for player in self.players],
+            "you": player.as_dict(),
+            "other_players": [p.as_dict() for p in self.players if p != player],
             "terrain": self.get_player_terrain(player),
             "entities": self.get_player_entities(player),
             "status": self.status
@@ -54,7 +55,9 @@ class Game:
 
     def add_player(self, sid):
         color = Game.PLAYER_COLORS[len(self.players) % len(Game.PLAYER_COLORS)]
-        self.players.append(Player(sid, color))
+        player = Player(sid, color)
+        self.players.append(player)
+        return player
 
     def remove_player(self, sid):
         for player in self.players:

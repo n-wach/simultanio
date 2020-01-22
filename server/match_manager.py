@@ -16,7 +16,7 @@ class MatchManager:
 
     def list_matches(self):
         return {
-            "matches": [match.get_listing() for match in self.matches]
+            "matches": [match.get_listing() for match in self.matches if len(match.game.players) > 0]
         }
 
     def join_match(self, match_id):
