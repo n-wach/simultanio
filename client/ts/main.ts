@@ -9,7 +9,6 @@ console.log("Socket IO", socketio);
 function resizeCanvas() {
     Game.canvas.width = window.innerWidth;
     Game.canvas.height = window.innerHeight;
-    loop();
 }
 
 function loop() {
