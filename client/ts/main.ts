@@ -1,13 +1,21 @@
 import {Game} from './gfx/Game'
-import {IntroScene} from "./scenes/IntroScene";
+import {LobbyScene} from "./scenes/LobbyScene";
+import * as io from 'socket.io-client';
+import Socket = SocketIOClient.Socket;
+
+export let socketio: Socket = io();
+console.log("Socket IO", socketio);
 
 function resizeCanvas() {
     Game.canvas.width = window.innerWidth;
     Game.canvas.height = window.innerHeight;
+    loop();
 }
 
-function draw() {
+function loop() {
+    Game.update();
     Game.render();
+    window.requestAnimationFrame(loop);
 }
 
 window.addEventListener("load", function() {
@@ -18,9 +26,11 @@ window.addEventListener("load", function() {
         "  \\___ \\| | '_ ` _ \\| | | | | __/ _` | '_ \\  | |/ _ \\ \n" +
         "  ____) | | | | | | | |_| | | || (_| | | | |_| | (_) |\n" +
         " |_____/|_|_| |_| |_|\\__,_|_|\\__\\__,_|_| |_(_)_|\\___/\n");
-    Game.initialize();
-    Game.scene = new IntroScene();
 
+    Game.initialize();
+    Game.setScene(new LobbyScene(socketio));
+    
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
+    loop();
 });
