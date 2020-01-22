@@ -3,12 +3,7 @@
 ## Client
 Written in Typescript for HTML5 Canvas
 
-To build:
-
-```bash
-npm install package.json
-npm run bundle
-```
+To build, run `bash build.sh` from `/client`
 
 View by running the Server locally as described below.
 
@@ -16,16 +11,21 @@ View by running the Server locally as described below.
 
 Written in Flask
 
-`python3 -m pip install server` to install python requirements.
+`python3 -m pip install -r server/requirements.txt` to install python requirements.
 
-Run locally using `python3 server/__init__.py`. (https://localhost/)
+Run locally using `python3 startup.py` from `/`
 
-To deploy, install gunicorn and create a `secrets.sh` file in `/server` based on the following template:
+
+## Deploying
+
+Build client and install server requirements.
+
+To deploy, install gunicorn3 and create a `secrets.sh` file in `/` based on the following template:
 
 ```bash
 # FLASK
 export SECRET_KEY="random text here"
-export SERVER_NAME="localhost"
+export SERVER_NAME="example.com"
 ```
 
-Then run `bash startup.sh` from `/server`
+Then run `bash startup.sh` from `/`
