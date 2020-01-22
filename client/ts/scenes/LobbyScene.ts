@@ -3,7 +3,7 @@ import {Sprite} from "../gfx/Sprite";
 import {Vec2} from "../gfx/Vec2";
 import { RenderCanvas } from "../gfx/RenderCanvas";
 
-export class IntroScene extends Scene {
+export class LobbyScene extends Scene {
     initialize(): void {
         super.initialize();
 
@@ -17,7 +17,7 @@ export class IntroScene extends Scene {
         console.log('yee');
         console.log(sqr.graphic);
 
-        this.addSprite(sqr);
+        this.add(sqr);
     }
 
     render(ctx: CanvasRenderingContext2D): void {
