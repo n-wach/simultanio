@@ -1,3 +1,9 @@
+from random import random
+
+import numpy as np
+from scipy.ndimage.filters import gaussian_filter
+
+
 class Tile:
     LAND = "land"
     WATER = "water"
@@ -36,11 +42,36 @@ class MatterSource(Tile):
         return Tile.MATTER_SOURCE
 
 
+# precondition: sum of weights in weight_blur is 1
+def noise(weight_blur, width, height):
+    noise_vals = np.zeros((width, height))
+    for (weight, blur) in weight_blur:
+        noise_vals += weight * gaussian_filter(np.random.rand(width, height), sigma=blur)
+    return noise_vals
+
+
 class Terrain:
     def __init__(self, width, height):
         self.width = width
         self.height = height
         self.tiles = tuple(tuple(Land() for _ in range(height)) for __ in range(width))
+
+    @staticmethod
+    def gen_terrain(width, height, weight_blur=[(0.3, 4), (0.7, 9)], bias=0.51, source_chance=0.99):
+        # get random noise and smooth it a bit
+        vals = noise(weight_blur, width, height)
+        terrain = Terrain(width, height)
+
+        def place_tile(val):
+            if val < bias:
+                if random() > source_chance:
+                    return MatterSource()
+                return Land()
+            return Water()
+
+        terrain.tiles = tuple(tuple(place_tile(vals[x, y]) for y in range(height)) for x in range(width))
+        # TODO guarantee large paths between bases
+        return terrain
 
     def tile_at(self, x, y):
         """
@@ -83,5 +114,3 @@ class Terrain:
 
     def get_player_grid(self, player):
         return [[self.tiles[x][y].get_name() for y in range(self.height)] for x in range(self.width)]
-
-
