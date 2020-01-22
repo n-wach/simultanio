@@ -6,6 +6,7 @@ export class Game {
     static ctx: CanvasRenderingContext2D;
     static scene: Scene;
     static input: Input;
+    static frame: number;
 
     static initialize(): void {
         this.canvas = document.getElementById("canvas") as HTMLCanvasElement;
@@ -14,9 +15,11 @@ export class Game {
     }
 
     static update() {
+        this.input.update();
         if (this.scene) {
             this.scene.update();
         }
+        this.frame++;
     }
 
     static render(): void {
