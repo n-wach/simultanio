@@ -15,7 +15,7 @@ export class LobbyScene extends Scene {
         super();
         this.socketio = socketio;
         this.socketio.on("list matches", (matchList: MatchList) => {
-            this.clear();
+            // this.clear();
             this.add(new Button("Create Match", 100, 20, 400, 70, () => {
                 this.socketio.emit("create match");
             }));

@@ -6,7 +6,7 @@ export class Input {
     public mouseDown: boolean;
     public mousePressed: boolean;
     private mousePressFrame: number = -1;
-    private keyStates: Record<string, KeyState>;
+    private keyStates: any = {};
 
     constructor() {
         // mouse events
@@ -26,12 +26,18 @@ export class Input {
 
         // keyboard events
         Game.canvas.addEventListener("keydown", (event) => {
+            if (!this.keyStates[event.key]) {
+                this.keyStates[event.key] = new KeyState();
+            }
             if (!event.repeat) {
                 this.keyStates[event.key].down = true;
                 this.keyStates[event.key].pressFrame = Game.frame;
             }
         });
         Game.canvas.addEventListener("keyup", (event) => {
+            if (!this.keyStates[event.key]) {
+                this.keyStates[event.key] = new KeyState();
+            }
             this.keyStates[event.key].down = false;
         });
     }
@@ -44,10 +50,16 @@ export class Input {
     }
 
     isKeyDown(key: string): boolean {
+        if (!this.keyStates[key]) {
+            this.keyStates[key] = new KeyState();
+        }
         return this.keyStates[key].down;
     }
 
     isKeyPressed(key: string): boolean {
+        if (!this.keyStates[key]) {
+            this.keyStates[key] = new KeyState();
+        }
         let ks = this.keyStates[key];
         return ks.pressFrame == Game.frame;
     }
