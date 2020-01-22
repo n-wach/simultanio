@@ -30,6 +30,11 @@ export class LobbyScene extends Scene {
             //add game scene passing match and socketio
         });
     }
+    destroy() {
+        super.destroy();
+        this.socketio.off("join match");
+        this.socketio.off("list matches");
+    }
 
     initialize(): void {
         super.initialize();
