@@ -29,7 +29,7 @@ export type MatchListing = {
     id: string,
     name: string,
     player_count: number,
-    max_player: number,
+    max_players: number,
 };
 
 export type MatchList = {
