@@ -19,7 +19,7 @@ export class HUD extends Renderable {
         ctx.fillStyle = "grey";
         ctx.fillRect(0, 0, w, 30);
 
-        let time = this.playScene.match.duration.toFixed(0);
+        let time = this.playScene.match.info.duration.toFixed(0);
         ctx.fillStyle = "white";
         ctx.font = "20px Arial";
         ctx.textAlign = "center";
