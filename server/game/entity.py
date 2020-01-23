@@ -4,6 +4,7 @@ from math import floor
 class Entity:
     ACTIVE_SIGHT = 0
     PASSIVE_SIGHT = 0
+    VARIATION = "unknown"
 
     def __init__(self, owner, terrain, grid_x, grid_y):
         self.owner = owner
@@ -11,8 +12,16 @@ class Entity:
         self.grid_x = grid_x
         self.grid_y = grid_y
 
-    def tick(self):
+    def tick(self, dt):
         pass
+
+    def get_self(self):
+        return {
+            "variation": self.VARIATION,
+            "x": self.grid_x,
+            "y": self.grid_y,
+            "id": id(self),
+        }
 
 
 class UnalignedEntity(Entity):
@@ -38,3 +47,11 @@ class UnalignedEntity(Entity):
     def y(self, y):
         self._y = y
         self.grid_y = floor(y)
+
+    def get_self(self):
+        return {
+            "variation": self.VARIATION,
+            "x": self.x,
+            "y": self.y,
+            "id": id(self),
+        }

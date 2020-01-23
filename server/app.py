@@ -40,7 +40,7 @@ def ws_disconnect():
     leave_match()
 
 
-@socketio.on("create match")
+@socketio.on("create info")
 def create_match():
     if "lobby" not in rooms():
         return  # can only create from the lobby
@@ -49,7 +49,7 @@ def create_match():
     emit_available_matches(True)
 
 
-@socketio.on("join match")
+@socketio.on("join info")
 def join_match(match_id):
     if "lobby" not in rooms(sid=request.sid):
         return  # can only join from the lobby
@@ -58,10 +58,10 @@ def join_match(match_id):
     emit_available_matches(True)
 
 
-@socketio.on("leave match")
+@socketio.on("leave info")
 def leave_match():
     if "lobby" in rooms(sid=request.sid):
-        return  # can only leave if in match
+        return  # can only leave if in info
     join_room("lobby")
     match_manager.leave_match()
     emit_available_matches(True)
