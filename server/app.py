@@ -67,6 +67,17 @@ def leave_match():
     emit_available_matches(True)
 
 
+@socketio.on("player command")
+def player_command(command):
+    match = match_manager.get_user_match()
+    if match is None:
+        return
+    for player in match.game.players:
+        if player.sid == request.sid:
+            player.pending_messages.append(command)
+            return
+
+
 def emit_available_matches(broadcast=False):
     emit("list matches", match_manager.list_matches(),
          room="lobby", broadcast=broadcast)
