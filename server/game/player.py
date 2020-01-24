@@ -15,14 +15,14 @@ class Player:
         PURPLE = "purple"
         ALL = [RED, BLUE, GREEN, ORANGE, PURPLE, YELLOW]  # in order of preference
 
-    def __init__(self, game, sid, color, spawn_pos):
+    def __init__(self, game, sid, color, player_id):
         self.game = game
         self.sid = sid
         self.stored_energy = 0
         self.stored_matter = 0
         self.color = color
         self.terrain_view = TerrainView(game.terrain, self)
-
+        spawn_pos = game.terrain.spawn_positions[player_id]
         self.capital = City(self, game.terrain, spawn_pos[0], spawn_pos[1])
 
         self.scout = Unit(x=self.capital.grid_x, y=self.capital.grid_y,
@@ -30,6 +30,7 @@ class Player:
 
         self.entities = [self.capital, self.scout]
         self.id = id(self)
+        self.player_id = player_id
 
         self.pending_messages = []
 
