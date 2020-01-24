@@ -17,7 +17,8 @@ class Match:
         self.socketio = socketio
         self.manager = manager
         self.name = random_adjective().capitalize() + random_noun().capitalize()
-        self.match_id = "match_{}".format(id(self))
+        self.match_id = id(self)
+        self.room_name = "match_{}".format(self.match_id)
         self.max_players = 4
         self.tick_period = 0.1
         self.status = Match.Status.WAITING
@@ -38,12 +39,12 @@ class Match:
         if len(self.game.players) >= self.max_players:
             return
         player = self.game.add_player(request.sid)
-        join_room(self.match_id)
+        join_room(self.room_name)
         emit("join info", player.get_update())
 
     def leave(self):
         self.game.remove_player(request.sid)
-        leave_room(self.match_id)
+        leave_room(self.room_name)
         emit("leave info")
 
     def start(self):
