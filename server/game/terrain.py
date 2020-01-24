@@ -117,19 +117,20 @@ class TerrainView:
     def __init__(self, terrain, player):
         self.terrain = terrain
         self.player = player
+        self.discovered_grid = [[False for y in range(self.terrain.height)] for x in range(self.terrain.width)]
         self.visibility_grid = [[False for y in range(self.terrain.height)] for x in range(self.terrain.width)]
 
     def get_player_grid(self):
-        self.update_visiblity_grid()
+        self.update_view()
         return [[self.terrain.tiles[x][y].get_name()
-                 if self.visibility_grid[x][y] else Tile.UNKNOWN
+                 if self.discovered_grid[x][y] else Tile.UNKNOWN
                  for y in range(self.terrain.height)]
                 for x in range(self.terrain.width)]
 
-    def update_visiblity_grid(self):
+    def update_view(self):
         for y in range(self.terrain.height):
             for x in range(self.terrain.width):
-                self.visibility_grid[x][y] = False
+                self.visibility_grid[x][y]=False
 
         for entity in self.player.entities:
             if isinstance(entity, UnalignedEntity):
@@ -139,6 +140,10 @@ class TerrainView:
                 x = entity.grid_x
                 y = entity.grid_y
             for point in self.terrain.points_near(x, y, entity.PASSIVE_SIGHT):
+                self.discovered_grid[point[0]][point[1]] = True
+            for point in self.terrain.points_near(x, y, entity.ACTIVE_SIGHT):
                 self.visibility_grid[point[0]][point[1]] = True
 
+    def entity_visible(self, entity):
+        return self.visibility_grid[entity.grid_x][entity.grid_y]
 

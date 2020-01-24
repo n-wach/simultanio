@@ -38,11 +38,21 @@ class Player:
     def get_entities(self):
         return [entity.get_self() for entity in self.entities]
 
+    def get_entities_from_perspective(self,other):
+        return [entity.get_self() for entity in self.entities if other.terrain_view.entity_visible(entity)]
+
     def get_self(self):
         return {
             "stored_energy": self.stored_energy,
             "stored_matter": self.stored_matter,
             "entities": self.get_entities(),
+            "color": self.color,
+            "id": self.id,
+        }
+
+    def get_self_from_perspective(self, other):
+        return {
+            "entities": self.get_entities_from_perspective(other),
             "color": self.color,
             "id": self.id,
         }
@@ -55,7 +65,7 @@ class Player:
         }
 
     def get_other_players(self):
-        return [p.get_self() for p in self.game.players if p != self]
+        return [p.get_self_from_perspective(self) for p in self.game.players if p != self]
 
     def get_update(self):
         return {

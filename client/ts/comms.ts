@@ -55,6 +55,12 @@ export type Player = {
     id: Id,
 };
 
+export type OtherPlayer = {
+    color: Color,
+    entities: Entity[],
+    id: Id,
+};
+
 export type Entity = {
     variation: EntityVariation,
     // integer is center of grid square
@@ -67,7 +73,7 @@ export type Entity = {
 export type Match = {
     info: MatchListing,
     you: Player,
-    other_players: Player[],
+    other_players: OtherPlayer[],
     terrain_view: TerrainView,
 };
 

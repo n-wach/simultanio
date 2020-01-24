@@ -37,7 +37,7 @@ class UnalignedEntity(Entity):
     @x.setter
     def x(self, x):
         self._x = x
-        self.grid_x = floor(x)
+        self.grid_x = min(max(floor(x), 0), self.terrain_view.terrain.width)
 
     @property
     def y(self):
@@ -46,7 +46,7 @@ class UnalignedEntity(Entity):
     @y.setter
     def y(self, y):
         self._y = y
-        self.grid_y = floor(y)
+        self.grid_y = min(max(floor(y), 0), self.terrain_view.terrain.height)
 
     def get_self(self):
         return {
