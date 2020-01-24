@@ -23,11 +23,14 @@ class Player:
                               random.randrange(0, game.terrain.height))]
         self.id = id(self)
 
+    def get_entities(self):
+        return [entity.get_self() for entity in self.entities]
+
     def get_self(self):
         return {
             "stored_energy": self.stored_energy,
             "stored_matter": self.stored_matter,
-            "entities": self.entities,
+            "entities": self.get_entities(),
             "color": self.color,
             "id": self.id,
         }
@@ -44,7 +47,7 @@ class Player:
 
     def get_update(self):
         return {
-            "match": self.game.match.get_listing(),
+            "info": self.game.match.get_info(),
             "you": self.get_self(),
             "other_players": self.get_other_players(),
             "terrain_view": self.get_terrain_view(),
@@ -54,6 +57,8 @@ class Player:
         socketio.emit("game update", self.get_update(), room=self.sid)
 
     def tick(self, dt):
+        for entity in self.entities:
+            entity.tick(dt)
         # Human player will act based on WS events received since last call
         # AI player will act using AI
         pass

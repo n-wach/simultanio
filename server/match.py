@@ -24,7 +24,7 @@ class Match:
         self.duration = 0
         self.game = Game(self)
 
-    def get_listing(self):
+    def get_info(self):
         return {
             "id": self.match_id,
             "name": self.name,
@@ -39,12 +39,12 @@ class Match:
             return
         player = self.game.add_player(request.sid)
         join_room(self.match_id)
-        emit("join match", player.get_update())
+        emit("join info", player.get_update())
 
     def leave(self):
         self.game.remove_player(request.sid)
         leave_room(self.match_id)
-        emit("leave match")
+        emit("leave info")
 
     def start(self):
         self.socketio.start_background_task(self.logic_loop)

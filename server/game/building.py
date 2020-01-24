@@ -7,19 +7,26 @@ class Building(Entity):
 
 
 class EnergyGenerator(Building):
-    def tick(self):
-        self.owner.energy += 1
+    GENERATION_RATE = 1
+
+    def tick(self, dt):
+        self.owner.energy += dt * self.GENERATION_RATE
 
 
 class MatterCollector(Building):
-    def tick(self):
-        self.owner.matter += 1
+    GENERATION_RATE = 1
+
+    def tick(self, dt):
+        self.owner.matter += dt * self.GENERATION_RATE
 
 
 class City(Building):
+    GENERATION_RATE = 1
+
+    VARIATION = "city"
     ACTIVE_SIGHT = 12
     PASSIVE_SIGHT = 10
 
-    def tick(self):
-        self.owner.matter += 1
-        self.owner.energy += 1
+    def tick(self, dt):
+        self.owner.stored_matter += dt * self.GENERATION_RATE
+        self.owner.stored_energy += dt * self.GENERATION_RATE

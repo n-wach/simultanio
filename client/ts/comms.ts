@@ -20,16 +20,8 @@ export enum TerrainTile {
     UNKNOWN = "unknown",
 }
 
-export enum EntityType {
-    UNIT = "unit",
-    BUILDING = "building",
-}
-
-export enum UnitVariation {
-
-}
-
-export enum BuildingVariation {
+export enum EntityVariation {
+    UNKNOWN = "unknown",
     CITY = "city",
 }
 
@@ -61,15 +53,16 @@ export type Player = {
 }
 
 export type Entity = {
-    type: EntityType,
-    variation: UnitVariation | BuildingVariation,
+    variation: EntityVariation,
+    // integer is center of grid square
+    // ... may be float from [-0.5 to terrain.width-0.5]
     x: number,
     y: number,
     id: number,
 }
 
 export type Match = {
-    match: MatchListing,
+    info: MatchListing,
     you: Player,
     other_players: Player[],
     terrain_view: TerrainView,
