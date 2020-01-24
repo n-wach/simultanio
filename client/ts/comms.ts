@@ -25,19 +25,28 @@ export enum EntityType {
     BUILDING = "building",
 }
 
+export enum UnitVariation {
+
+}
+
+export enum BuildingVariation {
+    CITY = "city",
+}
+
 export type MatchListing = {
     id: string,
     name: string,
     player_count: number,
     max_players: number,
+    status: MatchStatus,
+    duration: number,
 };
 
 export type MatchList = {
     matches: MatchListing[]
 };
 
-
-export type Terrain = {
+export type TerrainView = {
     width: number,
     height: number,
     grid: TerrainTile[][],
@@ -47,24 +56,21 @@ export type Player = {
     stored_energy: number,
     stored_matter: number,
     color: Color,
+    entities: Entity[],
     id: number,
 }
 
 export type Entity = {
     type: EntityType,
-    variation: string,
+    variation: UnitVariation | BuildingVariation,
     x: number,
     y: number,
-    color: Color,
     id: number,
 }
 
 export type Match = {
-    listing: MatchListing,
-    duration: number,
+    match: MatchListing,
     you: Player,
     other_players: Player[],
-    terrain: Terrain,
-    entities: Entity[],
-    status: MatchStatus,
+    terrain_view: TerrainView,
 }

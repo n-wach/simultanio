@@ -12,10 +12,6 @@ class EnergyGenerator(Building):
 
 
 class MatterCollector(Building):
-    """
-    Safe to assume collector lies on resource
-    """
-
     def tick(self):
         self.owner.matter += 1
 
