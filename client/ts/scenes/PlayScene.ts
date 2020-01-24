@@ -1,9 +1,9 @@
 import {Scene} from "../gfx/Scene";
-import {Match, MatchList, TerrainTile} from "../comms";
 import {Button} from "../gfx/ui/Button";
 import {LobbyScene} from "./LobbyScene";
 import {Game} from "../gfx/Game";
 import {HUD} from "../gfx/ui/HUD";
+import {Entity, EntityVariation, Match, PlayerCommand, TerrainTile} from "../comms";
 
 export class PlayScene extends Scene {
     socketio: SocketIOClient.Socket;
@@ -16,7 +16,7 @@ export class PlayScene extends Scene {
         this.socketio.on("game update", (match: Match) => {
             this.match = match;
         });
-        this.socketio.on("leave match", () => {
+        this.socketio.on("leave info", () => {
             Game.setScene(new LobbyScene(this.socketio));
         });
     }
@@ -27,28 +27,42 @@ export class PlayScene extends Scene {
         this.add(new HUD(this));
 
         this.add(new Button("Leave", 5, 5, 100, 20, () => {
-            this.socketio.emit("leave match");
+            this.socketio.emit("leave info");
         }));
     }
 
     destroy() {
         super.destroy();
         this.socketio.off("game update");
-        this.socketio.off("leave match");
+        this.socketio.off("leave info");
+    }
+
+    update() {
+        super.update();
+        if(Game.input.mouseDown) {
+            let pos = Game.input.mousePos;
+            pos.x -= 105;
+            pos.y -= 105;
+            this.socketio.emit("player command", ({
+                command: "set target",
+                x: pos.x / 10,
+                y: pos.y / 10,
+            } as PlayerCommand));
+        }
     }
 
     render(ctx: CanvasRenderingContext2D): void {
         super.render(ctx);
 
-        for(let x = 0; x < this.match.terrain.width; x++) {
-            for(let y = 0; y < this.match.terrain.height; y++) {
-                let tile = this.match.terrain.grid[x][y];
+        for(let x = 0; x < this.match.terrain_view.width; x++) {
+            for(let y = 0; y < this.match.terrain_view.height; y++) {
+                let tile = this.match.terrain_view.grid[x][y];
                 switch(tile) {
                     case TerrainTile.LAND:
                         ctx.fillStyle = "white";
                         break;
                     case TerrainTile.WATER:
-                        ctx.fillStyle = "blue";
+                        ctx.fillStyle = "darkblue";
                         break;
                     case TerrainTile.MATTER_SOURCE:
                         ctx.fillStyle = "pink";
@@ -59,6 +73,33 @@ export class PlayScene extends Scene {
                 }
                 ctx.fillRect(100 + x * 10, 100 + y * 10, 10, 10);
             }
+        }
+
+        ctx.fillStyle = this.match.you.color;
+        PlayScene.drawEntities(ctx, this.match.you.entities);
+        for(let player of this.match.other_players) {
+            ctx.fillStyle = player.color;
+            PlayScene.drawEntities(ctx, player.entities);
+        }
+    }
+
+    static drawEntities(ctx: CanvasRenderingContext2D, entities: Entity[]) {
+        for(let entity of entities) {
+            ctx.moveTo(entity.x, entity.y);
+            ctx.beginPath();
+            switch(entity.variation) {
+                case EntityVariation.UNKNOWN:
+                    console.error("tried to draw unknown entity:", entity);
+                    break;
+                case EntityVariation.CITY:
+                    // TODO replace with draw sprite
+                    ctx.arc(100 + 5 + entity.x * 10, 100 + 5 + entity.y * 10, 7, 0, Math.PI * 2);
+                    break;
+                case EntityVariation.UNIT:
+                    ctx.rect(100 + 2 + entity.x * 10, 100 + 2 + entity.y * 10, 6, 6);
+                    break;
+            }
+            ctx.fill();
         }
     }
 }

@@ -20,51 +20,76 @@ export enum TerrainTile {
     UNKNOWN = "unknown",
 }
 
-export enum EntityType {
+export enum EntityVariation {
+    UNKNOWN = "unknown",
+    CITY = "city",
     UNIT = "unit",
-    BUILDING = "building",
 }
 
+export type Id = number;
+
 export type MatchListing = {
-    id: string,
+    id: Id,
     name: string,
     player_count: number,
     max_players: number,
+    status: MatchStatus,
+    duration: number,
 };
 
 export type MatchList = {
     matches: MatchListing[]
 };
 
-
-export type Terrain = {
+export type TerrainView = {
     width: number,
     height: number,
     grid: TerrainTile[][],
-}
+};
 
 export type Player = {
     stored_energy: number,
     stored_matter: number,
     color: Color,
-    id: number,
-}
+    entities: Entity[],
+    id: Id,
+};
+
+export type OtherPlayer = {
+    color: Color,
+    entities: Entity[],
+    id: Id,
+};
 
 export type Entity = {
-    type: EntityType,
-    variation: string,
+    variation: EntityVariation,
+    // integer is center of grid square
+    // ... may be float from [-0.5 to terrain.width-0.5]
     x: number,
     y: number,
-    color: Color,
-    id: number,
-}
+    id: Id,
+};
 
 export type Match = {
-    listing: MatchListing,
-    duration: number,
+    info: MatchListing,
     you: Player,
-    other_players: Player[],
-    terrain: Terrain,
-    entities: Entity[],
-    status: MatchStatus,
-}
+    other_players: OtherPlayer[],
+    terrain_view: TerrainView,
+};
+
+export type SetTargetCommand = {
+    command: "set target",
+    id: Id,
+    x: number,
+    y: number,
+};
+
+export type SetTargetsCommand = {
+    command: "set targets",
+    ids: Id[],
+    x: number,
+    y: number,
+};
+
+export type PlayerCommand = SetTargetCommand | SetTargetsCommand;
+
