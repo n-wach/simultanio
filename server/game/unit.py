@@ -4,6 +4,8 @@ from server.game.entity import UnalignedEntity
 
 
 class Unit(UnalignedEntity):
+    ACTIVE_SIGHT = 5
+    PASSIVE_SIGHT = 5
     ENERGY_COST = 10
     MATTER_COST = 10
     TIME_COST = 10

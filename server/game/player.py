@@ -1,6 +1,7 @@
 from server.game.building import City
 import random
 
+from server.game.terrain import TerrainView
 from server.game.unit import Unit
 
 
@@ -20,6 +21,7 @@ class Player:
         self.stored_energy = 0
         self.stored_matter = 0
         self.color = color
+        self.terrain_view = TerrainView(game.terrain, self)
 
         scout = Unit(x=0, y=0, owner=self, terrain=game.terrain)
         scout.set_target(game.terrain.width, game.terrain.height)
@@ -46,7 +48,7 @@ class Player:
         return {
             "width": self.game.terrain.width,
             "height": self.game.terrain.height,
-            "grid": self.game.terrain.get_player_grid(self)
+            "grid": self.terrain_view.get_player_grid()
         }
 
     def get_other_players(self):

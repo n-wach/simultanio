@@ -19,7 +19,7 @@ class Match:
         self.name = random_adjective().capitalize() + random_noun().capitalize()
         self.match_id = "match_{}".format(id(self))
         self.max_players = 4
-        self.tick_period = 0.5
+        self.tick_period = 0.1
         self.status = Match.Status.WAITING
         self.duration = 0
         self.game = Game(self)

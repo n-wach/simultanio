@@ -1,7 +1,10 @@
+import math
 from random import random
 
 import numpy as np
 from scipy.ndimage.filters import gaussian_filter
+
+from server.game.entity import UnalignedEntity
 
 
 class Tile:
@@ -80,18 +83,18 @@ class Terrain:
         return self.tiles[x][y]
 
     def points_near(self, x, y, radius):
-        right = max(x - radius, 0)
-        left = min(x + radius, self.width - 1)
-        top = max(y - radius, 0)
-        bottom = min(y + radius, self.height - 1)
+        right = max(math.ceil(x) - radius, 0)
+        left = min(math.floor(x) + radius, self.width - 1)
+        top = max(math.ceil(y) - radius, 0)
+        bottom = min(math.floor(y) + radius, self.height - 1)
 
-        r2 = radius ** 2
+        r2 = (radius + 0.2) ** 2
 
         for px in range(right, left + 1):
             for py in range(top, bottom + 1):
                 dx = px - x
                 dy = py - y
-                if dx ** 2 + dy ** 2 > r2:
+                if dx ** 2 + dy ** 2 <= r2:
                     yield (px, py)
 
     def neighboring_points(self, x, y):
@@ -109,10 +112,33 @@ class Terrain:
         if y < self.height - 1:
             yield (x, y + 1)
 
-    def get_player_grid(self, player):
-        return [[self.tiles[x][y].get_name() for y in range(self.height)] for x in range(self.width)]
-
 
 class TerrainView:
     def __init__(self, terrain, player):
-        pass
+        self.terrain = terrain
+        self.player = player
+        self.visibility_grid = [[False for y in range(self.terrain.height)] for x in range(self.terrain.width)]
+
+    def get_player_grid(self):
+        self.update_visiblity_grid()
+        return [[self.terrain.tiles[x][y].get_name()
+                 if self.visibility_grid[x][y] else Tile.UNKNOWN
+                 for y in range(self.terrain.height)]
+                for x in range(self.terrain.width)]
+
+    def update_visiblity_grid(self):
+        for y in range(self.terrain.height):
+            for x in range(self.terrain.width):
+                self.visibility_grid[x][y] = False
+
+        for entity in self.player.entities:
+            if isinstance(entity, UnalignedEntity):
+                x = entity.x
+                y = entity.y
+            else:
+                x = entity.grid_x
+                y = entity.grid_y
+            for point in self.terrain.points_near(x, y, entity.PASSIVE_SIGHT):
+                self.visibility_grid[point[0]][point[1]] = True
+
+
