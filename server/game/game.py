@@ -6,11 +6,11 @@ class Game:
     def __init__(self, match):
         self.match = match
         self.players = []
-        self.terrain = Terrain(100, 100)
+        self.terrain = Terrain(60, 60)
 
     def add_player(self, sid):
         color = Player.Color.ALL[len(self.players) % len(Player.Color.ALL)]
-        player = Player(self, sid, color)
+        player = Player(self, sid, color, self.terrain.spawn_positions[len(self.players)])
         self.players.append(player)
         return player
 

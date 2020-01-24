@@ -15,7 +15,7 @@ class Player:
         PURPLE = "purple"
         ALL = [RED, BLUE, GREEN, ORANGE, PURPLE, YELLOW]  # in order of preference
 
-    def __init__(self, game, sid, color):
+    def __init__(self, game, sid, color, spawn_pos):
         self.game = game
         self.sid = sid
         self.stored_energy = 0
@@ -23,9 +23,7 @@ class Player:
         self.color = color
         self.terrain_view = TerrainView(game.terrain, self)
 
-        self.capital = City(self, game.terrain,
-                            random.randrange(0, game.terrain.width),
-                            random.randrange(0, game.terrain.height))
+        self.capital = City(self, game.terrain, spawn_pos[0], spawn_pos[1])
 
         self.scout = Unit(x=self.capital.grid_x, y=self.capital.grid_y,
                           owner=self, terrain_view=self.terrain_view)

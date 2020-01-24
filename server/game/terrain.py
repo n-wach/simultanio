@@ -52,25 +52,35 @@ def noise(weight_blur, width, height):
         noise_vals += weight * gaussian_filter(np.random.rand(width, height), sigma=blur)
     return noise_vals
 
+def gen_terrain(width,height,weight_blur,bias,source_chance):
+    vals = noise(weight_blur, width, height)
+
+    def place_tile(val):
+        if val < bias:
+            if random() < source_chance:
+                return MatterSource()
+            return Land()
+        return Water()
+
+    return tuple(tuple(place_tile(vals[x, y]) for y in range(height)) for x in range(width))
+
 
 class Terrain:
     def __init__(self, width, height, weight_blur=None, bias=0.51, source_chance=0.01):
         # get random noise and smooth it a bit
         if weight_blur is None:
             weight_blur = ((0.3, 4), (0.7, 9))
-
-        vals = noise(weight_blur, width, height)
         self.width = width
         self.height = height
+        w_pad = math.floor(width / 6)
+        h_pad = math.floor(height / 6)
+        self.spawn_positions = [(w_pad, h_pad),
+                                (width - w_pad, h_pad),
+                                (w_pad, height - h_pad),
+                                (width - w_pad, height - h_pad)]
 
-        def place_tile(val):
-            if val < bias:
-                if random() < source_chance:
-                    return MatterSource()
-                return Land()
-            return Water()
 
-        self.tiles = tuple(tuple(place_tile(vals[x, y]) for y in range(height)) for x in range(width))
+        self.tiles = gen_terrain(width,height,weight_blur,bias,source_chance)
         # TODO guarantee large paths between bases
 
     def tile_at(self, x, y):
