@@ -51,7 +51,7 @@ def noise(weight_blur, width, height):
 
 
 class Terrain:
-    def __init__(self, width, height, weight_blur=None, bias=0.51, source_chance=0.99):
+    def __init__(self, width, height, weight_blur=None, bias=0.51, source_chance=0.01):
         # get random noise and smooth it a bit
         if weight_blur is None:
             weight_blur = ((0.3, 4), (0.7, 9))
@@ -62,7 +62,7 @@ class Terrain:
 
         def place_tile(val):
             if val < bias:
-                if random() > source_chance:
+                if random() < source_chance:
                     return MatterSource()
                 return Land()
             return Water()
@@ -111,3 +111,8 @@ class Terrain:
 
     def get_player_grid(self, player):
         return [[self.tiles[x][y].get_name() for y in range(self.height)] for x in range(self.width)]
+
+
+class TerrainView:
+    def __init__(self, terrain, player):
+        pass

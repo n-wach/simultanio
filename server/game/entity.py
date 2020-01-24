@@ -27,8 +27,8 @@ class Entity:
 class UnalignedEntity(Entity):
     def __init__(self, x, y, *args, **kwargs):
         super().__init__(grid_x=floor(x), grid_y=floor(y), *args, **kwargs)
-        self._x = x
-        self._y = x
+        self.x = x
+        self.y = y
 
     @property
     def x(self):

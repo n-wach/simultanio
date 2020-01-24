@@ -1,6 +1,8 @@
 from server.game.building import City
 import random
 
+from server.game.unit import Unit
+
 
 class Player:
     class Color:
@@ -18,9 +20,14 @@ class Player:
         self.stored_energy = 0
         self.stored_matter = 0
         self.color = color
+
+        scout = Unit(x=0, y=0, owner=self, terrain=game.terrain)
+        scout.set_target(game.terrain.width, game.terrain.height)
+
         self.entities = [City(self, game.terrain,
                               random.randrange(0, game.terrain.width),
-                              random.randrange(0, game.terrain.height))]
+                              random.randrange(0, game.terrain.height)),
+                         scout]
         self.id = id(self)
 
     def get_entities(self):

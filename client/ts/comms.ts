@@ -23,6 +23,7 @@ export enum TerrainTile {
 export enum EntityVariation {
     UNKNOWN = "unknown",
     CITY = "city",
+    UNIT = "unit",
 }
 
 export type MatchListing = {

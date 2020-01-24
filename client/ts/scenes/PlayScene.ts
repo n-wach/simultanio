@@ -48,7 +48,7 @@ export class PlayScene extends Scene {
                         ctx.fillStyle = "white";
                         break;
                     case TerrainTile.WATER:
-                        ctx.fillStyle = "blue";
+                        ctx.fillStyle = "darkblue";
                         break;
                     case TerrainTile.MATTER_SOURCE:
                         ctx.fillStyle = "pink";
@@ -80,6 +80,9 @@ export class PlayScene extends Scene {
                 case EntityVariation.CITY:
                     // TODO replace with draw sprite
                     ctx.arc(100 + 5 + entity.x * 10, 100 + 5 + entity.y * 10, 7, 0, Math.PI * 2);
+                    break;
+                case EntityVariation.UNIT:
+                    ctx.rect(100 + 2 + entity.x * 10, 100 + 2 + entity.y * 10, 6, 6);
                     break;
             }
             ctx.fill();
