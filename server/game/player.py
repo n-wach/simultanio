@@ -23,14 +23,17 @@ class Player:
         self.color = color
         self.terrain_view = TerrainView(game.terrain, self)
 
-        scout = Unit(x=0, y=0, owner=self, terrain=game.terrain)
-        scout.set_target(game.terrain.width, game.terrain.height)
+        self.capital = City(self, game.terrain,
+                            random.randrange(0, game.terrain.width),
+                            random.randrange(0, game.terrain.height))
 
-        self.entities = [City(self, game.terrain,
-                              random.randrange(0, game.terrain.width),
-                              random.randrange(0, game.terrain.height)),
-                         scout]
+        self.scout = Unit(x=self.capital.grid_x, y=self.capital.grid_y,
+                          owner=self, terrain_view=self.terrain_view)
+
+        self.entities = [self.capital, self.scout]
         self.id = id(self)
+
+        self.pending_messages = []
 
     def get_entities(self):
         return [entity.get_self() for entity in self.entities]
@@ -68,8 +71,11 @@ class Player:
     def tick(self, dt):
         for entity in self.entities:
             entity.tick(dt)
+
+        for message in self.pending_messages:
+            if message["command"] == "set target":
+                self.scout.set_target(message["x"], message["y"])
+
         # Human player will act based on WS events received since last call
         # AI player will act using AI
         pass
-
-

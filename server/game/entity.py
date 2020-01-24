@@ -6,9 +6,9 @@ class Entity:
     PASSIVE_SIGHT = 0
     VARIATION = "unknown"
 
-    def __init__(self, owner, terrain, grid_x, grid_y):
+    def __init__(self, owner, terrain_view, grid_x, grid_y):
         self.owner = owner
-        self.terrain = terrain
+        self.terrain_view = terrain_view
         self.grid_x = grid_x
         self.grid_y = grid_y
 

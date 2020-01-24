@@ -3,7 +3,7 @@ import {Button} from "../gfx/ui/Button";
 import {LobbyScene} from "./LobbyScene";
 import {Game} from "../gfx/Game";
 import {HUD} from "../gfx/ui/HUD";
-import {Entity, EntityVariation, Match, TerrainTile} from "../comms";
+import {Entity, EntityVariation, Match, PlayerCommand, TerrainTile} from "../comms";
 
 export class PlayScene extends Scene {
     socketio: SocketIOClient.Socket;
@@ -35,6 +35,21 @@ export class PlayScene extends Scene {
         super.destroy();
         this.socketio.off("game update");
         this.socketio.off("leave info");
+    }
+
+    update() {
+        super.update();
+        if(Game.input.mouseDown) {
+            console.log("hi");
+            let pos = Game.input.mousePos;
+            pos.x -= 105;
+            pos.y -= 105;
+            this.socketio.emit("player command", ({
+                command: "set target",
+                x: pos.x / 10,
+                y: pos.y / 10,
+            } as PlayerCommand));
+        }
     }
 
     render(ctx: CanvasRenderingContext2D): void {
