@@ -39,7 +39,7 @@ export class PlayScene extends Scene {
 
     update() {
         super.update();
-        if(Game.input.mouseDown) {
+        if(Game.input.mousePressed) {
             let pos = Game.input.mousePos;
             pos.x -= 105;
             pos.y -= 105;

@@ -136,6 +136,7 @@ class TerrainView:
         self.player = player
         self.discovered_grid = [[False for y in range(self.terrain.height)] for x in range(self.terrain.width)]
         self.visibility_grid = [[False for y in range(self.terrain.height)] for x in range(self.terrain.width)]
+        self.new_obstacle = False
 
     def get_player_grid(self):
         self.update_view()
@@ -157,6 +158,8 @@ class TerrainView:
                 x = entity.grid_x
                 y = entity.grid_y
             for point in self.terrain.points_near(x, y, entity.PASSIVE_SIGHT):
+                if not self.discovered_grid[point[0]][point[1]]:
+                    self.new_obstacle = True
                 self.discovered_grid[point[0]][point[1]] = True
             for point in self.terrain.points_near(x, y, entity.ACTIVE_SIGHT):
                 self.visibility_grid[point[0]][point[1]] = True
@@ -175,17 +178,26 @@ class TerrainView:
     # implement methods for TerrainView to be a graph
     # ie fill out methods used by a_star_search
 
+    def in_bounds(self, x, y):
+        return 0 <= x < self.terrain.width and 0 <= y < self.terrain.height
+
+    def neighboring_points(self, x, y):
+        for nx in range(x-1, x+2):
+            for ny in range(y-1, y+2):
+                if self.in_bounds(nx, ny):
+                    yield nx, ny
+
     def neighbors(self, position):
         return filter(
             lambda n: not self.discovered_grid[n[0]][n[1]] or self.terrain.tile_at(n[0], n[1]).passable,
-            self.terrain.neighboring_points(position[0], position[1])
+            self.neighboring_points(position[0], position[1])
         )
 
     def cost(self, start, end):
         return 1.0
 
     def heuristic(self, node, goal):
-        return abs(goal[0]-node[0]) + abs(goal[1]-node[1])
+        return (goal[0]-node[0])**2 + (goal[1]-node[1])**2
 
 
 def a_star_search(graph, start, goal):

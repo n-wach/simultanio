@@ -29,6 +29,7 @@ class Player:
                           owner=self, terrain_view=self.terrain_view)
 
         self.entities = [self.capital, self.scout]
+        self.units = [self.scout]
         self.id = id(self)
         self.player_id = player_id
 
@@ -81,9 +82,15 @@ class Player:
         for entity in self.entities:
             entity.tick(dt)
 
+        for unit in self.units:
+            if self.terrain_view.new_obstacle:
+                unit.calculate_path()
+        self.terrain_view.new_obstacle = False
+
         for message in self.pending_messages:
             if message["command"] == "set target":
                 self.scout.set_target(message["x"], message["y"])
+        self.pending_messages.clear()
 
         # Human player will act based on WS events received since last call
         # AI player will act using AI
