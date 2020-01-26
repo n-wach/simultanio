@@ -9,7 +9,7 @@ class Game:
         self.terrain = Terrain(60, 60)
         self.player_ids = [True]*4
 
-    def get_player_id(self):
+    def gen_player_id(self):
         for i in range(len(self.player_ids)):
             if self.player_ids[i]:
                 self.player_ids[i] = False
@@ -17,9 +17,9 @@ class Game:
         return None
 
     def add_player(self, sid):
-        id = self.get_player_id()
-        color = Player.Color.ALL[id]
-        player = Player(self, sid, color, id)
+        player_id = self.gen_player_id()
+        color = Player.Color.ALL[player_id]
+        player = Player(self, sid, color, player_id)
         self.players.append(player)
         return player
 

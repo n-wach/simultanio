@@ -1,8 +1,12 @@
 import math
 from random import random
 
+# for terrain generation
 import numpy as np
 from scipy.ndimage.filters import gaussian_filter
+
+# for priority queue in A*
+import heapq
 
 from server.game.entity import UnalignedEntity
 
@@ -160,3 +164,84 @@ class TerrainView:
     def entity_visible(self, entity):
         return self.visibility_grid[entity.grid_x][entity.grid_y]
 
+    def get_path(self, origin, target):
+        came_from, node = a_star_search(self, origin, target)
+        nodes = []
+        while node != origin and node is not None:
+            nodes.append(node)
+            node = came_from[node]
+        return list(reversed(nodes))
+
+    # implement methods for TerrainView to be a graph
+    # ie fill out methods used by a_star_search
+
+    def neighbors(self, position):
+        return filter(
+            lambda n: not self.discovered_grid[n[0]][n[1]] or self.terrain.tile_at(n[0], n[1]).passable,
+            self.terrain.neighboring_points(position[0], position[1])
+        )
+
+    def cost(self, start, end):
+        return 1.0
+
+    def heuristic(self, node, goal):
+        return abs(goal[0]-node[0]) + abs(goal[1]-node[1])
+
+
+def a_star_search(graph, start, goal):
+    # collection of nodes from which to propagate search
+    # pairs nodes with "priority", ie how close node is to start
+    frontier = PriorityQueue()
+    # start propagating search from start
+    frontier.put(start, 0.0)
+
+    # dictionary mapping position on graph to closest position in propagation
+    came_from = {start: None}
+    # dictionary mapping position on graph to cost to have reached position from start
+    cost_so_far = {start: 0.0}
+    # in case goal is unreachable, we keep track of node with minimum heuristic as replacement goal
+    (min_heuristic, min_heuristic_node) = graph.heuristic(goal, start), start
+
+    while not frontier.empty():
+        # get node with minimal priority, ie the node that is most likely to give a good path
+        current = frontier.get()
+
+        # terminate search if we have reached goal
+        # propagating longer can only find worse path
+        if current == goal:
+            break
+
+        # otherwise, propagate further
+        for neighbor in graph.neighbors(current):
+            # cost of new neighbor
+            new_cost = cost_so_far[current] + graph.cost(current, neighbor)
+
+            # add next to propagation if not yet found or if this is a shorter path
+            if neighbor not in cost_so_far or new_cost < cost_so_far[neighbor]:
+                cost_so_far[neighbor] = new_cost
+                # give it priority such that algorithm chooses nicer looking paths
+                # eg propagate first in direction towards goal rather than simply branching rapidly
+                heuristic = graph.heuristic(goal, neighbor)
+                priority = new_cost + heuristic
+                frontier.put(neighbor, priority)
+                came_from[neighbor] = current
+
+                # check to see if current neighbor has lowest heuristic
+                if heuristic < min_heuristic:
+                    min_heuristic = heuristic
+                    min_heuristic_node = neighbor
+    return came_from, min_heuristic_node
+
+
+class PriorityQueue:
+    def __init__(self):
+        self.elements = []
+
+    def empty(self):
+        return len(self.elements) == 0
+
+    def put(self, item, priority):
+        heapq.heappush(self.elements, (priority, item))
+
+    def get(self):
+        return heapq.heappop(self.elements)[1]
