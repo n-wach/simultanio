@@ -31,6 +31,9 @@ class Unit(UnalignedEntity):
         dist = dt * self.MOVEMENT_SPEED
         while dist > 0 and len(self.path) > 0:
             next_pos = self.path[0]
+            if not self.terrain_view.passable(*next_pos):
+                self.calculate_path()
+                break
             dx = next_pos[0] - self.x
             dy = next_pos[1] - self.y
             dd = math.sqrt(dx ** 2 + dy ** 2)

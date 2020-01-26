@@ -58,7 +58,7 @@ def noise(weight_blur, width, height):
 
 
 class Terrain:
-    def __init__(self, width, height, weight_blur=None, bias=0.51, source_chance=0.01):
+    def __init__(self, width, height, weight_blur=None, bias=0.5, source_chance=0.01):
         # get random noise and smooth it a bit
         if weight_blur is None:
             weight_blur = ((0.3, 4), (0.7, 9))
@@ -184,14 +184,17 @@ class TerrainView:
     def neighboring_points(self, x, y):
         for nx in range(x-1, x+2):
             for ny in range(y-1, y+2):
-                if self.in_bounds(nx, ny):
+                if self.in_bounds(nx, ny) and (nx == x or ny == y):
                     yield nx, ny
 
     def neighbors(self, position):
         return filter(
-            lambda n: not self.discovered_grid[n[0]][n[1]] or self.terrain.tile_at(n[0], n[1]).passable,
-            self.neighboring_points(position[0], position[1])
+            lambda n: self.passable(*position),
+            self.neighboring_points(*position)
         )
+
+    def passable(self, x, y):
+        return not self.discovered_grid[x][y] or self.terrain.tile_at(x, y).passable
 
     def cost(self, start, end):
         return 1.0
