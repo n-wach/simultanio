@@ -18,7 +18,7 @@ export class HUD extends Renderable {
     render(ctx: CanvasRenderingContext2D): void {
         let w = ctx.canvas.width;
 
-        ctx.fillStyle = "grey";
+        ctx.fillStyle = Res.col_uibg;
         ctx.fillRect(0, 0, w, 30);
 
         let time = Game.match.info.duration.toFixed(0);

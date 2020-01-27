@@ -26,15 +26,16 @@ export class LobbyUI extends RenderableGroup {
         Game.socketio.on("list matches", (matchList: MatchList) => {
             this.clear();
             let w = Game.canvas.width;
-            this.add(new Button("Create Match", w / 2 - 300, 20, 600, 70, () => {
+            let matchListX = 40;
+            let matchListY = 40;
+            this.add(new Button("Create Match", matchListX, matchListY, 400, 80, () => {
                 Game.socketio.emit("create match");
             }));
             for (let i = 0; i < matchList.matches.length; i++) {
-                let x = w / 2 - 300;
-                let y = 100 + i * 80;
+                let itemY = matchListY + (i + 1) * 100;
                 let match = matchList.matches[i];
                 this.add(new Button("Join " + match.name + " (" + match.player_count + "/" + match.max_players + ")",
-                    x, y, 600, 70, () => {
+                    matchListX, itemY, 400, 80, () => {
                         Game.socketio.emit("join match", match.id);
                     }));
             }
