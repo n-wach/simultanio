@@ -9,12 +9,12 @@ export abstract class Scene {
     abstract destroy();
 
     update() {
-        this.ui.update();
-        this.stage.update();
+        if(this.stage) this.stage.update();
+        if(this.ui) this.ui.update();
     }
 
     render(ctx: CanvasRenderingContext2D): void {
-        this.stage.render(ctx);
-        this.ui.render(ctx);
+        if(this.stage) this.stage.render(ctx);
+        if(this.ui) this.ui.render(ctx);
     }
 }
