@@ -1,5 +1,6 @@
 import { Renderable } from "../Renderable";
 import { Game } from "../Game";
+import { Res } from "../../game/Res";
 
 export class Button extends Renderable {
     x: number;
@@ -36,17 +37,17 @@ export class Button extends Renderable {
     
     render(ctx: CanvasRenderingContext2D): void {
         if(this.hover) {
-            ctx.fillStyle = "#888888";
+            ctx.fillStyle = Res.col_btn_hov;
         } else {
-            ctx.fillStyle = "#aaaaaa";
+            ctx.fillStyle = Res.col_btn;
         }
         ctx.fillRect(this.x, this.y, this.w, this.h);
-        ctx.fillStyle = "white";
-        ctx.font = (this.h - 10) + "px Arial";
+        ctx.fillStyle = Res.col_uifg;
+        ctx.font = (this.h - 10) + `px ${Res.font_ui}`;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText(this.text, this.x + this.w / 2, this.y + this.h / 2, this.w - 10);
-        ctx.strokeStyle = "#888888";
+        ctx.strokeStyle = Res.col_btn;
         ctx.lineWidth = 5;
         ctx.strokeRect(this.x, this.y, this.w, this.h);
 

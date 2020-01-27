@@ -22,7 +22,7 @@ export class HUD extends Renderable {
 
         let time = Game.match.info.duration.toFixed(0);
         ctx.fillStyle = "white";
-        ctx.font = "20px Arial";
+        ctx.font = "20px sans-serif";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText("Time: " + time + " seconds", w / 2, 15);
@@ -30,21 +30,21 @@ export class HUD extends Renderable {
         let energy = Game.match.you.stored_energy.toFixed(0);
 
         ctx.fillStyle = "cyan";
-        ctx.font = "20px Arial";
+        ctx.font = "20px sans-serif";
         ctx.textAlign = "left";
         ctx.textBaseline = "middle";
         ctx.fillText("Energy: " + energy, w - 210, 15, 100);
 
         let matter = Game.match.you.stored_matter.toFixed(0);
         ctx.fillStyle = "pink";
-        ctx.font = "20px Arial";
+        ctx.font = "20px sans-serif";
         ctx.textAlign = "left";
         ctx.textBaseline = "middle";
         ctx.fillText("Matter: " + matter, w - 105, 15, 100);
 
         let your_color = Game.match.you.color;
         ctx.fillStyle = your_color;
-        ctx.font = "20px Arial";
+        ctx.font = "20px sans-serif";
         ctx.textAlign = "right";
         ctx.textBaseline = "middle";
         ctx.fillText(your_color + " (you)", w - 5, 30 + 20, 100);
