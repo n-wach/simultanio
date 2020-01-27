@@ -4,6 +4,7 @@ import {LobbyScene} from "./LobbyScene";
 import {Game} from "../gfx/Game";
 import {HUD} from "../gfx/ui/HUD";
 import {Entity, EntityVariation, Match, PlayerCommand, TerrainTile} from "../comms";
+import {RenderableGroup} from "../gfx/RenderableGroup";
 
 export class PlayScene extends Scene {
     socketio: SocketIOClient.Socket;
@@ -16,30 +17,27 @@ export class PlayScene extends Scene {
         this.socketio.on("game update", (match: Match) => {
             this.match = match;
         });
-        this.socketio.on("leave info", () => {
+        this.socketio.on("leave match", () => {
             Game.setScene(new LobbyScene(this.socketio));
         });
     }
 
     initialize() {
-        super.initialize();
-
-        this.add(new HUD(this));
-
-        this.add(new Button("Leave", 5, 5, 100, 20, () => {
-            this.socketio.emit("leave info");
+        this.ui = new RenderableGroup(new HUD(this),
+            new Button("Leave", 5, 5, 100, 20, () => {
+            this.socketio.emit("leave match");
         }));
+        this.stage = new RenderableGroup();
     }
 
     destroy() {
-        super.destroy();
         this.socketio.off("game update");
-        this.socketio.off("leave info");
+        this.socketio.off("leave match");
     }
 
     update() {
         super.update();
-        if(Game.input.mouseDown) {
+        if(Game.input.mousePressed) {
             let pos = Game.input.mousePos;
             pos.x -= 105;
             pos.y -= 105;
