@@ -2,7 +2,7 @@ export class Res {
     public static col_land :string = "#acbd95";
     public static col_water :string = "#7ca19f";
     public static col_matter :string = "#cfb494";
-    public static col_unknown :string = "#3d3933";
+    public static col_fog :string = "#ada49c";
 
     public static col_bg :string = "#cfc5ba";
     public static col_uifg :string = "#f0e4f7";

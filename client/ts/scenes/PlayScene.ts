@@ -78,7 +78,7 @@ class GameRenderable extends RenderableGroup {
                         ctx.fillStyle = Res.col_matter;
                         break;
                     case TerrainTile.UNKNOWN:
-                        ctx.fillStyle = Res.col_unknown;
+                        ctx.fillStyle = Res.col_fog;
                         break;
                 }
                 ctx.fillRect(x * 10, y * 10, 11, 11);
