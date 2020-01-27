@@ -7,8 +7,11 @@ import { Entity, EntityVariation, Match, PlayerCommand, TerrainTile } from "../c
 import { RenderableGroup } from "../gfx/RenderableGroup";
 import { Vec2 } from "../gfx/Vec2";
 import { Renderable } from "../gfx/Renderable";
+import { Thing } from "../game/Thing";
 
 export class PlayScene extends Scene {
+    public things: Thing[];
+
     initialize() {
         this.ui = new RenderableGroup(new HUD(this),
             new Button("Leave", 5, 5, 100, 20, () => {
@@ -21,6 +24,9 @@ export class PlayScene extends Scene {
         Game.socketio.on("leave match", () => {
             Game.setScene(new LobbyScene());
         });
+    }
+
+    update() {
     }
 
     destroy() {
