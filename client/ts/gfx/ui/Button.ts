@@ -43,7 +43,7 @@ export class Button extends Renderable {
         }
         ctx.fillRect(this.x, this.y, this.w, this.h);
         ctx.fillStyle = Res.col_uifg;
-        ctx.font = (this.h - 10) + `px ${Res.font_ui}`;
+        ctx.font = Res.font_ui;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText(this.text, this.x + this.w / 2, this.y + this.h / 2, this.w - 10);

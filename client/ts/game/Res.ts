@@ -10,5 +10,6 @@ export class Res {
     public static col_btn :string = "#aaaaaa";
     public static col_btn_hov :string = "#888888";
 
-    public static font_ui :string = "sans-serif";
+    public static font_ui :string = "20px Share Tech Mono";
+    public static font_ui_lg :string = "20px Share Tech Mono";
 }
