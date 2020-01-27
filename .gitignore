@@ -1,5 +1,5 @@
 *.pyc
-/server/secrets.sh
+secrets.sh
 /client/node_modules
 /client/package-lock.json
 /client/dist/
