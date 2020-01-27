@@ -1,5 +1,5 @@
 # SECRETS
-. secrets.sh
+./secrets.sh
 
 # START
 echo "Launching Gunicorn"
