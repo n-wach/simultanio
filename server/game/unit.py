@@ -9,13 +9,14 @@ class Unit(UnalignedEntity):
     ENERGY_COST = 10
     MATTER_COST = 10
     TIME_COST = 10
-    MOVEMENT_SPEED = 1
+    MOVEMENT_SPEED = 10
     VARIATION = "unit"
 
     def __init__(self, x, y, *args, **kwargs):
         super().__init__(x, y, **kwargs)
         self.target_x = x
         self.target_y = y
+        self.path = []
         self.calculate_path()
 
     def set_target(self, x, y):
@@ -24,17 +25,25 @@ class Unit(UnalignedEntity):
         self.calculate_path()
 
     def calculate_path(self):
-        pass
+        self.path = self.terrain_view.get_path((self.grid_x, self.grid_y), (self.target_x, self.target_y))
 
     def tick(self, dt):
-        dx = self.target_x - self.x
-        dy = self.target_y - self.y
-        dist = math.sqrt(dx ** 2 + dy ** 2)
-        if dist < dt * self.MOVEMENT_SPEED:
-            self.x = self.target_x
-            self.y = self.target_y
-        else:
-            self.x += (dx / dist) * dt * self.MOVEMENT_SPEED
-            self.y += (dy / dist) * dt * self.MOVEMENT_SPEED
-
+        dist = dt * self.MOVEMENT_SPEED
+        while dist > 0 and len(self.path) > 0:
+            next_pos = self.path[0]
+            if not self.terrain_view.passable(*next_pos):
+                self.calculate_path()
+                break
+            dx = next_pos[0] - self.x
+            dy = next_pos[1] - self.y
+            dd = math.sqrt(dx ** 2 + dy ** 2)
+            if dd < dist:
+                self.x = next_pos[0]
+                self.y = next_pos[1]
+                self.path.pop(0)
+                dist -= dd
+            else:
+                self.x += (dx / dd) * dist
+                self.y += (dy / dd) * dist
+                dist = 0
 

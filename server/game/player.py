@@ -15,23 +15,23 @@ class Player:
         PURPLE = "purple"
         ALL = [RED, BLUE, GREEN, ORANGE, PURPLE, YELLOW]  # in order of preference
 
-    def __init__(self, game, sid, color):
+    def __init__(self, game, sid, color, player_id):
         self.game = game
         self.sid = sid
         self.stored_energy = 0
         self.stored_matter = 0
         self.color = color
         self.terrain_view = TerrainView(game.terrain, self)
-
-        self.capital = City(self, game.terrain,
-                            random.randrange(0, game.terrain.width),
-                            random.randrange(0, game.terrain.height))
+        spawn_pos = game.terrain.spawn_positions[player_id]
+        self.capital = City(self, game.terrain, spawn_pos[0], spawn_pos[1])
 
         self.scout = Unit(x=self.capital.grid_x, y=self.capital.grid_y,
                           owner=self, terrain_view=self.terrain_view)
 
         self.entities = [self.capital, self.scout]
+        self.units = [self.scout]
         self.id = id(self)
+        self.player_id = player_id
 
         self.pending_messages = []
 
@@ -82,9 +82,15 @@ class Player:
         for entity in self.entities:
             entity.tick(dt)
 
+        for unit in self.units:
+            if self.terrain_view.new_obstacle:
+                unit.calculate_path()
+        self.terrain_view.new_obstacle = False
+
         for message in self.pending_messages:
             if message["command"] == "set target":
                 self.scout.set_target(message["x"], message["y"])
+        self.pending_messages.clear()
 
         # Human player will act based on WS events received since last call
         # AI player will act using AI
