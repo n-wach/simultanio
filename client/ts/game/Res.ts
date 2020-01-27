@@ -7,8 +7,8 @@ export class Res {
     public static col_bg :string = "#cfc5ba";
     public static col_uifg :string = "#f0e4f7";
     public static col_uifg_accent :string = "#d2b0e8";
-    public static col_uibg :string = "#49585c";
-    public static col_uibg_accent :string = "#68797d";
+    public static col_uibg :string = "#526266";
+    public static col_uibg_accent :string = "#7a8d91";
     
 
     public static font_ui :string = "16px Share Tech Mono";
