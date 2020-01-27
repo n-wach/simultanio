@@ -7,32 +7,28 @@ import {Entity, EntityVariation, Match, PlayerCommand, TerrainTile} from "../com
 import {RenderableGroup} from "../gfx/RenderableGroup";
 
 export class PlayScene extends Scene {
-    socketio: SocketIOClient.Socket;
     match: Match;
 
-    constructor(socketio: SocketIOClient.Socket, match: Match) {
+    constructor(match: Match) {
         super();
         this.match = match;
-        this.socketio = socketio;
-        this.socketio.on("game update", (match: Match) => {
+        Game.socketio.on("game update", (match: Match) => {
             this.match = match;
         });
-        this.socketio.on("leave match", () => {
-            Game.setScene(new LobbyScene(this.socketio));
+        Game.socketio.on("leave match", () => {
+            Game.setScene(new LobbyScene());
         });
     }
 
     initialize() {
         this.ui = new RenderableGroup(new HUD(this),
             new Button("Leave", 5, 5, 100, 20, () => {
-            this.socketio.emit("leave match");
+            Game.socketio.emit("leave match");
         }));
-        this.stage = new RenderableGroup();
     }
 
     destroy() {
-        this.socketio.off("game update");
-        this.socketio.off("leave match");
+
     }
 
     update() {
@@ -41,7 +37,7 @@ export class PlayScene extends Scene {
             let pos = Game.input.mousePos;
             pos.x -= 105;
             pos.y -= 105;
-            this.socketio.emit("player command", ({
+            Game.socketio.emit("player command", ({
                 command: "set target",
                 x: pos.x / 10,
                 y: pos.y / 10,

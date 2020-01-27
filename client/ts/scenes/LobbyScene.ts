@@ -6,33 +6,28 @@ import {PlayScene} from "./PlayScene";
 import {RenderableGroup} from "../gfx/RenderableGroup";
 
 export class LobbyScene extends Scene {
-    socketio: SocketIOClient.Socket;
-
-    constructor(socketio: SocketIOClient.Socket) {
+    constructor() {
         super();
-        this.socketio = socketio;
     }
 
     destroy() {
-        this.socketio.off("join match");
-        this.socketio.off("list matches");
+
     }
 
     initialize() {
-        this.ui = new LobbyUI(this);
-        this.stage = new RenderableGroup();
+        this.ui = new LobbyUI();
     }
 }
 
 
 export class LobbyUI extends RenderableGroup {
-    constructor(scene: LobbyScene) {
+    constructor() {
         super();
-        scene.socketio.on("list matches", (matchList: MatchList) => {
+        Game.socketio.on("list matches", (matchList: MatchList) => {
             this.clear();
             let w = Game.canvas.width;
             this.add(new Button("Create Match", w / 2 - 300, 20, 600, 70, () => {
-                scene.socketio.emit("create match");
+                Game.socketio.emit("create match");
             }));
             for (let i = 0; i < matchList.matches.length; i++) {
                 let x = w / 2 - 300;
@@ -40,12 +35,12 @@ export class LobbyUI extends RenderableGroup {
                 let match = matchList.matches[i];
                 this.add(new Button("Join " + match.name + " (" + match.player_count + "/" + match.max_players + ")",
                     x, y, 600, 70, () => {
-                        scene.socketio.emit("join match", match.id);
+                        Game.socketio.emit("join match", match.id);
                     }));
             }
         });
-        scene.socketio.on("join match", (match: Match) => {
-            Game.setScene(new PlayScene(scene.socketio, match));
+        Game.socketio.on("join match", (match: Match) => {
+            Game.setScene(new PlayScene(match));
         });
     }
 }

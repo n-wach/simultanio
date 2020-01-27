@@ -1,17 +1,22 @@
 import { Scene } from './Scene'
 import { Input } from './Input';
 
+
+import * as io from 'socket.io-client';
+import Socket = SocketIOClient.Socket;
 export class Game {
     static canvas: HTMLCanvasElement;
     static ctx: CanvasRenderingContext2D;
     static scene: Scene;
     static input: Input;
     static frame: number;
+    static socketio: SocketIOClient.Socket;
 
     static initialize(): void {
         this.canvas = document.getElementById("canvas") as HTMLCanvasElement;
         this.ctx = this.canvas.getContext("2d");
         this.input = new Input();
+        this.socketio = io();
     }
 
     static update() {
@@ -33,6 +38,7 @@ export class Game {
     static setScene(scene: Scene) {
         if (this.scene != null) {
             this.scene.destroy();
+            this.socketio.removeAllListeners();
         }
         this.scene = scene;
         scene.initialize();
