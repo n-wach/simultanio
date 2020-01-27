@@ -8,11 +8,13 @@ import { RenderableGroup } from "../gfx/RenderableGroup";
 import { Vec2 } from "../gfx/Vec2";
 import { Renderable } from "../gfx/Renderable";
 import { Thing } from "../game/Thing";
+import { Res } from "../game/Res";
 
 export class PlayScene extends Scene {
     public things: Thing[];
 
     initialize() {
+        Game.clearColor = Res.col_bg;
         this.ui = new RenderableGroup(new HUD(this),
             new Button("Leave", 5, 5, 100, 20, () => {
                 Game.socketio.emit("leave match");
@@ -65,7 +67,7 @@ class GameRenderable extends RenderableGroup {
         ctx.translate(this.ctxOrigin.x, this.ctxOrigin.y);
         ctx.scale(this.ctxScale, this.ctxScale);
 
-        ctx.strokeStyle = "#888888";
+        ctx.strokeStyle = Res.col_uibg;
         ctx.lineWidth = 10;
         ctx.strokeRect(-5, -5, Game.match.terrain_view.width * 10 + 10, Game.match.terrain_view.height * 10 + 10);
         for (let x = 0; x < Game.match.terrain_view.width; x++) {
@@ -73,16 +75,16 @@ class GameRenderable extends RenderableGroup {
                 let tile = Game.match.terrain_view.grid[x][y];
                 switch (tile) {
                     case TerrainTile.LAND:
-                        ctx.fillStyle = "white";
+                        ctx.fillStyle = Res.col_land;
                         break;
                     case TerrainTile.WATER:
-                        ctx.fillStyle = "darkblue";
+                        ctx.fillStyle = Res.col_water;
                         break;
                     case TerrainTile.MATTER_SOURCE:
-                        ctx.fillStyle = "pink";
+                        ctx.fillStyle = Res.col_matter;
                         break;
                     case TerrainTile.UNKNOWN:
-                        ctx.fillStyle = "black";
+                        ctx.fillStyle = Res.col_fog;
                         break;
                 }
                 ctx.fillRect(x * 10, y * 10, 11, 11);

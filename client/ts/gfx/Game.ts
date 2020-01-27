@@ -13,6 +13,7 @@ export class Game {
     static frame: number;
     static socketio: SocketIOClient.Socket;
     static match: Match;
+    static clearColor: string = "black";
 
     static initialize(): void {
         this.canvas = document.getElementById("canvas") as HTMLCanvasElement;
@@ -30,7 +31,7 @@ export class Game {
     }
 
     static render(): void {
-        this.ctx.fillStyle = "black";
+        this.ctx.fillStyle = this.clearColor;
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         if (this.scene) {
             this.scene.render(this.ctx);
