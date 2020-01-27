@@ -37,9 +37,9 @@ export class Button extends Renderable {
     
     render(ctx: CanvasRenderingContext2D): void {
         if(this.hover) {
-            ctx.fillStyle = Res.col_btn_hov;
+            ctx.fillStyle = Res.col_ui_accent;
         } else {
-            ctx.fillStyle = Res.col_btn;
+            ctx.fillStyle = Res.col_uibg;
         }
         ctx.fillRect(this.x, this.y, this.w, this.h);
         ctx.fillStyle = Res.col_uifg;
@@ -47,7 +47,7 @@ export class Button extends Renderable {
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText(this.text, this.x + this.w / 2, this.y + this.h / 2, this.w - 10);
-        ctx.strokeStyle = Res.col_btn;
+        ctx.strokeStyle = Res.col_uibg;
         ctx.lineWidth = 5;
         ctx.strokeRect(this.x, this.y, this.w, this.h);
 

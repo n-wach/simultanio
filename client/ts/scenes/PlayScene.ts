@@ -11,6 +11,7 @@ import { Res } from "../game/Res";
 
 export class PlayScene extends Scene {
     initialize() {
+        Game.clearColor = Res.col_bg;
         this.ui = new RenderableGroup(new HUD(this),
             new Button("Leave", 5, 5, 100, 20, () => {
                 Game.socketio.emit("leave match");

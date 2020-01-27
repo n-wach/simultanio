@@ -4,11 +4,13 @@ import {Match, MatchList} from "../comms";
 import {Button} from "../gfx/ui/Button";
 import {PlayScene} from "./PlayScene";
 import {RenderableGroup} from "../gfx/RenderableGroup";
+import { Res } from "../game/Res";
 
 export class LobbyScene extends Scene {
     destroy(){}
 
     initialize() {
+        Game.clearColor = Res.col_bg;
         this.ui = new LobbyUI();
         Game.socketio.on("join match", (match: Match) => {
             Game.match = match;
