@@ -37,7 +37,7 @@ export class Button extends Renderable {
     
     render(ctx: CanvasRenderingContext2D): void {
         if(this.hover) {
-            ctx.fillStyle = Res.col_ui_accent;
+            ctx.fillStyle = Res.col_uibg_accent;
         } else {
             ctx.fillStyle = Res.col_uibg;
         }
