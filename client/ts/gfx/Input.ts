@@ -14,6 +14,7 @@ export class Input {
             this.mouseDown = true;
         });
         Game.canvas.addEventListener("mouseup", (event) => {
+            if (this.mouseDown) this.mousePressed = true;
             this.mouseDown = false;
         });
         Game.canvas.addEventListener("click", (event) => {

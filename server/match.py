@@ -40,12 +40,12 @@ class Match:
             return
         player = self.game.add_player(request.sid)
         join_room(self.room_name)
-        emit("join info", player.get_update())
+        emit("join match", player.get_update())
 
     def leave(self):
         self.game.remove_player(request.sid)
         leave_room(self.room_name)
-        emit("leave info")
+        emit("leave match")
 
     def start(self):
         self.socketio.start_background_task(self.logic_loop)

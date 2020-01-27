@@ -15,10 +15,10 @@ export class Game {
     }
 
     static update() {
-        this.input.update();
         if (this.scene) {
             this.scene.update();
         }
+        this.input.update();
         this.frame++;
     }
 

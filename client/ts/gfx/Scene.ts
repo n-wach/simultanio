@@ -1,37 +1,20 @@
-import { Renderable } from "./Renderable";
+import {RenderableGroup} from "./RenderableGroup";
 
 export abstract class Scene {
-    renderables: Renderable[];
+    ui: RenderableGroup;
+    stage: RenderableGroup;
 
-    initialize() {
-        this.renderables = [];
-    }
+    abstract initialize();
 
-    destroy() {
-        // TODO: ...
-    }
+    abstract destroy();
 
     update() {
-        for (let renderable of this.renderables) {
-            renderable.update();
-        }
+        this.ui.update();
+        this.stage.update();
     }
 
     render(ctx: CanvasRenderingContext2D): void {
-        for (let renderable of this.renderables) {
-            renderable.render(ctx);
-        }
-    }
-
-    add(ren: Renderable): void {
-        this.renderables.push(ren);
-    }
-
-    clear(): void {
-        this.renderables = [];
-    }
-
-    remove(ren: Renderable): void {
-        this.renderables.splice(this.renderables.indexOf(ren), 1);
+        this.stage.render(ctx);
+        this.ui.render(ctx);
     }
 }
