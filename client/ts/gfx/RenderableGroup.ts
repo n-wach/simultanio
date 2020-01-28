@@ -32,8 +32,8 @@ export class RenderableGroup extends Renderable {
         ctx.restore();
     }
 
-    add(ren: Renderable): void {
-        this.renderables.push(ren);
+    add(...ren: Renderable[]): void {
+        this.renderables.push(...ren);
     }
 
     clear(): void {

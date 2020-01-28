@@ -1,6 +1,6 @@
 from time import time
 
-from flask import request, current_app, copy_current_request_context
+from flask import request
 from flask_socketio import join_room, leave_room, emit
 
 from server.game.game import Game
