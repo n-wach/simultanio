@@ -12,8 +12,8 @@ export class GameRenderable extends RenderableGroup {
             let p = this.transformToCanvas(event);
             Game.socketio.emit("player command", ({
                 command: "set target",
-                x: p.x / 10,
-                y: p.y / 10,
+                x: p.x / TerrainRenderable.GRID_CELL_SIZE,
+                y: p.y / TerrainRenderable.GRID_CELL_SIZE,
             } as PlayerCommand));
             return true;
         }, "mousedown", "touchstart");
