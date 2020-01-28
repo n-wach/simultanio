@@ -1,3 +1,4 @@
+import { Sprite } from "../../gfx/Sprite";
 import { Color, Id } from "../../comms";
 import { Vec2 } from "../../gfx/Vec2";
 
