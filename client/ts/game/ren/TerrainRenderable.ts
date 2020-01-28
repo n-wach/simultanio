@@ -2,6 +2,7 @@ import { Renderable } from "../../gfx/Renderable";
 import { Game } from "../../gfx/Game";
 import { TerrainTile } from "../../comms";
 import { Res } from "../Res";
+import { Simul } from "../../Simul";
 
 export class TerrainRenderable extends Renderable {
     static GRID_CELL_SIZE = 10;
@@ -10,9 +11,9 @@ export class TerrainRenderable extends Renderable {
         let s = TerrainRenderable.GRID_CELL_SIZE;
         let c = s * 0.2;
         let hs = s / 2;
-        let w = Game.match.terrain_view.width;
-        let h = Game.match.terrain_view.height;
-        let g = Game.match.terrain_view.grid;
+        let w = Simul.match.terrain_view.width;
+        let h = Simul.match.terrain_view.height;
+        let g = Simul.match.terrain_view.grid;
 
         //fill fog first
         ctx.fillStyle = Res.col_fog;
@@ -133,8 +134,8 @@ export class TerrainRenderable extends Renderable {
         ctx.strokeStyle = Res.col_uibg;
         ctx.lineWidth = 10;
         ctx.strokeRect(-hs, -hs,
-            Game.match.terrain_view.width * s + s,
-            Game.match.terrain_view.height * s + s);
+            Simul.match.terrain_view.width * s + s,
+            Simul.match.terrain_view.height * s + s);
 
     }
 

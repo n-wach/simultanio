@@ -1,9 +1,10 @@
-import { Match, TerrainView, YouPlayer, OtherPlayer, Player, Color, Entity } from "../comms";
+import { Match, TerrainView, YouPlayer, OtherPlayer, Player, Color, Entity, MatchList, MatchListing, MatchStatus } from "../comms";
 
 export class MatchInterpolator {
     you: YouPlayer;
     others: OtherPlayer[];
     terrain_view: TerrainView;
+    info: MatchListing;
 
     constructor() {
         // populate empty data
@@ -20,9 +21,17 @@ export class MatchInterpolator {
             height: 0,
             grid: []
         };
+        this.info = {
+            id: -1,
+            name: null,
+            player_count: 0,
+            max_players: 0,
+            status: MatchStatus.WAITING,
+            duration: 0
+        }
     }
 
-    update(match: Match) {
+    public update(match: Match) {
         // update player deltas
         this.updateYou(match.you);
 
@@ -33,9 +42,12 @@ export class MatchInterpolator {
 
         // update terrain view
         this.updateTerrainView(match.terrain_view);
+
+        // update match info
+        this.info = match.info;
     }
 
-    updatePlayer(delPlayer: Player) {
+    private updatePlayer(delPlayer: Player) {
         // |> update player list
         if (delPlayer.id != this.you.id) { // make sure player isn't "me"
             // check if the player is a known other
@@ -87,7 +99,7 @@ export class MatchInterpolator {
         }
     }
 
-    updateYou(delYou: YouPlayer) {
+    private updateYou(delYou: YouPlayer) {
         // update my private fields
         this.you.stored_energy = delYou.stored_energy;
         this.you.stored_matter = delYou.stored_matter;
@@ -96,7 +108,7 @@ export class MatchInterpolator {
         this.updatePlayer(delYou);
     }
 
-    updateTerrainView(delTerrain: TerrainView) {
+    private updateTerrainView(delTerrain: TerrainView) {
         // TODO: handle things like previously visible terrain
         // update dimens
         this.terrain_view.height = delTerrain.height;
