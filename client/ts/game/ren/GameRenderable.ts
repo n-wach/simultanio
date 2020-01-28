@@ -3,6 +3,7 @@ import { Game } from "../../gfx/Game";
 import { PlayerCommand } from "../../comms";
 import { TerrainRenderable } from "./TerrainRenderable";
 import { EntitiesRenderable } from "./EntitiesRenderable";
+import { MatchInterpolator } from "../MatchInterpolator";
 
 export class GameRenderable extends RenderableGroup {
     constructor() {

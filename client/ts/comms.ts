@@ -5,6 +5,7 @@ export enum MatchStatus {
 }
 
 export enum Color {
+    WHITE = "white",
     RED = "red",
     ORANGE = "orange",
     YELLOW = "yellow",

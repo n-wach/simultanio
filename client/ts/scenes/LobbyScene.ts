@@ -5,21 +5,24 @@ import {Button} from "../gfx/ui/Button";
 import {PlayScene} from "./PlayScene";
 import {RenderableGroup} from "../gfx/RenderableGroup";
 import { Res } from "../game/Res";
+import { Simul } from "../Simul";
+import { MatchInterpolator } from "../game/MatchInterpolator";
 import { Block } from "../game/sprites/Block";
 import { Vec2 } from "../gfx/Vec2";
 
 export class LobbyScene extends Scene {
-    destroy(){}
-
     initialize() {
         Game.clearColor = Res.col_bg;
         this.ui = new LobbyUI();
+        Simul.match = new MatchInterpolator();
         this.stage = new LobbyStage();
         Game.socketio.on("join match", (match: Match) => {
-            Game.match = match;
+            Simul.match.update(match);
             Game.setScene(new PlayScene());
         });
     }
+
+    destroy(){}
 }
 
 export class LobbyStage extends RenderableGroup {
