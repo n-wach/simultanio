@@ -2,7 +2,7 @@ import { Scene } from "../gfx/Scene";
 import { Button } from "../gfx/ui/Button";
 import { LobbyScene } from "./LobbyScene";
 import { Game } from "../gfx/Game";
-import { HUD } from "../game/HUD";
+import { HUD } from "../game/ui/HUD";
 import { Entity, EntityVariation, Match, PlayerCommand, TerrainTile } from "../comms";
 import { RenderableGroup } from "../gfx/RenderableGroup";
 import { Vec2 } from "../gfx/Vec2";
