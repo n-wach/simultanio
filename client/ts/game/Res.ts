@@ -13,7 +13,7 @@ export class Res {
     public static col_uibg_accent :string = "#7a8d91";
     
     // color palette
-    public static pal_BLACK :string = "#111111";
+    public static pal_black :string = "#111111";
 
     // fonts
     public static font_ui :string = "16px Share Tech Mono";

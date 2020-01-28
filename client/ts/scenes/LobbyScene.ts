@@ -5,6 +5,8 @@ import {Button} from "../gfx/ui/Button";
 import {PlayScene} from "./PlayScene";
 import {RenderableGroup} from "../gfx/RenderableGroup";
 import { Res } from "../game/Res";
+import { Block } from "../game/sprites/Block";
+import { Vec2 } from "../gfx/Vec2";
 
 export class LobbyScene extends Scene {
     destroy(){}
@@ -12,10 +14,18 @@ export class LobbyScene extends Scene {
     initialize() {
         Game.clearColor = Res.col_bg;
         this.ui = new LobbyUI();
+        this.stage = new LobbyStage();
         Game.socketio.on("join match", (match: Match) => {
             Game.match = match;
             Game.setScene(new PlayScene());
         });
+    }
+}
+
+export class LobbyStage extends RenderableGroup {
+    constructor() {
+        super();
+        this.add(new Block(new Vec2(20, 20), new Vec2(40, 40)));
     }
 }
 
