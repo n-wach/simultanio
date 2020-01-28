@@ -20,7 +20,7 @@ class Match:
         self.match_id = id(self)
         self.room_name = "match_{}".format(self.match_id)
         self.max_players = 4
-        self.tick_period = 0.1
+        self.tick_period = 0.2
         self.status = Match.Status.WAITING
         self.duration = 0
         self.game = Game(self)
