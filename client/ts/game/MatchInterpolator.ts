@@ -1,4 +1,4 @@
-import { Match, TerrainView, YouPlayer, OtherPlayer, Player, Color } from "../comms";
+import { Match, TerrainView, YouPlayer, OtherPlayer, Player, Color, Entity } from "../comms";
 
 export class MatchInterpolator {
     you: YouPlayer;
@@ -36,7 +36,7 @@ export class MatchInterpolator {
     }
 
     updatePlayer(delPlayer: Player) {
-        // ensure player exists in list
+        // |> update player list
         if (delPlayer.id != this.you.id) { // make sure player isn't "me"
             // check if the player is a known other
             if (!this.others.filter(x => x.id == delPlayer.id).length) {
@@ -48,7 +48,43 @@ export class MatchInterpolator {
                 });
             }
         }
-        // TODO: check entities and sync to sprites
+        let other = this.others.filter(x => x.id == delPlayer.id)[0];
+        
+        // |> check entities and sync to sprites
+        // check if entity is known
+        for (let nt of delPlayer.entities) {
+            let matched_entities = other.entities.filter(x => x.id == nt.id);
+            if (matched_entities.length > 0) {
+                // update entity info
+                let known_entity = matched_entities[0];
+                known_entity.variation = nt.variation;
+                known_entity.x = nt.x;
+                known_entity.y = nt.y;
+            } else {
+                // entity is not known, add it.
+                other.entities.push({
+                    variation: nt.variation,
+                    x: nt.x,
+                    y: nt.y,
+                    id: nt.id
+                });
+                // TODO: call to add sprite
+            }
+        }
+        // check for removed/dead entities
+        let removed_entities: Entity[] = [];
+        for (let known_nt of other.entities) {
+            let matched_entities = delPlayer.entities.filter(x => x.id == known_nt.id);
+            if (!matched_entities) {
+                // entity is no longer sent, remove it from knowledge
+                removed_entities.push(known_nt);
+                // TODO: call to remove sprite
+            }
+        }
+        // process entity data queued for removal
+        for (let to_remove of removed_entities) {
+            other.entities.splice(other.entities.indexOf(to_remove), 1);
+        }
     }
 
     updateYou(delYou: YouPlayer) {
