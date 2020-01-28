@@ -69,7 +69,7 @@ class Player:
 
     def get_update(self):
         return {
-            "info": self.Game.match.get_info(),
+            "info": self.game.match.get_info(),
             "you": self.get_self(),
             "other_players": self.get_other_players(),
             "terrain_view": self.get_terrain_view(),
