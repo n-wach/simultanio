@@ -13,13 +13,9 @@ function pixel_ratio() {
     let dpr = window.devicePixelRatio || 1;
 
     // @ts-ignore
-    let bsr = ctx.webkitBackingStorePixelRatio ||
+    let bsr = ctx.webkitBackingStorePixelRatio || ctx.mozBackingStorePixelRatio ||
     // @ts-ignore
-              ctx.mozBackingStorePixelRatio ||
-    // @ts-ignore
-              ctx.msBackingStorePixelRatio ||
-    // @ts-ignore
-              ctx.oBackingStorePixelRatio ||
+              ctx.msBackingStorePixelRatio || ctx.oBackingStorePixelRatio ||
     // @ts-ignore
               ctx.backingStorePixelRatio || 1;
 
