@@ -1,6 +1,6 @@
-import { Sprite } from "../gfx/Sprite";
-import { RenderCanvas } from "../gfx/RenderCanvas";
-import { Game } from "../gfx/Game";
+import { Sprite } from "../../gfx/Sprite";
+import { RenderCanvas } from "../../gfx/RenderCanvas";
+import { Game } from "../../gfx/Game";
 
 export class Block extends Sprite {
     public moveSpeed: number;
