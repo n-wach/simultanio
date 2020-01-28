@@ -6,16 +6,14 @@ import {PlayScene} from "./PlayScene";
 import {RenderableGroup} from "../gfx/RenderableGroup";
 
 export class LobbyScene extends Scene {
-    constructor() {
-        super();
-    }
-
-    destroy() {
-
-    }
+    destroy(){}
 
     initialize() {
         this.ui = new LobbyUI();
+        Game.socketio.on("join match", (match: Match) => {
+            Game.match = match;
+            Game.setScene(new PlayScene());
+        });
     }
 }
 
@@ -38,9 +36,6 @@ export class LobbyUI extends RenderableGroup {
                         Game.socketio.emit("join match", match.id);
                     }));
             }
-        });
-        Game.socketio.on("join match", (match: Match) => {
-            Game.setScene(new PlayScene(match));
         });
     }
 }

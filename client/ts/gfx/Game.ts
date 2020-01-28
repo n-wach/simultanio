@@ -4,6 +4,7 @@ import { Input } from './Input';
 
 import * as io from 'socket.io-client';
 import Socket = SocketIOClient.Socket;
+import {Match} from "../comms";
 export class Game {
     static canvas: HTMLCanvasElement;
     static ctx: CanvasRenderingContext2D;
@@ -11,6 +12,7 @@ export class Game {
     static input: Input;
     static frame: number;
     static socketio: SocketIOClient.Socket;
+    static match: Match;
 
     static initialize(): void {
         this.canvas = document.getElementById("canvas") as HTMLCanvasElement;
@@ -39,6 +41,7 @@ export class Game {
         if (this.scene != null) {
             this.scene.destroy();
             this.socketio.removeAllListeners();
+            this.input.clearHandlers();
         }
         this.scene = scene;
         scene.initialize();
