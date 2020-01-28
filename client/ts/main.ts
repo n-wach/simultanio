@@ -2,8 +2,28 @@ import {Game} from './gfx/Game'
 import {LobbyScene} from "./scenes/LobbyScene";
 
 function resizeCanvas() {
-    Game.canvas.width = window.innerWidth;
-    Game.canvas.height = window.innerHeight;
+    let ratio = pixel_ratio();
+    Game.canvas.width = window.innerWidth * ratio;
+    Game.canvas.height = window.innerHeight * ratio;
+    Game.ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+}
+
+function pixel_ratio() {
+    let ctx = Game.ctx;
+    let dpr = window.devicePixelRatio || 1;
+
+    // @ts-ignore
+    let bsr = ctx.webkitBackingStorePixelRatio ||
+    // @ts-ignore
+              ctx.mozBackingStorePixelRatio ||
+    // @ts-ignore
+              ctx.msBackingStorePixelRatio ||
+    // @ts-ignore
+              ctx.oBackingStorePixelRatio ||
+    // @ts-ignore
+              ctx.backingStorePixelRatio || 1;
+
+    return dpr / bsr;
 }
 
 function loop() {
