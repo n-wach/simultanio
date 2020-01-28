@@ -6,13 +6,13 @@ class Game:
     def __init__(self, match):
         self.match = match
         self.players = []
-        self.terrain = Terrain(500, 500)
-        self.player_ids = [True]*4
+        self.terrain = Terrain(150, 150)
+        self.player_slots = [True] * 4
 
     def gen_player_id(self):
-        for i in range(len(self.player_ids)):
-            if self.player_ids[i]:
-                self.player_ids[i] = False
+        for i in range(len(self.player_slots)):
+            if self.player_slots[i]:
+                self.player_slots[i] = False
                 return i
         return None
 
@@ -26,6 +26,6 @@ class Game:
     def remove_player(self, sid):
         for player in self.players:
             if player.sid == sid:
-                self.player_ids[player.player_id] = True
+                self.player_slots[player.player_id] = True
                 self.players.remove(player)
                 return

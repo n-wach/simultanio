@@ -201,6 +201,8 @@ class TerrainView:
 
 
 def a_star_search(graph, start, goal):
+    # TODO this doesn't seem to work for large grids (try 500x500)... we need to optimize
+
     # collection of nodes from which to propagate search
     # pairs nodes with "priority", ie how close node is to start
     frontier = PriorityQueue()

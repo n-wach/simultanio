@@ -47,6 +47,14 @@ class TerrainRenderable extends Renderable {
             Game.match.terrain_view.width * s,
             Game.match.terrain_view.height * s);
 
+        /*
+           TODO so this kinda speeds things up, but it's nowhere near fast enough for a large,
+            explored grid (say 500x500)...
+            i also tried rendering to a RenderCanvas and drawing that,
+            but normal putImageData doesn't respect transformation matrix
+            using drawImage instead (passing the canvas) works but is jittery for large
+            terrains any ideas would be welcome
+         */
         for(let v in TerrainTile) {
             let t = TerrainTile[v];
             if(t == TerrainTile.UNKNOWN) continue;
