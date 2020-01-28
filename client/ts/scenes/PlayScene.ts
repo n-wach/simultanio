@@ -7,7 +7,7 @@ import { Entity, EntityVariation, Match, PlayerCommand, TerrainTile } from "../c
 import { RenderableGroup } from "../gfx/RenderableGroup";
 import { Vec2 } from "../gfx/Vec2";
 import { Renderable } from "../gfx/Renderable";
-import { Thing } from "../game/Thing";
+import { Thing } from "../game/sprites/Thing";
 import { Res } from "../game/Res";
 
 export class PlayScene extends Scene {
@@ -29,6 +29,7 @@ export class PlayScene extends Scene {
     }
 
     update() {
+        
     }
 
     destroy() {

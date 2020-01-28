@@ -1,5 +1,5 @@
-import { Color, Id } from "../comms";
-import { Vec2 } from "../gfx/Vec2";
+import { Color, Id } from "../../comms";
+import { Vec2 } from "../../gfx/Vec2";
 
 // represents a drawable game unit of some sort
 export class Thing extends Sprite {
