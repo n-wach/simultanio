@@ -1,15 +1,23 @@
 import { Renderable } from "../../gfx/Renderable";
-import { Entity, EntityVariation } from "../../comms";
+import { Entity, EntityVariation, Match } from "../../comms";
 import { Game } from "../../gfx/Game";
+import { MatchInterpolator } from "../MatchInterpolator";
 
 export class EntitiesRenderable extends Renderable {
+    knowledge: MatchInterpolator;
+
+    constructor(knowledge: MatchInterpolator) {
+        super();
+        this.knowledge = knowledge;
+    }
+
     update(): void {
     }
 
     render(ctx: CanvasRenderingContext2D): void {
-        ctx.fillStyle = Game.match.you.color;
-        EntitiesRenderable.drawEntities(ctx, Game.match.you.entities);
-        for (let player of Game.match.other_players) {
+        ctx.fillStyle = this.knowledge.you.color;
+        EntitiesRenderable.drawEntities(ctx, this.knowledge.you.entities);
+        for (let player of this.knowledge.others) {
             ctx.fillStyle = player.color;
             EntitiesRenderable.drawEntities(ctx, player.entities);
         }

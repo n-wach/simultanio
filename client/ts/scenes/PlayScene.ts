@@ -21,7 +21,7 @@ export class PlayScene extends Scene {
             new Button("Leave", 5, 5, 100, 20, () => {
                 Game.socketio.emit("leave match");
             }));
-        this.stage = new GameRenderable();
+        this.stage = new GameRenderable(this.knowledge);
         Game.socketio.on("game update", (match: Match) => {
             this.knowledge.update(match);
         });
