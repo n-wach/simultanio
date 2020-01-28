@@ -1,5 +1,6 @@
 import {Renderable} from "./Renderable";
 import {Vec2} from "./Vec2";
+import {Game} from "./Game";
 
 export class RenderableGroup extends Renderable {
     renderables: Renderable[];
@@ -32,8 +33,8 @@ export class RenderableGroup extends Renderable {
         ctx.restore();
     }
 
-    add(ren: Renderable): void {
-        this.renderables.push(ren);
+    add(...ren: Renderable[]): void {
+        this.renderables.push(...ren);
     }
 
     clear(): void {
@@ -47,7 +48,8 @@ export class RenderableGroup extends Renderable {
     zoomOnPoint(zoomFactor: number, point: Vec2) {
         let originalScale = this.ctxScale;
         let s = this.ctxScale - (zoomFactor * 0.005 * this.ctxScale);
-        this.ctxScale = Math.min(10, Math.max(0.1, s));
+        s = Math.min(3, Math.max(0.04, s));
+        this.ctxScale = s;
         let scaleChange = originalScale - this.ctxScale;
         this.ctxOrigin.x += (point.x * scaleChange);
         this.ctxOrigin.y += (point.y * scaleChange);

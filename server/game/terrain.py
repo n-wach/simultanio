@@ -71,12 +71,12 @@ class Terrain:
                                 (w_pad, height - h_pad),
                                 (width - w_pad, height - h_pad)]
         self.tiles = self.gen_terrain(weight_blur, bias, source_chance)
-        while not self.is_terrain_valid():
-            self.tiles = self.gen_terrain(weight_blur, bias, source_chance)
         # TODO guarantee large paths between bases
 
     def gen_terrain(self, weight_blur, bias, source_chance):
         vals = noise(weight_blur, self.width, self.height)
+        while not all(vals[pos[0], pos[1]] < bias for pos in self.spawn_positions):
+            vals = noise(weight_blur, self.width, self.height)
 
         def place_tile(val):
             if val < bias:
@@ -86,9 +86,6 @@ class Terrain:
             return Water()
 
         return tuple(tuple(place_tile(vals[x, y]) for y in range(self.height)) for x in range(self.width))
-
-    def is_terrain_valid(self):
-        return all(self.tile_at(pos[0], pos[1]).passable for pos in self.spawn_positions)
 
     def tile_at(self, x, y):
         """
@@ -140,15 +137,15 @@ class TerrainView:
 
     def get_player_grid(self):
         self.update_view()
-        return [[self.terrain.tiles[x][y].get_name()
-                 if self.discovered_grid[x][y] else Tile.UNKNOWN
-                 for y in range(self.terrain.height)]
-                for x in range(self.terrain.width)]
+        return [[{
+            "type": self.terrain.tiles[x][y].get_name() if self.discovered_grid[x][y] else Tile.UNKNOWN,
+            "active": self.visibility_grid[x][y],
+        } for y in range(self.terrain.height)] for x in range(self.terrain.width)]
 
     def update_view(self):
         for y in range(self.terrain.height):
             for x in range(self.terrain.width):
-                self.visibility_grid[x][y]=False
+                self.visibility_grid[x][y] = False
 
         for entity in self.player.entities:
             if isinstance(entity, UnalignedEntity):
@@ -158,8 +155,6 @@ class TerrainView:
                 x = entity.grid_x
                 y = entity.grid_y
             for point in self.terrain.points_near(x, y, entity.PASSIVE_SIGHT):
-                if not self.discovered_grid[point[0]][point[1]]:
-                    self.new_obstacle = True
                 self.discovered_grid[point[0]][point[1]] = True
             for point in self.terrain.points_near(x, y, entity.ACTIVE_SIGHT):
                 self.visibility_grid[point[0]][point[1]] = True
@@ -204,6 +199,8 @@ class TerrainView:
 
 
 def a_star_search(graph, start, goal):
+    # TODO this doesn't seem to work for large grids (try 500x500)... we need to optimize
+
     # collection of nodes from which to propagate search
     # pairs nodes with "priority", ie how close node is to start
     frontier = PriorityQueue()

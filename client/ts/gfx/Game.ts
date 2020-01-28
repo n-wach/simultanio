@@ -12,11 +12,11 @@ export class Game {
     static input: Input;
     static frame: number;
     static socketio: SocketIOClient.Socket;
-    static match: Match;
     static clearColor: string = "black";
 
     static initialize(): void {
         this.canvas = document.getElementById("canvas") as HTMLCanvasElement;
+        this.canvas.setAttribute("tabindex", "0");
         this.ctx = this.canvas.getContext("2d");
         this.input = new Input();
         this.socketio = io();

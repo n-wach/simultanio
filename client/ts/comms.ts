@@ -5,6 +5,7 @@ export enum MatchStatus {
 }
 
 export enum Color {
+    WHITE = "white",
     RED = "red",
     ORANGE = "orange",
     YELLOW = "yellow",
@@ -13,7 +14,7 @@ export enum Color {
     PURPLE = "purple",
 }
 
-export enum TerrainTile {
+export enum TerrainTileType {
     LAND = "land",
     WATER = "water",
     MATTER_SOURCE = "matter_source",
@@ -25,6 +26,11 @@ export enum EntityVariation {
     CITY = "city",
     UNIT = "unit",
 }
+
+export type TerrainTile = {
+    type: TerrainTileType,
+    active: boolean,
+};
 
 export type Id = number;
 
@@ -47,7 +53,7 @@ export type TerrainView = {
     grid: TerrainTile[][],
 };
 
-export type Player = {
+export type YouPlayer = {
     stored_energy: number,
     stored_matter: number,
     color: Color,
@@ -61,6 +67,8 @@ export type OtherPlayer = {
     id: Id,
 };
 
+export type Player = YouPlayer | OtherPlayer;
+
 export type Entity = {
     variation: EntityVariation,
     // integer is center of grid square
@@ -72,7 +80,7 @@ export type Entity = {
 
 export type Match = {
     info: MatchListing,
-    you: Player,
+    you: YouPlayer,
     other_players: OtherPlayer[],
     terrain_view: TerrainView,
 };
