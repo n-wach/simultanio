@@ -7,21 +7,23 @@ import {RenderableGroup} from "../gfx/RenderableGroup";
 import { Res } from "../game/Res";
 
 export class LobbyScene extends Scene {
-    destroy(){}
-
+    match: Match;
+    
     initialize() {
         Game.clearColor = Res.col_bg;
-        this.ui = new LobbyUI();
+        this.ui = new LobbyUI(this.match);
         Game.socketio.on("join match", (match: Match) => {
-            Game.match = match;
+            this.match = match;
             Game.setScene(new PlayScene());
         });
     }
+
+    destroy(){}
 }
 
 
 export class LobbyUI extends RenderableGroup {
-    constructor() {
+    constructor(match: Match) {
         super();
         Game.socketio.on("list matches", (matchList: MatchList) => {
             this.clear();
