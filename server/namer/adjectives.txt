@@ -23,7 +23,6 @@ accrued
 accurst
 acerb
 aching
-acock
 acold
 acorned
 acred
@@ -230,7 +229,6 @@ baleful
 balky
 bally
 balmy
-banal
 bandaged
 banded
 baneful
@@ -337,7 +335,6 @@ birchen
 birdlike
 birken
 bistred
-bitchy
 bitless
 bitten
 bitty
@@ -537,7 +534,6 @@ busied
 buskined
 bustled
 busty
-buttocked
 buxom
 bygone
 byssal
@@ -782,9 +778,6 @@ coated
 coatless
 coccal
 coccoid
-cockney
-cocksure
-cocky
 coffered
 cogent
 cognate
@@ -3038,7 +3031,6 @@ postiche
 postponed
 potent
 potted
-potty
 powered
 practic
 practiced
@@ -3100,8 +3092,6 @@ prolix
 pronounced
 proposed
 proscribed
-prostate
-prostrate
 prostyle
 prosy
 proven
@@ -3115,7 +3105,6 @@ prying
 pseudo
 psycho
 pubic
-pucka
 puddly
 pudgy
 puffy
@@ -3521,12 +3510,6 @@ serviced
 servo
 setose
 severe
-sexism
-sexist
-sexless
-sextan
-sexy
-shabby
 shaded
 shadeless
 shadowed
@@ -4471,7 +4454,6 @@ unclimbed
 unclipped
 unclogged
 unclutched
-uncocked
 uncoined
 uncombed
 uncooked

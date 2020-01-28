@@ -7,12 +7,15 @@ import {RenderableGroup} from "../gfx/RenderableGroup";
 import { Res } from "../game/Res";
 import { Simul } from "../Simul";
 import { MatchInterpolator } from "../game/MatchInterpolator";
+import { Block } from "../game/sprites/Block";
+import { Vec2 } from "../gfx/Vec2";
 
 export class LobbyScene extends Scene {
     initialize() {
         Game.clearColor = Res.col_bg;
         this.ui = new LobbyUI();
         Simul.match = new MatchInterpolator();
+        this.stage = new LobbyStage();
         Game.socketio.on("join match", (match: Match) => {
             Simul.match.update(match);
             Game.setScene(new PlayScene());
@@ -20,6 +23,13 @@ export class LobbyScene extends Scene {
     }
 
     destroy(){}
+}
+
+export class LobbyStage extends RenderableGroup {
+    constructor() {
+        super();
+        this.add(new Block(new Vec2(20, 20), new Vec2(40, 40)));
+    }
 }
 
 
