@@ -6,7 +6,7 @@ import { EntitiesRenderable } from "./EntitiesRenderable";
 import { MatchInterpolator } from "../MatchInterpolator";
 
 export class GameRenderable extends RenderableGroup {
-    constructor(knowledge: MatchInterpolator) {
+    constructor() {
         super();
         Game.input.addHandler((event) => {
             let p = this.transformToCanvas(event);
@@ -28,6 +28,6 @@ export class GameRenderable extends RenderableGroup {
             this.zoomOnPoint(delta, this.transformToCanvas(event));
             return true;
         }, "wheel");
-        this.add(new TerrainRenderable(), new EntitiesRenderable(knowledge));
+        this.add(new TerrainRenderable(), new EntitiesRenderable());
     }
 }
