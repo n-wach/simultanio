@@ -19,7 +19,7 @@ export class MatchInterpolator {
         this.terrain_view = {
             width: 0,
             height: 0,
-            grid: []
+            grid: [[]]
         };
         this.info = {
             id: -1,
