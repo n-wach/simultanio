@@ -6,11 +6,13 @@ import {PlayScene} from "./PlayScene";
 import {RenderableGroup} from "../gfx/RenderableGroup";
 import { Res } from "../game/Res";
 import { Simul } from "../Simul";
+import { MatchInterpolator } from "../game/MatchInterpolator";
 
 export class LobbyScene extends Scene {
     initialize() {
         Game.clearColor = Res.col_bg;
         this.ui = new LobbyUI();
+        Simul.match = new MatchInterpolator();
         Game.socketio.on("join match", (match: Match) => {
             Simul.match.update(match);
             Game.setScene(new PlayScene());
