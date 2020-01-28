@@ -12,7 +12,6 @@ export class Game {
     static input: Input;
     static frame: number;
     static socketio: SocketIOClient.Socket;
-    static match: Match;
     static clearColor: string = "black";
 
     static initialize(): void {

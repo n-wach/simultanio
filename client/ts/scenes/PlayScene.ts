@@ -9,19 +9,22 @@ import { Vec2 } from "../gfx/Vec2";
 import { Renderable } from "../gfx/Renderable";
 import { Thing } from "../game/sprites/Thing";
 import { Res } from "../game/Res";
+import { MatchInterpolator } from "../game/MatchInterpolator";
 
 export class PlayScene extends Scene {
     public things: Thing[];
+    public knowledge: MatchInterpolator;
 
     initialize() {
         Game.clearColor = Res.col_bg;
+        this.knowledge = new MatchInterpolator();
         this.ui = new RenderableGroup(new HUD(this),
             new Button("Leave", 5, 5, 100, 20, () => {
                 Game.socketio.emit("leave match");
             }));
         this.stage = new GameRenderable();
         Game.socketio.on("game update", (match: Match) => {
-            Game.match = match;
+            this.knowledge.update(match);
         });
         Game.socketio.on("leave match", () => {
             Game.setScene(new LobbyScene());
@@ -70,10 +73,10 @@ class GameRenderable extends RenderableGroup {
 
         ctx.strokeStyle = Res.col_uibg;
         ctx.lineWidth = 10;
-        ctx.strokeRect(-5, -5, Game.match.terrain_view.width * 10 + 10, Game.match.terrain_view.height * 10 + 10);
-        for (let x = 0; x < Game.match.terrain_view.width; x++) {
-            for (let y = 0; y < Game.match.terrain_view.height; y++) {
-                let tile = Game.match.terrain_view.grid[x][y];
+        ctx.strokeRect(-5, -5, this.knowledge.terrain_view.width * 10 + 10, this.knowledge.terrain_view.height * 10 + 10);
+        for (let x = 0; x < this.knowledge.terrain_view.width; x++) {
+            for (let y = 0; y < this.knowledge.terrain_view.height; y++) {
+                let tile = this.knowledge.terrain_view.grid[x][y];
                 switch (tile) {
                     case TerrainTile.LAND:
                         ctx.fillStyle = Res.col_land;
