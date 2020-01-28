@@ -1,10 +1,5 @@
 import {Game} from './gfx/Game'
 import {LobbyScene} from "./scenes/LobbyScene";
-import * as io from 'socket.io-client';
-import Socket = SocketIOClient.Socket;
-
-export let socketio: Socket = io();
-console.log("Socket IO", socketio);
 
 function resizeCanvas() {
     Game.canvas.width = window.innerWidth;
@@ -27,9 +22,10 @@ window.addEventListener("load", function() {
         " |_____/|_|_| |_| |_|\\__,_|_|\\__\\__,_|_| |_(_)_|\\___/\n");
 
     Game.initialize();
-    Game.setScene(new LobbyScene(socketio));
+    Game.setScene(new LobbyScene());
     
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
     loop();
+    console.log("Game:", Game);
 });

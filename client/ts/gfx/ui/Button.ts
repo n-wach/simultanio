@@ -18,6 +18,13 @@ export class Button extends Renderable {
         this.w = w;
         this.h = h;
         this.onclick = onclick;
+        Game.input.addHandler((event) => {
+            if(this.hover) {
+                if (this.onclick) this.onclick();
+                return true;
+            }
+            return false;
+        }, "mouseup");
     }
 
     update(): void {
@@ -25,21 +32,13 @@ export class Button extends Renderable {
             && Game.input.mousePos.x < this.x + this.w
             && this.y < Game.input.mousePos.y
             && Game.input.mousePos.y < this.y + this.h;
-        if (this.hover) {
-            if (Game.input.mouseDown) {
-                this.onclick();
-            }
-        }
     }
     
     render(ctx: CanvasRenderingContext2D): void {
-        ctx.strokeStyle = "black";
-        ctx.lineWidth = 5;
-        ctx.strokeRect(this.x, this.y, this.w, this.h);
         if(this.hover) {
-            ctx.fillStyle = "red";
+            ctx.fillStyle = "#888888";
         } else {
-            ctx.fillStyle = "blue";
+            ctx.fillStyle = "#aaaaaa";
         }
         ctx.fillRect(this.x, this.y, this.w, this.h);
         ctx.fillStyle = "white";
@@ -47,5 +46,9 @@ export class Button extends Renderable {
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText(this.text, this.x + this.w / 2, this.y + this.h / 2, this.w - 10);
+        ctx.strokeStyle = "#888888";
+        ctx.lineWidth = 5;
+        ctx.strokeRect(this.x, this.y, this.w, this.h);
+
     }
 }
