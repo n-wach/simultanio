@@ -1,7 +1,7 @@
-import { Renderable } from "../gfx/Renderable";
-import {PlayScene} from "../scenes/PlayScene";
-import {Game} from "../gfx/Game";
-import { Res } from "./Res";
+import { Renderable } from "../../gfx/Renderable";
+import {PlayScene} from "../../scenes/PlayScene";
+import {Game} from "../../gfx/Game";
+import { Res } from "../Res";
 
 export class HUD extends Renderable {
     playScene: PlayScene;
