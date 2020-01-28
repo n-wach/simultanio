@@ -3,11 +3,13 @@ import { Button } from "../gfx/ui/Button";
 import { LobbyScene } from "./LobbyScene";
 import { Game } from "../gfx/Game";
 import { HUD } from "../game/HUD";
-import { Entity, EntityVariation, Match, PlayerCommand, TerrainTile } from "../comms";
+import {Entity, EntityVariation, Match, PlayerCommand, TerrainTile, TerrainView} from "../comms";
 import { RenderableGroup } from "../gfx/RenderableGroup";
 import { Vec2 } from "../gfx/Vec2";
 import { Renderable } from "../gfx/Renderable";
 import { Res } from "../game/Res";
+import {Sprite} from "../gfx/Sprite";
+import {RenderCanvas} from "../gfx/RenderCanvas";
 
 export class PlayScene extends Scene {
     initialize() {
@@ -29,6 +31,87 @@ export class PlayScene extends Scene {
 
     }
 
+}
+
+
+class TerrainRenderable extends Renderable {
+    static GRID_CELL_SIZE = 10;
+    
+    render(ctx: CanvasRenderingContext2D): void {
+        let s = TerrainRenderable.GRID_CELL_SIZE;
+        let hs = s / 2;
+
+        //fill fog first
+        ctx.fillStyle = Res.col_fog;
+        ctx.fillRect(0, 0,
+            Game.match.terrain_view.width * s,
+            Game.match.terrain_view.height * s);
+
+        for(let v in TerrainTile) {
+            let t = TerrainTile[v];
+            if(t == TerrainTile.UNKNOWN) continue;
+            if(t == TerrainTile.LAND) ctx.fillStyle = Res.col_land;
+            if(t == TerrainTile.WATER) ctx.fillStyle = Res.col_water;
+            if(t == TerrainTile.MATTER_SOURCE) ctx.fillStyle = Res.col_matter;
+            ctx.beginPath();
+            for (let x = 0; x < Game.match.terrain_view.width; x++) {
+                for (let y = 0; y < Game.match.terrain_view.height; y++) {
+                    let tile = Game.match.terrain_view.grid[x][y];
+                    if(tile == t) {
+                        ctx.rect(x * s, y * s, s * 1.2, s * 1.2);
+                    }
+                }
+            }
+            ctx.fill();
+        }
+
+
+        //border
+        ctx.strokeStyle = Res.col_uibg;
+        ctx.lineWidth = 10;
+        ctx.strokeRect(-hs, -hs,
+            Game.match.terrain_view.width * s + s,
+            Game.match.terrain_view.height * s + s);
+
+    }
+
+    update(): void {
+
+    }
+}
+
+class EntitiesRenderable extends Renderable {
+    update(): void {
+    }
+
+    render(ctx: CanvasRenderingContext2D): void {
+        ctx.fillStyle = Game.match.you.color;
+        EntitiesRenderable.drawEntities(ctx, Game.match.you.entities);
+        for (let player of Game.match.other_players) {
+            ctx.fillStyle = player.color;
+            EntitiesRenderable.drawEntities(ctx, player.entities);
+        }
+    }
+
+    static drawEntities(ctx: CanvasRenderingContext2D, entities: Entity[]) {
+        for (let entity of entities) {
+            ctx.moveTo(entity.x, entity.y);
+            ctx.beginPath();
+            switch (entity.variation) {
+                case EntityVariation.UNKNOWN:
+                    console.error("tried to draw unknown entity:", entity);
+                    break;
+                case EntityVariation.CITY:
+                    // TODO replace with draw sprite
+                    ctx.arc(5 + entity.x * 10, 5 + entity.y * 10, 7, 0, Math.PI * 2);
+                    break;
+                case EntityVariation.UNIT:
+                    ctx.rect(2 + entity.x * 10, 2 + entity.y * 10, 6, 6);
+                    break;
+            }
+            ctx.fill();
+        }
+    }
 }
 
 class GameRenderable extends RenderableGroup {
@@ -54,64 +137,7 @@ class GameRenderable extends RenderableGroup {
             this.zoomOnPoint(delta, this.transformToCanvas(event));
             return true;
         }, "wheel");
-    }
-
-    render(ctx: CanvasRenderingContext2D): void {
-        ctx.save();
-        ctx.translate(this.ctxOrigin.x, this.ctxOrigin.y);
-        ctx.scale(this.ctxScale, this.ctxScale);
-
-        ctx.strokeStyle = Res.col_uibg;
-        ctx.lineWidth = 10;
-        ctx.strokeRect(-5, -5, Game.match.terrain_view.width * 10 + 10, Game.match.terrain_view.height * 10 + 10);
-        for (let x = 0; x < Game.match.terrain_view.width; x++) {
-            for (let y = 0; y < Game.match.terrain_view.height; y++) {
-                let tile = Game.match.terrain_view.grid[x][y];
-                switch (tile) {
-                    case TerrainTile.LAND:
-                        ctx.fillStyle = Res.col_land;
-                        break;
-                    case TerrainTile.WATER:
-                        ctx.fillStyle = Res.col_water;
-                        break;
-                    case TerrainTile.MATTER_SOURCE:
-                        ctx.fillStyle = Res.col_matter;
-                        break;
-                    case TerrainTile.UNKNOWN:
-                        ctx.fillStyle = Res.col_fog;
-                        break;
-                }
-                ctx.fillRect(x * 10, y * 10, 11, 11);
-            }
-        }
-
-        ctx.fillStyle = Game.match.you.color;
-        GameRenderable.drawEntities(ctx, Game.match.you.entities);
-        for (let player of Game.match.other_players) {
-            ctx.fillStyle = player.color;
-            GameRenderable.drawEntities(ctx, player.entities);
-        }
-        ctx.restore();
-    }
-
-    static drawEntities(ctx: CanvasRenderingContext2D, entities: Entity[]) {
-        for (let entity of entities) {
-            ctx.moveTo(entity.x, entity.y);
-            ctx.beginPath();
-            switch (entity.variation) {
-                case EntityVariation.UNKNOWN:
-                    console.error("tried to draw unknown entity:", entity);
-                    break;
-                case EntityVariation.CITY:
-                    // TODO replace with draw sprite
-                    ctx.arc(5 + entity.x * 10, 5 + entity.y * 10, 7, 0, Math.PI * 2);
-                    break;
-                case EntityVariation.UNIT:
-                    ctx.rect(2 + entity.x * 10, 2 + entity.y * 10, 6, 6);
-                    break;
-            }
-            ctx.fill();
-        }
+        this.add(new TerrainRenderable(), new EntitiesRenderable());
     }
 }
 

@@ -6,7 +6,7 @@ class Game:
     def __init__(self, match):
         self.match = match
         self.players = []
-        self.terrain = Terrain(100, 100)
+        self.terrain = Terrain(500, 500)
         self.player_ids = [True]*4
 
     def gen_player_id(self):
