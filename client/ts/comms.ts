@@ -14,7 +14,7 @@ export enum Color {
     PURPLE = "purple",
 }
 
-export enum TerrainTile {
+export enum TerrainTileType {
     LAND = "land",
     WATER = "water",
     MATTER_SOURCE = "matter_source",
@@ -26,6 +26,11 @@ export enum EntityVariation {
     CITY = "city",
     UNIT = "unit",
 }
+
+export type TerrainTile = {
+    type: TerrainTileType,
+    active: boolean,
+};
 
 export type Id = number;
 

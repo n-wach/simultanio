@@ -1,19 +1,24 @@
-import { Renderable } from "../../gfx/Renderable";
-import { Game } from "../../gfx/Game";
-import { TerrainTile } from "../../comms";
-import { Res } from "../Res";
-import { Simul } from "../../Simul";
+import {Renderable} from "../../gfx/Renderable";
+import {TerrainTile, TerrainTileType} from "../../comms";
+import {Res} from "../Res";
+import {Simul} from "../../Simul";
 
 export class TerrainRenderable extends Renderable {
-    static GRID_CELL_SIZE = 10;
+    static GRID_CELL_SIZE = 100;
 
     render(ctx: CanvasRenderingContext2D): void {
         let s = TerrainRenderable.GRID_CELL_SIZE;
         let c = s * 0.2;
-        let hs = s / 2;
         let w = Simul.match.terrain_view.width;
         let h = Simul.match.terrain_view.height;
         let g = Simul.match.terrain_view.grid;
+
+        //border
+        ctx.fillStyle = Res.col_uibg;
+        ctx.fillRect(-s, -s,
+            Simul.match.terrain_view.width * s + 2 * s,
+            Simul.match.terrain_view.height * s + 2 * s);
+
 
         //fill fog first
         ctx.fillStyle = Res.col_fog;
@@ -27,77 +32,62 @@ export class TerrainRenderable extends Renderable {
             using drawImage instead (passing the canvas) works but is jittery for large
             terrains any ideas would be welcome
          */
-        for(let v in TerrainTile) {
-            let t = TerrainTile[v];
-            if(t == TerrainTile.UNKNOWN) continue;
-            if(t == TerrainTile.LAND) ctx.fillStyle = Res.col_land;
-            if(t == TerrainTile.WATER) ctx.fillStyle = Res.col_water;
-            if(t == TerrainTile.MATTER_SOURCE) ctx.fillStyle = Res.col_matter;
+        for(let v in TerrainTileType) {
+            let t = TerrainTileType[v];
+            switch(t) {
+                case TerrainTileType.UNKNOWN:
+                    continue;
+                case TerrainTileType.LAND:
+                    ctx.fillStyle = Res.col_land;
+                    break;
+                case TerrainTileType.WATER:
+                    ctx.fillStyle = Res.col_water;
+                    break;
+                case TerrainTileType.MATTER_SOURCE:
+                    ctx.fillStyle = Res.col_matter;
+                    break;
+            }
             ctx.beginPath();
             for (let x = 0; x < w; x++) {
                 for (let y = 0; y < h; y++) {
-                    let tile = g[x][y];
+                    let tile = g[x][y].type;
                     if(tile == t) {
                         ctx.rect(x * s, y * s, s, s);
-                    } else {
-                        let left = t;
-                        let right = t;
-                        let top = t;
-                        let bot = t;
-                        if (x > 0) left = g[x - 1][y];
-                        if (x < w - 1) right = g[x + 1][y];
-                        if (y > 0) top = g[x][y - 1];
-                        if (y < h - 1) bot = g[x][y + 1];
-
-                        if(left == t && top == t) {
-                            ctx.moveTo(x * s, y * s);
-                            ctx.lineTo(x * s + c, y * s);
-                            ctx.lineTo(x * s, y * s + c);
-                            ctx.closePath();
-                        }
-                        if(top == t && right == t) {
-                            ctx.moveTo((x + 1) * s, y * s);
-                            ctx.lineTo((x + 1) * s - c, y * s);
-                            ctx.lineTo((x + 1) * s, y * s + c);
-                            ctx.closePath();
-                        }
-                        if(right == t && bot == t) {
-                            ctx.moveTo((x + 1) * s, (y + 1) * s);
-                            ctx.lineTo((x + 1) * s - c, (y + 1) * s);
-                            ctx.lineTo((x + 1) * s, (y + 1) * s - c);
-                            ctx.closePath();
-                        }
-                        if(bot == t && left == t) {
-                            ctx.moveTo(x * s, (y + 1) * s);
-                            ctx.lineTo(x * s + c, (y + 1) * s);
-                            ctx.lineTo(x * s, (y + 1) * s - c);
-                            ctx.closePath();
-                        }
                     }
                 }
             }
             ctx.fill();
         }
 
-        for(let v in TerrainTile) {
-            let t = TerrainTile[v];
-            if(t == TerrainTile.UNKNOWN) ctx.fillStyle = Res.col_fog;
-            if(t == TerrainTile.LAND) ctx.fillStyle = Res.col_land;
-            if(t == TerrainTile.WATER) ctx.fillStyle = Res.col_water;
-            if(t == TerrainTile.MATTER_SOURCE) ctx.fillStyle = Res.col_matter;
+        for(let v in TerrainTileType) {
+            let t = TerrainTileType[v];
+            switch(t) {
+                case TerrainTileType.UNKNOWN:
+                    ctx.fillStyle = Res.col_fog;
+                    break;
+                case TerrainTileType.LAND:
+                    ctx.fillStyle = Res.col_land;
+                    break;
+                case TerrainTileType.WATER:
+                    ctx.fillStyle = Res.col_water;
+                    break;
+                case TerrainTileType.MATTER_SOURCE:
+                    ctx.fillStyle = Res.col_matter;
+                    break;
+            }
             ctx.beginPath();
             for (let x = 0; x < w; x++) {
                 for (let y = 0; y < h; y++) {
-                    let tile = g[x][y];
+                    let tile = g[x][y].type;
                     if(tile != t) {
-                        let left = t;
-                        let right = t;
-                        let top = t;
-                        let bot = t;
-                        if (x > 0) left = g[x - 1][y];
-                        if (x < w - 1) right = g[x + 1][y];
-                        if (y > 0) top = g[x][y - 1];
-                        if (y < h - 1) bot = g[x][y + 1];
+                        let left = null;
+                        let right = null;
+                        let top = null;
+                        let bot = null;
+                        if (x > 0) left = g[x - 1][y].type;
+                        if (x < w - 1) right = g[x + 1][y].type;
+                        if (y > 0) top = g[x][y - 1].type;
+                        if (y < h - 1) bot = g[x][y + 1].type;
 
                         if(left == t && top == t) {
                             ctx.moveTo(x * s, y * s);
@@ -129,13 +119,58 @@ export class TerrainRenderable extends Renderable {
             ctx.fill();
         }
 
+        ctx.fillStyle = Res.pal_black;
+        let a = ctx.globalAlpha;
+        ctx.globalAlpha = Res.passive_alpha;
+        ctx.beginPath();
+        for (let x = 0; x < w; x++) {
+            for (let y = 0; y < h; y++) {
+                let t = g[x][y].type;
+                let a = g[x][y].active;
+                if(t != TerrainTileType.UNKNOWN && !a) {
+                    ctx.rect(x * s, y * s, s, s);
+                }
 
-        //border
-        ctx.strokeStyle = Res.col_uibg;
-        ctx.lineWidth = 10;
-        ctx.strokeRect(-hs, -hs,
-            Simul.match.terrain_view.width * s + s,
-            Simul.match.terrain_view.height * s + s);
+                /* TODO: this doesn't work very well...
+                let left: boolean = null;
+                let right: boolean = null;
+                let top: boolean = null;
+                let bot: boolean = null;
+                if (x > 0) left = !g[x - 1][y].active;
+                if (x < w - 1) right = !g[x + 1][y].active;
+                if (y > 0) top = !g[x][y - 1].active;
+                if (y < h - 1) bot = !g[x][y + 1].active;
+
+                if (left && top) {
+                    ctx.moveTo(x * s, y * s);
+                    ctx.lineTo(x * s + c, y * s);
+                    ctx.lineTo(x * s, y * s + c);
+                    ctx.closePath();
+                }
+                if (top && right) {
+                    ctx.moveTo((x + 1) * s, y * s);
+                    ctx.lineTo((x + 1) * s - c, y * s);
+                    ctx.lineTo((x + 1) * s, y * s + c);
+                    ctx.closePath();
+                }
+                if (right && bot) {
+                    ctx.moveTo((x + 1) * s, (y + 1) * s);
+                    ctx.lineTo((x + 1) * s - c, (y + 1) * s);
+                    ctx.lineTo((x + 1) * s, (y + 1) * s - c);
+                    ctx.closePath();
+                }
+                if (bot && left) {
+                    ctx.moveTo(x * s, (y + 1) * s);
+                    ctx.lineTo(x * s + c, (y + 1) * s);
+                    ctx.lineTo(x * s, (y + 1) * s - c);
+                    ctx.closePath();
+                }*/
+            }
+        }
+
+
+        ctx.fill();
+        ctx.globalAlpha = a;
 
     }
 

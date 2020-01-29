@@ -3,6 +3,7 @@ import { Entity, EntityVariation, Match } from "../../comms";
 import { Game } from "../../gfx/Game";
 import { MatchInterpolator } from "../MatchInterpolator";
 import { Simul } from "../../Simul";
+import {TerrainRenderable} from "./TerrainRenderable";
 
 export class EntitiesRenderable extends Renderable {
     update(): void {
@@ -18,6 +19,8 @@ export class EntitiesRenderable extends Renderable {
     }
 
     static drawEntities(ctx: CanvasRenderingContext2D, entities: Entity[]) {
+        let s = TerrainRenderable.GRID_CELL_SIZE;
+        let hs = s / 2;
         for (let entity of entities) {
             ctx.moveTo(entity.x, entity.y);
             ctx.beginPath();
@@ -27,10 +30,10 @@ export class EntitiesRenderable extends Renderable {
                     break;
                 case EntityVariation.CITY:
                     // TODO replace with draw sprite
-                    ctx.arc(5 + entity.x * 10, 5 + entity.y * 10, 7, 0, Math.PI * 2);
+                    ctx.arc(hs + entity.x * s, hs + entity.y * s, s * 0.7, 0, Math.PI * 2);
                     break;
                 case EntityVariation.UNIT:
-                    ctx.rect(2 + entity.x * 10, 2 + entity.y * 10, 6, 6);
+                    ctx.rect(s * 0.2 + entity.x * s, s * 0.2 + entity.y * s, s * 0.6, s * 0.6);
                     break;
             }
             ctx.fill();

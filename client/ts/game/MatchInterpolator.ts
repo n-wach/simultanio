@@ -1,4 +1,15 @@
-import { Match, TerrainView, YouPlayer, OtherPlayer, Player, Color, Entity, MatchList, MatchListing, MatchStatus } from "../comms";
+import {
+    Color,
+    Entity,
+    Match,
+    MatchListing,
+    MatchStatus,
+    OtherPlayer,
+    Player,
+    TerrainTile,
+    TerrainView,
+    YouPlayer
+} from "../comms";
 
 export class MatchInterpolator {
     you: YouPlayer;
@@ -15,11 +26,11 @@ export class MatchInterpolator {
             entities: [],
             id: -1
         };
-        this.others = []
+        this.others = [];
         this.terrain_view = {
             width: 0,
             height: 0,
-            grid: [[]]
+            grid: [],
         };
         this.info = {
             id: -1,

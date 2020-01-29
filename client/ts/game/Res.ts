@@ -4,6 +4,8 @@ export class Res {
     public static col_water :string = "#7ca19f";
     public static col_matter :string = "#cfb494";
     public static col_fog :string = "#ada49c";
+    // a black mask is drawn over passively seen tiles at this alpha
+    public static passive_alpha :number = 0.2;
 
     // ui
     public static col_bg :string = "#cfc5ba";

@@ -24,8 +24,8 @@ class City(Building):
     GENERATION_RATE = 1
 
     VARIATION = "city"
-    ACTIVE_SIGHT = 12
-    PASSIVE_SIGHT = 10
+    ACTIVE_SIGHT = 10
+    PASSIVE_SIGHT = 12
 
     def tick(self, dt):
         self.owner.stored_matter += dt * self.GENERATION_RATE

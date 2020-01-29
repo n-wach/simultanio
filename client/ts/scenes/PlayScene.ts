@@ -30,10 +30,6 @@ export class PlayScene extends Scene {
         });
     }
 
-    update() {
-        
-    }
-
     destroy() {
 
     }
