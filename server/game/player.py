@@ -82,11 +82,6 @@ class Player:
         for entity in self.entities:
             entity.tick(dt)
 
-        for unit in self.units:
-            if self.terrain_view.new_obstacle:
-                unit.calculate_path()
-        self.terrain_view.new_obstacle = False
-
         for message in self.pending_messages:
             if message["command"] == "set target":
                 self.scout.set_target(message["x"], message["y"])
