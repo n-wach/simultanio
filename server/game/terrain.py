@@ -66,10 +66,45 @@ class Terrain:
         h_pad = math.floor(height / 6)
         self.spawn_positions = [(w_pad, h_pad),
                                 (width - w_pad, h_pad),
-                                (w_pad, height - h_pad),
-                                (width - w_pad, height - h_pad)]
-        self.tiles = self.gen_terrain(weight_blur, bias, source_chance)
-        # TODO guarantee large paths between bases
+                                (width - w_pad, height - h_pad),
+                                (w_pad, height - h_pad)]
+
+        while True:
+            self.tiles = self.gen_terrain(weight_blur, bias, source_chance)
+
+            no_path = False
+            print("trying...")
+
+            # guarantee large paths between bases
+            tiles_saved = self.tiles
+            self.tiles = self.tile_blur()
+            # DONT call player grid pls
+            total_view = TerrainView(self, None, True)
+            lengths = []
+            for i in range(len(self.spawn_positions)):
+                try:
+                    length = total_view.path_length(self.spawn_positions[i],
+                                                    self.spawn_positions[(i+1) % len(self.spawn_positions)])
+                    lengths.append(length)
+                except (networkx.NetworkXNoPath, networkx.NodeNotFound):
+                    no_path = True
+                    break
+            self.tiles = tiles_saved
+
+            if no_path:
+                print("no path")
+                continue
+
+            if max(lengths) <= 1.5 * min(lengths):
+                print(lengths)
+                print("length restriciton succ")
+                break
+            print("lenth restr failed")
+
+    def tile_blur(self, radius=0):
+        return tuple(tuple(
+            Water() if any(not self.tile_at(*t).passable for t in self.points_near(x, y, radius)) else Land()
+            for y in range(self.height)) for x in range(self.width))
 
     def gen_terrain(self, weight_blur, bias, source_chance):
         vals = noise(weight_blur, self.width, self.height)
@@ -126,13 +161,17 @@ class Terrain:
 
 
 class TerrainView:
-    def __init__(self, terrain, player):
+    def __init__(self, terrain, player, discovered=False):
         self.terrain = terrain
         self.player = player
         self.discovered_grid = [[False for y in range(self.terrain.height)] for x in range(self.terrain.width)]
         self.visibility_grid = [[False for y in range(self.terrain.height)] for x in range(self.terrain.width)]
         self.graph = networkx.Graph()
         self.init_graph()
+        if discovered:
+            for y in range(self.terrain.height):
+                for x in range(self.terrain.width):
+                    self.discover((x, y))
 
     def get_player_grid(self):
         self.update_view()
@@ -182,6 +221,9 @@ class TerrainView:
                     self.graph.add_edge((x, y - 1), p, weight=1)
                 if x > 0 and y > 0:
                     self.graph.add_edge((x - 1, y - 1), p, weight=1.414)
+
+    def path_length(self, origin, target):
+        return networkx.astar_path_length(self.graph, origin, target, lambda s, d: (s[0] - d[0]) ** 2 + (s[1] - d[1]) ** 2, weight="weight")
 
     def get_path(self, origin, target):
         try:
