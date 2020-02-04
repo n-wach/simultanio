@@ -73,7 +73,6 @@ class Terrain:
             self.tiles = self.gen_terrain(weight_blur, bias, source_chance)
 
             no_path = False
-            print("trying...")
 
             # guarantee large paths between bases
             tiles_saved = self.tiles
@@ -92,14 +91,10 @@ class Terrain:
             self.tiles = tiles_saved
 
             if no_path:
-                print("no path")
                 continue
 
             if max(lengths) <= 1.5 * min(lengths):
-                print(lengths)
-                print("length restriciton succ")
                 break
-            print("lenth restr failed")
 
     def tile_blur(self, radius=0):
         return tuple(tuple(
