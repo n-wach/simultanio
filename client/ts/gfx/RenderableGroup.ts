@@ -1,13 +1,12 @@
 import {Renderable} from "./Renderable";
 import {Vec2} from "./Vec2";
 
-export class RenderableGroup extends Renderable {
+export class RenderableGroup implements Renderable {
     renderables: Renderable[];
     ctxOrigin: Vec2 = new Vec2(0, 0);
     ctxScale: number = 1;
 
     constructor(...renderables: Renderable[]) {
-        super();
         this.renderables = renderables;
     }
 
@@ -16,9 +15,9 @@ export class RenderableGroup extends Renderable {
         return new Vec2(scaled.x - this.ctxOrigin.x / this.ctxScale, scaled.y - this.ctxOrigin.y / this.ctxScale);
     }
 
-    update() {
+    update(dt: number) {
         for (let renderable of this.renderables) {
-            renderable.update();
+            renderable.update(dt);
         }
     }
 

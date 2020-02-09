@@ -9,42 +9,69 @@ class Unit(UnalignedEntity):
     ENERGY_COST = 10
     MATTER_COST = 10
     TIME_COST = 10
-    MOVEMENT_SPEED = 10
-    VARIATION = "unit"
+    MOVEMENT_SPEED = 2
+    TYPE = "unit"
 
-    def __init__(self, x, y, *args, **kwargs):
-        super().__init__(x, y, **kwargs)
+    def __init__(self, owner, x, y):
+        super().__init__(owner, x, y)
         self.target_x = x
         self.target_y = y
         self.path = []
         self.calculate_path()
 
     def set_target(self, x, y):
-        self.target_x = x
-        self.target_y = y
+        self.target_x = self.align_x(x)
+        self.target_y = self.align_y(y)
         self.calculate_path()
 
     def calculate_path(self):
         self.path = self.terrain_view.get_path((self.grid_x, self.grid_y), (self.target_x, self.target_y))
 
+    def valid_path(self):
+        return all(self.terrain_view.passable(*p) for p in self.path)
+
     def tick(self, dt):
-        dist = dt * self.MOVEMENT_SPEED
-        while dist > 0 and len(self.path) > 0:
+        remaining_distance = dt * self.MOVEMENT_SPEED
+        while remaining_distance > 0 and len(self.path) > 0:
             next_pos = self.path[0]
-            if not self.terrain_view.terrain.tile_at(*next_pos).passable:
-                self.calculate_path()
-                break
             dx = next_pos[0] - self.x
             dy = next_pos[1] - self.y
             dd = math.sqrt(dx ** 2 + dy ** 2)
-            if dd < dist:
+            if dd < remaining_distance:
                 self.x = next_pos[0]
                 self.y = next_pos[1]
                 self.path.pop(0)
-                dist -= dd
+                remaining_distance -= dd
                 self.terrain_view.update_view()
+                if not self.valid_path():
+                    self.calculate_path()
             else:
-                self.x += (dx / dd) * dist
-                self.y += (dy / dd) * dist
-                dist = 0
+                self.x += (dx / dd) * remaining_distance
+                self.y += (dy / dd) * remaining_distance
+                remaining_distance = 0
+
+    def get_path(self):
+        path = []
+        for pos in self.path:
+            path.append({"x": pos[0], "y": pos[1]})
+        return path
+
+    def get_self(self):
+        return {
+            "type": self.TYPE,
+            "x": self.x,
+            "y": self.y,
+            "id": id(self),
+            "path": self.get_path(),
+        }
+
+
+class Scout(Unit):
+    ACTIVE_SIGHT = 7
+    PASSIVE_SIGHT = 7
+    ENERGY_COST = 10
+    MATTER_COST = 10
+    TIME_COST = 10
+    MOVEMENT_SPEED = 3
+    TYPE = "scout"
 

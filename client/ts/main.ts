@@ -1,5 +1,6 @@
 import {Game} from './gfx/Game'
 import {LobbyScene} from "./scenes/LobbyScene";
+import {Simul} from "./Simul";
 
 function resizeCanvas() {
     let ratio = pixel_ratio();
@@ -22,8 +23,14 @@ function pixel_ratio() {
     return dpr / bsr;
 }
 
+let lastTime = new Date().getTime();
+
 function loop() {
-    Game.update();
+    let thisTime = new Date().getTime();
+    let dt = (thisTime - lastTime) / 1000;
+    lastTime = thisTime;
+    if(Simul.match) Simul.match.interpolate(dt);
+    Game.update(dt);
     Game.render();
     window.requestAnimationFrame(loop);
 }

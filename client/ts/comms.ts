@@ -14,26 +14,27 @@ export enum Color {
     PURPLE = "purple",
 }
 
-export enum TerrainTile {
+export enum TerrainTileType {
     LAND = "land",
     WATER = "water",
     MATTER_SOURCE = "matter_source",
     UNKNOWN = "unknown",
 }
 
-export enum EntityVariation {
-    UNKNOWN = "unknown",
-    CITY = "city",
-    UNIT = "unit",
-}
-
 export type Id = number;
+
+export type Path = { x: number, y: number }[]
+
+export type TerrainTile = {
+    type: TerrainTileType,
+    active: boolean,
+};
 
 export type MatchListing = {
     id: Id,
     name: string,
-    player_count: number,
-    max_players: number,
+    playerCount: number,
+    maxPlayers: number,
     status: MatchStatus,
     duration: number,
 };
@@ -48,36 +49,49 @@ export type TerrainView = {
     grid: TerrainTile[][],
 };
 
-export type YouPlayer = {
-    stored_energy: number,
-    stored_matter: number,
+export type BasePlayer = {
     color: Color,
-    entities: Entity[],
+    entities: AnyEntity[]
     id: Id,
+}
+
+export type YouPlayer = BasePlayer & {
+    storedEnergy: number,
+    storedMatter: number,
 };
 
-export type OtherPlayer = {
-    color: Color,
-    entities: Entity[],
-    id: Id,
-};
+export type AnyPlayer = YouPlayer | BasePlayer;
 
-export type Player = YouPlayer | OtherPlayer;
 
-export type Entity = {
-    variation: EntityVariation,
-    // integer is center of grid square
-    // ... may be float from [-0.5 to terrain.width-0.5]
+export enum UnitType {
+    SCOUT = "scout"
+}
+
+export enum BuildingType {
+    CITY = "city"
+}
+
+export type BaseEntity = {
     x: number,
     y: number,
-    id: Id,
+    id: Id
+}
+
+export type Unit = BaseEntity & {
+    path: Path,
+    type: UnitType,
+}
+export type Building = BaseEntity & {
+    type: BuildingType,
 };
+
+export type AnyEntity = Unit | Building;
 
 export type Match = {
     info: MatchListing,
     you: YouPlayer,
-    other_players: OtherPlayer[],
-    terrain_view: TerrainView,
+    otherPlayers: BasePlayer[],
+    terrainView: TerrainView,
 };
 
 export type SetTargetCommand = {

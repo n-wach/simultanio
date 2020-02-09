@@ -2,8 +2,31 @@ import { RenderableGroup } from "../../gfx/RenderableGroup";
 import { Game } from "../../gfx/Game";
 import { PlayerCommand } from "../../comms";
 import { TerrainRenderable } from "./TerrainRenderable";
-import { EntitiesRenderable } from "./EntitiesRenderable";
-import { MatchInterpolator } from "../MatchInterpolator";
+import {Renderable} from "../../gfx/Renderable";
+import {Simul} from "../../Simul";
+import {BasePlayerInterpolator} from "../interpolation/PlayerInterpolator";
+
+class EntitiesRenderable implements Renderable {
+    render(ctx: CanvasRenderingContext2D): void {
+        this.renderPlayer(ctx, Simul.match.you);
+
+        for(let o in Simul.match.otherPlayers) {
+            this.renderPlayer(ctx, Simul.match.otherPlayers[o]);
+        }
+    }
+
+    renderPlayer(ctx: CanvasRenderingContext2D, player: BasePlayerInterpolator) {
+        ctx.fillStyle = player.color;
+        ctx.beginPath();
+        for(let o in player.entities) {
+            player.entities[o].render(ctx);
+        }
+        ctx.fill();
+    }
+
+    update(): void {
+    }
+}
 
 export class GameRenderable extends RenderableGroup {
     constructor() {
@@ -12,8 +35,8 @@ export class GameRenderable extends RenderableGroup {
             let p = this.transformToCanvas(event);
             Game.socketio.emit("player command", ({
                 command: "set target",
-                x: p.x / 10,
-                y: p.y / 10,
+                x: p.x / TerrainRenderable.GRID_CELL_SIZE,
+                y: p.y / TerrainRenderable.GRID_CELL_SIZE,
             } as PlayerCommand));
             return true;
         }, "mousedown", "touchstart");
