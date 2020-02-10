@@ -226,22 +226,7 @@ class TerrainView:
                                        lambda s, d: (s[0] - d[0]) ** 2 + (s[1] - d[1]) ** 2,
                                        weight="weight")[1:]
         except (networkx.NetworkXNoPath, networkx.NodeNotFound):
-            magic = (float(target[0]), float(target[1]))
-            base = (self.terrain.width * self.terrain.height) ** 2
-            ox, oy = origin
-            self.graph.add_node(magic)
-            for x in range(self.terrain.width):
-                for y in range(self.terrain.height):
-                    p = (x, y)
-                    if self.graph.has_node(p):
-                        dx = ox - x
-                        dy = oy - y
-                        dd = dx ** 2 + dy ** 2
-                        self.graph.add_edge(p, magic, weight=(base + math.sqrt(dd)))
-            path = networkx.astar_path(self.graph, origin, magic,
-                                       lambda s, d: (s[0] - d[0]) ** 2 + (s[1] - d[1]) ** 2,
-                                       weight="weight")[1:-1]
-            self.graph.remove_node(magic)
+            # todo: get path to closest point
             return path
 
     def passable(self, x, y):

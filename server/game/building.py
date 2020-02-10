@@ -23,7 +23,7 @@ class MatterCollector(Building):
 class City(Building):
     GENERATION_RATE = 1
 
-    VARIATION = "city"
+    TYPE = "city"
     ACTIVE_SIGHT = 10
     PASSIVE_SIGHT = 12
 

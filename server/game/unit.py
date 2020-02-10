@@ -10,10 +10,10 @@ class Unit(UnalignedEntity):
     MATTER_COST = 10
     TIME_COST = 10
     MOVEMENT_SPEED = 2
-    VARIATION = "unit"
+    TYPE = "unit"
 
-    def __init__(self, x, y, *args, **kwargs):
-        super().__init__(x, y, **kwargs)
+    def __init__(self, owner, x, y):
+        super().__init__(owner, x, y)
         self.target_x = x
         self.target_y = y
         self.path = []
@@ -49,4 +49,29 @@ class Unit(UnalignedEntity):
                 self.x += (dx / dd) * remaining_distance
                 self.y += (dy / dd) * remaining_distance
                 remaining_distance = 0
+
+    def get_path(self):
+        path = []
+        for pos in self.path:
+            path.append({"x": pos[0], "y": pos[1]})
+        return path
+
+    def get_self(self):
+        return {
+            "type": self.TYPE,
+            "x": self.x,
+            "y": self.y,
+            "id": id(self),
+            "path": self.get_path(),
+        }
+
+
+class Scout(Unit):
+    ACTIVE_SIGHT = 7
+    PASSIVE_SIGHT = 7
+    ENERGY_COST = 10
+    MATTER_COST = 10
+    TIME_COST = 10
+    MOVEMENT_SPEED = 3
+    TYPE = "scout"
 

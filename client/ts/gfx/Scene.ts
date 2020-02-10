@@ -8,9 +8,9 @@ export abstract class Scene {
 
     abstract destroy();
 
-    update() {
-        if(this.stage) this.stage.update();
-        if(this.ui) this.ui.update();
+    update(dt: number) {
+        if(this.stage) this.stage.update(dt);
+        if(this.ui) this.ui.update(dt);
     }
 
     render(ctx: CanvasRenderingContext2D): void {

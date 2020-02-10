@@ -2,7 +2,7 @@ import { Renderable } from "../Renderable";
 import { Game } from "../Game";
 import { Res } from "../../game/Res";
 
-export class Button extends Renderable {
+export class Button implements Renderable {
     x: number;
     y: number;
     w: number;
@@ -12,7 +12,6 @@ export class Button extends Renderable {
     hover: boolean = false;
 
     constructor(text: string, x: number, y: number, w: number, h: number, onclick?: () => void) {
-        super();
         this.text = text;
         this.x = x;
         this.y = y;
@@ -28,7 +27,7 @@ export class Button extends Renderable {
         }, "mouseup");
     }
 
-    update(): void {
+    update(dt: number): void {
         this.hover = this.x < Game.input.mousePos.x
             && Game.input.mousePos.x < this.x + this.w
             && this.y < Game.input.mousePos.y
