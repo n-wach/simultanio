@@ -1,4 +1,3 @@
-import {PlayScene} from "../../scenes/PlayScene";
 import Grid from "../../gfx/ui/Grid";
 import TopBar from "./TopBar";
 import BottomBar from "./BottomBar";

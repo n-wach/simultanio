@@ -7,7 +7,7 @@ export default class Grid extends Component {
     totalVConst: number = 0;
     rowHeights: number[] = [];
     colWidths: number[] = [];
-    margin: number = 0;
+
     components: Component[] = [];
     positions: [number, number, number, number, number][] = [];
 

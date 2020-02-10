@@ -1,6 +1,5 @@
 import {Renderable} from "./Renderable";
 import Grid from "./ui/Grid";
-import {Game} from "./Game";
 
 export abstract class Scene {
     ui: Grid;
