@@ -56,8 +56,8 @@ export default class Grid extends Component {
         return {
             x: this.getX(col) + m,
             y: this.getY(row) + m,
-            width: w - m,
-            height: h - m,
+            width: w - m * 2,
+            height: h - m * 2,
         };
     }
 

@@ -6,6 +6,7 @@ import Grid from "../../gfx/ui/Grid";
 import Label from "../../gfx/ui/Label";
 import Button from "../../gfx/ui/Button";
 import {Game} from "../../gfx/Game";
+import Icon from "../../gfx/ui/Icon";
 
 export class HUD extends Grid {
     playScene: PlayScene;
@@ -22,13 +23,15 @@ export class HUD extends Grid {
 
 class TopBar extends Grid {
     constructor() {
-        super([1.0], [100, 1.0, 100, 100, 40]);
+        super([1.0], [100, 1.0, 40, 60, 40, 60, 40]);
         this.addComponent(new TimeLabel(), 0, 0, 1, 1, 10);
-        this.addComponent(new EnergyLabel(), 0, 2, 1, 1, 10);
-        this.addComponent(new MatterLabel(), 0, 3, 1, 1, 10);
+        this.addComponent(new Icon("/energy.png"), 0, 2, 1, 1, 10);
+        this.addComponent(new EnergyLabel(), 0, 3, 1, 1, 10);
+        this.addComponent(new Icon("/matter.png"), 0, 4, 1, 1, 10);
+        this.addComponent(new MatterLabel(), 0, 5, 1, 1, 10);
         this.addComponent(new Button("X", () => {
             Game.socketio.emit("leave match");
-        }), 0, 4, 1, 1, 5);
+        }), 0, 6, 1, 1, 5);
     }
     render(ctx: CanvasRenderingContext2D): void {
         ctx.fillStyle = Res.col_uibg;
@@ -51,21 +54,21 @@ class TimeLabel extends Label {
 
 class EnergyLabel extends Label {
     constructor() {
-        super("ENG: 0");
+        super("0", "left");
     }
     update(dt: number): void {
         super.update(dt);
-        this.text = "ENG: " + Simul.match.you.storedEnergy.toFixed(0);
+        this.text = Simul.match.you.storedEnergy.toFixed(0);
     }
 }
 
 
 class MatterLabel extends Label {
     constructor() {
-        super("MAT: 0");
+        super("0", "left");
     }
     update(dt: number): void {
         super.update(dt);
-        this.text = "MAT: " + Simul.match.you.storedMatter.toFixed(0);
+        this.text = Simul.match.you.storedMatter.toFixed(0);
     }
 }
