@@ -7,6 +7,9 @@ import { Simul } from "../Simul";
 import { MatchInterpolator } from "../game/interpolation/MatchInterpolator";
 import Button from "../gfx/ui/Button";
 import Grid from "../gfx/ui/Grid";
+import {GameRenderable} from "../game/ren/GameRenderable";
+import {Vec2} from "../gfx/Vec2";
+import {TerrainRenderable} from "../game/ren/TerrainRenderable";
 
 export class LobbyScene extends Scene {
     initialize() {
@@ -27,28 +30,14 @@ export class LobbyScene extends Scene {
         });
         Game.socketio.on("join match", (match: Match) => {
             Simul.match = new MatchInterpolator(match);
-            Game.setScene(new PlayScene());
+            let focal = match.you.entities[0];
+            let play = new PlayScene();
+            Game.setScene(play);
+            let o = new Vec2(window.innerWidth / 2, window.innerHeight / 2);
+            let s = TerrainRenderable.GRID_CELL_SIZE;
+            (play.stage as GameRenderable).ctxOrigin = new Vec2(o.x - focal.x * s, o.y - focal.y * s);
         });
     }
 
     destroy(){}
-}
-
-export class LobbyUI extends Grid {
-    constructor() {
-        super([100], [10, 0.3, 0.4, 300, 0.3, 10]);
-        Game.socketio.on("list matches", (matchList: MatchList) => {
-            this.clear();
-            let row = 0;
-            this.addComponent(new Button("Create Match", () => {
-                Game.socketio.emit("create match");
-            }), row, 2, 1, 2, 10);
-            for (let match of matchList.matches) {
-                row++;
-                this.addComponent(new Button("Join " + match.name + " (" + match.playerCount + "/" + match.maxPlayers + ")", () => {
-                        Game.socketio.emit("join match", match.id);
-                    }), row, 2, 1, 2, 10);
-            }
-        });
-    }
 }

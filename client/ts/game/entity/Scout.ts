@@ -2,6 +2,12 @@ import Unit from "./Unit";
 
 export default class Scout extends Unit {
     draw(ctx: CanvasRenderingContext2D): void {
-        ctx.ellipse(0, 0, 40, 40, 0, 0, Math.PI * 2);
+        ctx.rotate(this.orientation);
+        ctx.moveTo(0, 40);
+        ctx.lineTo(20, -20);
+        ctx.lineTo(0, -10);
+        ctx.lineTo(-20, -20);
+        ctx.closePath();
+        ctx.rotate(-this.orientation);
     }
 }

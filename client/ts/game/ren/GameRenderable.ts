@@ -17,11 +17,11 @@ class EntitiesRenderable implements Renderable {
 
     renderPlayer(ctx: CanvasRenderingContext2D, player: BasePlayerInterpolator) {
         ctx.fillStyle = player.color;
-        ctx.beginPath();
         for(let o in player.entities) {
+            ctx.beginPath();
             player.entities[o].render(ctx);
+            ctx.fill();
         }
-        ctx.fill();
     }
 
     update(): void {
