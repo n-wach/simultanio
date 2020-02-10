@@ -21,6 +21,7 @@ export class BasePlayerInterpolator extends Interpolated<BasePlayer>{
     }
 
     sync(ref: BasePlayer) {
+        super.sync(ref);
         this.color = ref.color;
         for(let e of ref.entities) {
             if(this.entities[e.id]) {

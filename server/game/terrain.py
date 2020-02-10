@@ -77,7 +77,7 @@ class Terrain:
 
             # guarantee large paths between bases
             tiles_saved = self.tiles
-            self.tiles = self.tile_blur()
+            #self.tiles = self.tile_blur(1)
             # DONT call player grid pls
             total_view = TerrainView(self, None, True)
             lengths = []
@@ -92,9 +92,9 @@ class Terrain:
             self.tiles = tiles_saved
 
             if no_path:
+                print("No path")
                 continue
-
-            if max(lengths) <= 1.5 * min(lengths):
+            else:
                 break
 
     def tile_blur(self, radius=0):
@@ -160,14 +160,10 @@ class TerrainView:
     def __init__(self, terrain, player, discovered=False):
         self.terrain = terrain
         self.player = player
-        self.discovered_grid = [[False for y in range(self.terrain.height)] for x in range(self.terrain.width)]
+        self.discovered_grid = [[discovered for y in range(self.terrain.height)] for x in range(self.terrain.width)]
         self.visibility_grid = [[False for y in range(self.terrain.height)] for x in range(self.terrain.width)]
         self.graph = networkx.Graph()
         self.init_graph()
-        if discovered:
-            for y in range(self.terrain.height):
-                for x in range(self.terrain.width):
-                    self.discover((x, y))
 
     def get_player_grid(self):
         self.update_view()
@@ -206,17 +202,22 @@ class TerrainView:
     def init_graph(self):
         for x in range(self.terrain.width):
             for y in range(self.terrain.height):
-                self.graph.add_node((x, y))
+                if self.passable(x, y):
+                    self.graph.add_node((x, y))
 
         for x in range(self.terrain.width):
             for y in range(self.terrain.height):
+                if not self.passable(x, y):
+                    continue
                 p = (x, y)
-                if x > 0:
+                if self.passable(x - 1, y):
                     self.graph.add_edge((x - 1, y), p, weight=1)
-                if y > 0:
+                if self.passable(x, y - 1):
                     self.graph.add_edge((x, y - 1), p, weight=1)
-                if x > 0 and y > 0:
+                if self.passable(x - 1, y - 1):
                     self.graph.add_edge((x - 1, y - 1), p, weight=1.414)
+                if self.passable(x + 1, y - 1):
+                    self.graph.add_edge((x + 1, y - 1), p, weight=1.414)
 
     def path_length(self, origin, target):
         return networkx.astar_path_length(self.graph, origin, target, lambda s, d: (s[0] - d[0]) ** 2 + (s[1] - d[1]) ** 2, weight="weight")
@@ -228,7 +229,9 @@ class TerrainView:
                                        weight="weight")[1:]
         except (networkx.NetworkXNoPath, networkx.NodeNotFound):
             # todo: get path to closest point
-            return path
+            return []
 
     def passable(self, x, y):
+        if x < 0 or x > self.terrain.width - 1 or y < 0 or y > self.terrain.height - 1:
+            return False
         return not self.discovered_grid[x][y] or self.terrain.tile_at(x, y).passable
