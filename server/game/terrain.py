@@ -69,6 +69,7 @@ class Terrain:
                                 (width - w_pad, height - h_pad),
                                 (w_pad, height - h_pad)]
 
+        print("Generating terrain")
         while True:
             self.tiles = self.gen_terrain(weight_blur, bias, source_chance)
 
