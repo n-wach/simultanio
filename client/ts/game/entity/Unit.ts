@@ -5,6 +5,7 @@ import {UNIT_SPEEDS} from "../../consts";
 export default abstract class UnitInterpolator extends EntityInterpolator {
     path: Path;
     type: string;
+    orientation: number = 0;
     update(): void {
 
     }
@@ -28,7 +29,8 @@ export default abstract class UnitInterpolator extends EntityInterpolator {
             } else {
                 this.x += (dx / dd) * remainingD;
                 this.y += (dy / dd) * remainingD;
-                remainingD = 0
+                remainingD = 0;
+                this.orientation = Math.atan2(dy, dx) - Math.PI / 2;
             }
         }
     }

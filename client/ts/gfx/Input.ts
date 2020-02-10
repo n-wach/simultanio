@@ -1,6 +1,5 @@
-import { Game } from "./Game";
-import { Vec2 } from "./Vec2";
-import {Renderable} from "./Renderable";
+import {Game} from "./Game";
+import {Vec2} from "./Vec2";
 
 type InputHandlers = {
     [event: string]: ((event) => boolean)[],

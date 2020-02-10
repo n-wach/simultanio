@@ -60,9 +60,6 @@ export type YouPlayer = BasePlayer & {
     storedMatter: number,
 };
 
-export type AnyPlayer = YouPlayer | BasePlayer;
-
-
 export enum UnitType {
     SCOUT = "scout"
 }
