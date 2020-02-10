@@ -12,8 +12,8 @@ export abstract class Scene {
 
     resize() {
         if(this.ui) {
-            this.ui.width = Game.canvas.width;
-            this.ui.height = Game.canvas.height;
+            this.ui.width = window.innerWidth;
+            this.ui.height = window.innerHeight;
             this.ui.x = 0;
             this.ui.y = 0;
             this.ui.resize();
