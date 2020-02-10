@@ -1,4 +1,4 @@
-export abstract class Renderable {
-    abstract update(): void;
-    abstract render(ctx: CanvasRenderingContext2D): void;
+export interface Renderable {
+    update(dt: number): void;
+    render(ctx: CanvasRenderingContext2D): void;
 }

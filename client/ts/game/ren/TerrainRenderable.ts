@@ -3,21 +3,21 @@ import {TerrainTile, TerrainTileType} from "../../comms";
 import {Res} from "../Res";
 import {Simul} from "../../Simul";
 
-export class TerrainRenderable extends Renderable {
+export class TerrainRenderable implements Renderable {
     static GRID_CELL_SIZE = 100;
 
     render(ctx: CanvasRenderingContext2D): void {
         let s = TerrainRenderable.GRID_CELL_SIZE;
         let c = s * 0.2;
-        let w = Simul.match.terrain_view.width;
-        let h = Simul.match.terrain_view.height;
-        let g = Simul.match.terrain_view.grid;
+        let w = Simul.match.terrainView.width;
+        let h = Simul.match.terrainView.height;
+        let g = Simul.match.terrainView.grid;
 
         //border
         ctx.fillStyle = Res.col_uibg;
         ctx.fillRect(-s, -s,
-            Simul.match.terrain_view.width * s + 2 * s,
-            Simul.match.terrain_view.height * s + 2 * s);
+            Simul.match.terrainView.width * s + 2 * s,
+            Simul.match.terrainView.height * s + 2 * s);
 
 
         //fill fog first

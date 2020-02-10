@@ -22,9 +22,9 @@ export class Game {
         this.socketio = io();
     }
 
-    static update() {
+    static update(dt: number) {
         if (this.scene) {
-            this.scene.update();
+            this.scene.update(dt);
         }
         this.input.update();
         this.frame++;
@@ -46,5 +46,6 @@ export class Game {
         }
         this.scene = scene;
         scene.initialize();
+        scene.resize();
     }
 }

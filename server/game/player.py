@@ -1,8 +1,7 @@
 from server.game.building import City
-import random
 
 from server.game.terrain import TerrainView
-from server.game.unit import Unit
+from server.game.unit import Scout
 
 
 class Player:
@@ -23,36 +22,28 @@ class Player:
         self.color = color
         self.terrain_view = TerrainView(game.terrain, self)
         spawn_pos = game.terrain.spawn_positions[player_id]
-        self.capital = City(self, game.terrain, spawn_pos[0], spawn_pos[1])
 
-        self.scout = Unit(x=self.capital.grid_x, y=self.capital.grid_y,
-                          owner=self, terrain_view=self.terrain_view)
+        self.capital = City(self, spawn_pos[0], spawn_pos[1])
+        self.scout = Scout(self, self.capital.grid_x, self.capital.grid_y)
 
         self.entities = [self.capital, self.scout]
-        self.units = [self.scout]
         self.id = id(self)
         self.player_id = player_id
 
         self.pending_messages = []
 
-    def get_entities(self):
-        return [entity.get_self() for entity in self.entities]
-
-    def get_entities_from_perspective(self,other):
-        return [entity.get_self() for entity in self.entities if other.terrain_view.entity_visible(entity)]
-
     def get_self(self):
         return {
-            "stored_energy": self.stored_energy,
-            "stored_matter": self.stored_matter,
-            "entities": self.get_entities(),
+            "storedEnergy": self.stored_energy,
+            "storedMatter": self.stored_matter,
+            "entities": [entity.get_self() for entity in self.entities],
             "color": self.color,
             "id": self.id,
         }
 
     def get_self_from_perspective(self, other):
         return {
-            "entities": self.get_entities_from_perspective(other),
+            "entities": [entity.get_self() for entity in self.entities if other.terrain_view.entity_visible(entity)],
             "color": self.color,
             "id": self.id,
         }
@@ -71,8 +62,8 @@ class Player:
         return {
             "info": self.game.match.get_info(),
             "you": self.get_self(),
-            "other_players": self.get_other_players(),
-            "terrain_view": self.get_terrain_view(),
+            "otherPlayers": self.get_other_players(),
+            "terrainView": self.get_terrain_view(),
         }
 
     def broadcast_update(self, socketio):
@@ -81,11 +72,6 @@ class Player:
     def tick(self, dt):
         for entity in self.entities:
             entity.tick(dt)
-
-        for unit in self.units:
-            if self.terrain_view.new_obstacle:
-                unit.calculate_path()
-        self.terrain_view.new_obstacle = False
 
         for message in self.pending_messages:
             if message["command"] == "set target":

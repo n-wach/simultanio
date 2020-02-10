@@ -4,11 +4,11 @@ from math import floor
 class Entity:
     ACTIVE_SIGHT = 0
     PASSIVE_SIGHT = 0
-    VARIATION = "unknown"
+    TYPE = "unknown"
 
-    def __init__(self, owner, terrain_view, grid_x, grid_y):
+    def __init__(self, owner, grid_x, grid_y):
         self.owner = owner
-        self.terrain_view = terrain_view
+        self.terrain_view = owner.terrain_view
         self.grid_x = grid_x
         self.grid_y = grid_y
 
@@ -17,7 +17,7 @@ class Entity:
 
     def get_self(self):
         return {
-            "variation": self.VARIATION,
+            "type": self.TYPE,
             "x": self.grid_x,
             "y": self.grid_y,
             "id": id(self),
@@ -25,8 +25,10 @@ class Entity:
 
 
 class UnalignedEntity(Entity):
-    def __init__(self, x, y, *args, **kwargs):
-        super().__init__(grid_x=floor(x), grid_y=floor(y), *args, **kwargs)
+    def __init__(self, owner, x, y):
+        super().__init__(owner, x, y)
+        self.grid_x = self.align_x(x)
+        self.grid_y = self.align_y(y)
         self.x = x
         self.y = y
 
@@ -37,7 +39,7 @@ class UnalignedEntity(Entity):
     @x.setter
     def x(self, x):
         self._x = x
-        self.grid_x = min(max(floor(x), 0), self.terrain_view.terrain.width)
+        self.grid_x = self.align_x(x)
 
     @property
     def y(self):
@@ -46,11 +48,17 @@ class UnalignedEntity(Entity):
     @y.setter
     def y(self, y):
         self._y = y
-        self.grid_y = min(max(floor(y), 0), self.terrain_view.terrain.height)
+        self.grid_y = self.align_y(y)
+
+    def align_x(self, x):
+        return min(max(floor(x), 0), self.owner.terrain_view.terrain.width - 1)
+
+    def align_y(self, y):
+        return min(max(floor(y), 0), self.owner.terrain_view.terrain.height - 1)
 
     def get_self(self):
         return {
-            "variation": self.VARIATION,
+            "type": self.TYPE,
             "x": self.x,
             "y": self.y,
             "id": id(self),

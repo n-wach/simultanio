@@ -29,8 +29,8 @@ class Match:
         return {
             "id": self.match_id,
             "name": self.name,
-            "player_count": len(self.game.players),
-            "max_players": self.max_players,
+            "playerCount": len(self.game.players),
+            "maxPlayers": self.max_players,
             "status": self.status,
             "duration": self.duration,
         }
