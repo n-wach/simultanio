@@ -1,12 +1,13 @@
 import {Scene} from "../gfx/Scene";
 import {Game} from "../gfx/Game";
 import {Match, MatchList} from "../comms";
-import {Button} from "../gfx/ui/Button";
 import {PlayScene} from "./PlayScene";
 import {RenderableGroup} from "../gfx/RenderableGroup";
 import { Res } from "../game/Res";
 import { Simul } from "../Simul";
 import { MatchInterpolator } from "../game/interpolation/MatchInterpolator";
+import Button from "../gfx/ui/Button";
+import Grid from "../gfx/ui/Grid";
 
 export class LobbyScene extends Scene {
     initialize() {
@@ -21,9 +22,9 @@ export class LobbyScene extends Scene {
     destroy(){}
 }
 
-export class LobbyUI extends RenderableGroup {
+export class LobbyUI extends Grid {
     constructor() {
-        super();
+        super([100, ]);
         Game.socketio.on("list matches", (matchList: MatchList) => {
             this.clear();
             let matchListX = 40;

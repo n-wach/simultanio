@@ -1,22 +1,13 @@
-import { Renderable } from "../Renderable";
 import { Game } from "../Game";
 import { Res } from "../../game/Res";
+import Label from "./Label";
 
-export class Button implements Renderable {
-    x: number;
-    y: number;
-    w: number;
-    h: number;
-    text: string;
+export default class Button extends Label {
     onclick: () => void;
     hover: boolean = false;
 
-    constructor(text: string, x: number, y: number, w: number, h: number, onclick?: () => void) {
-        this.text = text;
-        this.x = x;
-        this.y = y;
-        this.w = w;
-        this.h = h;
+    constructor(text: string, onclick?: () => void) {
+        super(text);
         this.onclick = onclick;
         Game.input.addHandler((event) => {
             if(this.hover) {
@@ -29,9 +20,9 @@ export class Button implements Renderable {
 
     update(dt: number): void {
         this.hover = this.x < Game.input.mousePos.x
-            && Game.input.mousePos.x < this.x + this.w
+            && Game.input.mousePos.x < this.x + this.width
             && this.y < Game.input.mousePos.y
-            && Game.input.mousePos.y < this.y + this.h;
+            && Game.input.mousePos.y < this.y + this.height;
     }
     
     render(ctx: CanvasRenderingContext2D): void {
@@ -40,19 +31,10 @@ export class Button implements Renderable {
         } else {
             ctx.fillStyle = Res.col_uibg;
         }
-        ctx.fillRect(this.x, this.y, this.w, this.h);
-        ctx.fillStyle = Res.col_uifg;
-        if (this.h > 40) {
-            ctx.font = Res.font_ui_lg;
-        } else {
-            ctx.font = Res.font_ui;
-        }
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(this.text, this.x + this.w / 2, this.y + this.h / 2, this.w - 10);
+        ctx.fillRect(this.x, this.y, this.width, this.height);
+        super.render(ctx);
         ctx.strokeStyle = Res.col_uibg;
         ctx.lineWidth = 5;
-        ctx.strokeRect(this.x, this.y, this.w, this.h);
-
+        ctx.strokeRect(this.x, this.y, this.width, this.height);
     }
 }
