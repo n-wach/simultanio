@@ -11,7 +11,20 @@ import Grid from "../gfx/ui/Grid";
 export class LobbyScene extends Scene {
     initialize() {
         Game.clearColor = Res.col_bg;
-        this.ui = new LobbyUI();
+        this.ui = new Grid([100], [10, 0.3, 0.4, 300, 0.3, 10]);
+        Game.socketio.on("list matches", (matchList: MatchList) => {
+            this.ui.clear();
+            let row = 0;
+            this.ui.addComponent(new Button("Create Match", () => {
+                Game.socketio.emit("create match");
+            }), row, 2, 1, 2, 10);
+            for (let match of matchList.matches) {
+                row++;
+                this.ui.addComponent(new Button("Join " + match.name + " (" + match.playerCount + "/" + match.maxPlayers + ")", () => {
+                        Game.socketio.emit("join match", match.id);
+                    }), row, 2, 1, 2, 10);
+            }
+        });
         Game.socketio.on("join match", (match: Match) => {
             Simul.match = new MatchInterpolator(match);
             Game.setScene(new PlayScene());
