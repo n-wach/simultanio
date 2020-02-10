@@ -1,15 +1,33 @@
 import Building from "./Building";
+import {TerrainRenderable} from "../ren/TerrainRenderable";
 
 export default class City extends Building {
+    static MAX_CIRCLE_RADIUS = TerrainRenderable.GRID_CELL_SIZE * 2;
+    circleRadius: number = 0;
+
     draw(ctx: CanvasRenderingContext2D): void {
-        ctx.rect(-40, -40, 80, 80);
+        let a = ctx.globalAlpha;
+        ctx.globalAlpha = 0.3 * (City.MAX_CIRCLE_RADIUS - this.circleRadius) / City.MAX_CIRCLE_RADIUS;
+        ctx.ellipse(0, 0, this.circleRadius, this.circleRadius, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = a;
+        ctx.beginPath();
+        ctx.moveTo(0, 40);
+        ctx.lineTo(10, 10);
+        ctx.lineTo(40, 0);
+        ctx.lineTo(10, -10);
+        ctx.lineTo(0, -40);
+        ctx.lineTo(-10, -10);
+        ctx.lineTo(-40, 0);
+        ctx.lineTo(-10, 10);
+        ctx.closePath();
     }
 
     interpolate(dt: number) {
-
     }
 
     update(dt: number): void {
-
+        this.circleRadius += (City.MAX_CIRCLE_RADIUS * dt);
+        while(this.circleRadius > City.MAX_CIRCLE_RADIUS) this.circleRadius -= City.MAX_CIRCLE_RADIUS;
     }
 }

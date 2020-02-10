@@ -1,6 +1,5 @@
 import {Renderable} from "./Renderable";
 import {Vec2} from "./Vec2";
-import {Game} from "./Game";
 
 export class RenderableGroup implements Renderable {
     renderables: Renderable[];

@@ -1,4 +1,3 @@
-import { Res } from "../../game/Res";
 import Component from "./Component";
 
 export default class Icon extends Component {

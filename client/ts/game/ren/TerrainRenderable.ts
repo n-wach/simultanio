@@ -1,5 +1,5 @@
 import {Renderable} from "../../gfx/Renderable";
-import {TerrainTile, TerrainTileType} from "../../comms";
+import {TerrainTileType} from "../../comms";
 import {Res} from "../Res";
 import {Simul} from "../../Simul";
 

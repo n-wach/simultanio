@@ -1,13 +1,4 @@
-import {
-    Color,
-    Match,
-    MatchListing,
-    MatchStatus,
-    AnyPlayer,
-    TerrainView,
-    YouPlayer, BasePlayer, AnyEntity, Id
-} from "../../comms";
-import EntityInterpolator from "./EntityInterpolator";
+import {Match, MatchListing, TerrainView} from "../../comms";
 import Interpolated from "./Interpolated";
 import {BasePlayerInterpolator, YouPlayerInterpolator} from "./PlayerInterpolator";
 

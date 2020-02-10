@@ -1,10 +1,9 @@
-import { Scene } from './Scene'
-import { Input } from './Input';
+import {Scene} from './Scene'
+import {Input} from './Input';
 
 
 import * as io from 'socket.io-client';
-import Socket = SocketIOClient.Socket;
-import {Match} from "../comms";
+
 export class Game {
     static canvas: HTMLCanvasElement;
     static ctx: CanvasRenderingContext2D;
