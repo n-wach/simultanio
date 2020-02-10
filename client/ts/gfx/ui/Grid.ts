@@ -9,9 +9,9 @@ export default class Grid extends Component {
     colWidths: number[] = [];
     margin: number = 0;
     components: Component[] = [];
-    positions: [number, number, number, number, boolean][] = [];
+    positions: [number, number, number, number, number][] = [];
 
-    constructor(rowHeights: number[], colWidths: number[], margin: number=5) {
+    constructor(rowHeights: number[], colWidths: number[]) {
         super();
         this.nRows = rowHeights.length;
         this.nCols = colWidths.length;
@@ -27,7 +27,6 @@ export default class Grid extends Component {
                 this.totalHConst += c;
             }
         }
-        this.margin = margin;
     }
 
 
@@ -40,11 +39,12 @@ export default class Grid extends Component {
             c.y = p.y;
             c.width = p.width;
             c.height = p.height;
+            c.resize();
         }
     }
 
-    evalPosition(row: number, col: number, rowSpan: number, colSpan: number, margin: boolean) {
-        let m = margin ? this.margin / 2 : 0;
+    evalPosition(row: number, col: number, rowSpan: number, colSpan: number, margin: number) {
+        let m = margin / 2;
         let w = 0;
         let h = 0;
         for(let c = 0; c < colSpan; c++) {
@@ -61,7 +61,7 @@ export default class Grid extends Component {
         };
     }
 
-    addComponent(component: Component, row: number, col: number, rowSpan: number=1, colSpan: number=1, margin: boolean=false) {
+    addComponent(component: Component, row: number, col: number, rowSpan: number=1, colSpan: number=1, margin: number=0) {
         let p = this.evalPosition(row, col, rowSpan, colSpan, margin);
         component.x = p.x;
         component.y = p.y;
@@ -75,7 +75,7 @@ export default class Grid extends Component {
         this.components = [];
     }
 
-    getWidth(col: number) {
+    getWidth(col: number): number {
         if(col >= this.nCols) return this.getWidth(this.nCols - 1);
         let c = this.colWidths[col];
         if(c > 1) return c;
@@ -84,7 +84,7 @@ export default class Grid extends Component {
         return remainingWidth * c;
     }
 
-    getHeight(row: number) {
+    getHeight(row: number): number {
         if(row >= this.nRows) return this.getHeight(this.nRows - 1);
         let r = this.rowHeights[row];
         if(r > 1) return r;
@@ -93,16 +93,16 @@ export default class Grid extends Component {
         return remainingHeight * r;
     }
 
-    getX(col: number) {
-        let x = 0;
+    getX(col: number): number {
+        let x = this.x;
         for(let c = 0; c < col; c++) {
             x += this.getWidth(c);
         }
         return x;
     }
 
-    getY(row: number) {
-        let y = 0;
+    getY(row: number): number {
+        let y = this.y;
         for(let r = 0; r < row; r++) {
             y += this.getHeight(r);
         }

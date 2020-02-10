@@ -18,7 +18,7 @@ export class Res {
     public static pal_black :string = "#111111";
 
     // fonts
-    public static font_ui :string = "16px Share Tech Mono";
-    public static font_ui_lg :string = "24px Share Tech Mono";
+    public static font_face :string = "Share Tech Mono";
+    public static max_font :number = 24;
 
 }

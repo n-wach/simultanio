@@ -36,7 +36,7 @@ class Unit(UnalignedEntity):
             next_pos = self.path[0]
             if not self.terrain_view.passable(*next_pos):
                 self.calculate_path()
-                next_pos = self.path[0]
+                continue
             dx = next_pos[0] - self.x
             dy = next_pos[1] - self.y
             dd = math.sqrt(dx ** 2 + dy ** 2)

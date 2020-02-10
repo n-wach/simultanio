@@ -15,11 +15,7 @@ export default class Label extends Component {
 
     render(ctx: CanvasRenderingContext2D): void {
         ctx.fillStyle = Res.col_uifg;
-        if (this.height > 40) {
-            ctx.font = Res.font_ui_lg;
-        } else {
-            ctx.font = Res.font_ui;
-        }
+        ctx.font = Math.min(this.height - 10, Res.max_font) + "px " + Res.font_face;
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText(this.text, this.x + this.width / 2, this.y + this.height / 2, this.width - 10);
