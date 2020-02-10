@@ -2,7 +2,6 @@ import {Scene} from "../gfx/Scene";
 import {Game} from "../gfx/Game";
 import {Match, MatchList} from "../comms";
 import {PlayScene} from "./PlayScene";
-import {RenderableGroup} from "../gfx/RenderableGroup";
 import { Res } from "../game/Res";
 import { Simul } from "../Simul";
 import { MatchInterpolator } from "../game/interpolation/MatchInterpolator";
@@ -24,21 +23,18 @@ export class LobbyScene extends Scene {
 
 export class LobbyUI extends Grid {
     constructor() {
-        super([100, ]);
+        super([100], [10, 0.3, 0.4, 300, 0.3, 10], 10);
         Game.socketio.on("list matches", (matchList: MatchList) => {
             this.clear();
-            let matchListX = 40;
-            let matchListY = 40;
-            this.add(new Button("Create Match", matchListX, matchListY, 400, 80, () => {
+            let row = 0;
+            this.addComponent(new Button("Create Match", () => {
                 Game.socketio.emit("create match");
-            }));
-            for (let i = 0; i < matchList.matches.length; i++) {
-                let itemY = matchListY + (i + 1) * 100;
-                let match = matchList.matches[i];
-                this.add(new Button("Join " + match.name + " (" + match.playerCount + "/" + match.maxPlayers + ")",
-                    matchListX, itemY, 400, 80, () => {
+            }), row, 2, 1, 2, true);
+            for (let match of matchList.matches) {
+                row++;
+                this.addComponent(new Button("Join " + match.name + " (" + match.playerCount + "/" + match.maxPlayers + ")", () => {
                         Game.socketio.emit("join match", match.id);
-                    }));
+                    }), row, 2, 1, 2, true);
             }
         });
     }

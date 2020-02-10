@@ -3,11 +3,13 @@ import {PlayScene} from "../../scenes/PlayScene";
 import {Game} from "../../gfx/Game";
 import { Res } from "../Res";
 import { Simul } from "../../Simul";
+import Component from "../../gfx/ui/Component";
 
-export class HUD implements Renderable {
+export class HUD extends Component {
     playScene: PlayScene;
 
     constructor(playScene: PlayScene) {
+        super();
         this.playScene = playScene;
     }
 

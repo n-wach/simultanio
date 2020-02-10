@@ -7,6 +7,7 @@ function resizeCanvas() {
     Game.canvas.width = window.innerWidth * ratio;
     Game.canvas.height = window.innerHeight * ratio;
     Game.ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    if(Game.scene) Game.scene.resize();
 }
 
 function pixel_ratio() {

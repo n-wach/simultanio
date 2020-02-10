@@ -6,6 +6,8 @@ export default abstract class Component implements Renderable {
     width: number;
     height: number;
 
+    resize(): void {}
+
     abstract render(ctx: CanvasRenderingContext2D): void;
     abstract update(dt: number): void;
 
