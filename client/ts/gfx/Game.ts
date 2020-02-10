@@ -46,5 +46,6 @@ export class Game {
         }
         this.scene = scene;
         scene.initialize();
+        scene.resize();
     }
 }
