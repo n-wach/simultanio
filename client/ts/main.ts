@@ -1,6 +1,6 @@
-import {Game} from './gfx/Game'
-import {LobbyScene} from "./scenes/LobbyScene";
-import {Simul} from "./Simul";
+import Game from './gfx/Game'
+import LobbyScene from "./scenes/LobbyScene";
+import Simul from "./Simul";
 
 function resizeCanvas() {
     let ratio = pixel_ratio();
@@ -30,7 +30,7 @@ function loop() {
     let thisTime = new Date().getTime();
     let dt = (thisTime - lastTime) / 1000;
     lastTime = thisTime;
-    if(Simul.match) Simul.match.interpolate(dt);
+    Simul.update(dt);
     Game.update(dt);
     Game.render();
     window.requestAnimationFrame(loop);

@@ -1,8 +1,8 @@
 import Building from "./Building";
-import {TerrainRenderable} from "../ren/TerrainRenderable";
+import GameRenderable from "../ren/GameRenderable";
 
 export default class City extends Building {
-    static MAX_CIRCLE_RADIUS = TerrainRenderable.GRID_CELL_SIZE * 2;
+    static MAX_CIRCLE_RADIUS = GameRenderable.TILE_SIZE * 2;
     circleRadius: number = 0;
 
     draw(ctx: CanvasRenderingContext2D): void {

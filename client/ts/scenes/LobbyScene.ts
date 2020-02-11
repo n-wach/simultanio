@@ -1,17 +1,16 @@
-import {Scene} from "../gfx/Scene";
-import {Game} from "../gfx/Game";
+import Scene from "../gfx/Scene";
+import Game from "../gfx/Game";
 import {Match, MatchList} from "../comms";
-import {PlayScene} from "./PlayScene";
-import { Res } from "../game/Res";
-import { Simul } from "../Simul";
-import { MatchInterpolator } from "../game/interpolation/MatchInterpolator";
+import PlayScene from "./PlayScene";
+import Res from "../game/Res";
+import Simul from "../Simul";
+import MatchInterpolator from "../game/interpolation/MatchInterpolator";
 import Button from "../gfx/ui/Button";
 import Grid from "../gfx/ui/Grid";
-import {GameRenderable} from "../game/ren/GameRenderable";
-import {Vec2} from "../gfx/Vec2";
-import {TerrainRenderable} from "../game/ren/TerrainRenderable";
+import GameRenderable, {GameTransformationLayer} from "../game/ren/GameRenderable";
+import Vec2 from "../gfx/Vec2";
 
-export class LobbyScene extends Scene {
+export default class LobbyScene extends Scene {
     initialize() {
         Game.clearColor = Res.col_bg;
         this.ui = new Grid([100], [10, 0.3, 0.4, 300, 0.3, 10]);
@@ -34,8 +33,8 @@ export class LobbyScene extends Scene {
             let play = new PlayScene();
             Game.setScene(play);
             let o = new Vec2(window.innerWidth / 2, window.innerHeight / 2);
-            let s = TerrainRenderable.GRID_CELL_SIZE;
-            (play.stage as GameRenderable).ctxOrigin = new Vec2(o.x - focal.x * s, o.y - focal.y * s);
+            let s = GameRenderable.TILE_SIZE;
+            (play.stage as GameTransformationLayer).ctxOrigin = new Vec2(o.x - focal.x * s, o.y - focal.y * s);
         });
     }
 

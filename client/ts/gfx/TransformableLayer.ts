@@ -1,7 +1,7 @@
-import {Renderable} from "./Renderable";
-import {Vec2} from "./Vec2";
+import Renderable from "./Renderable";
+import Vec2 from "./Vec2";
 
-export class RenderableGroup implements Renderable {
+export default class TransformableLayer implements Renderable {
     renderables: Renderable[];
     ctxOrigin: Vec2 = new Vec2(0, 0);
     ctxScale: number = 1;

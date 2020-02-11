@@ -110,11 +110,9 @@ export default class Grid extends Component {
     }
 
     render(ctx: CanvasRenderingContext2D): void {
-        ctx.translate(this.x, this.y);
         for(let c of this.components) {
             c.render(ctx);
         }
-        ctx.translate(-this.x, -this.y);
     }
 
     update(dt: number): void {

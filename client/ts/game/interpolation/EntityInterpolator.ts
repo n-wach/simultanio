@@ -1,7 +1,7 @@
-import {Renderable} from "../../gfx/Renderable";
+import Renderable from "../../gfx/Renderable";
 import {BaseEntity, Id} from "../../comms";
 import Interpolated from "./Interpolated";
-import {TerrainRenderable} from "../ren/TerrainRenderable";
+import GameRenderable from "../ren/GameRenderable";
 
 export default abstract class EntityInterpolator extends Interpolated<BaseEntity> implements Renderable {
     x: number;
@@ -21,7 +21,7 @@ export default abstract class EntityInterpolator extends Interpolated<BaseEntity
     }
 
     render(ctx: CanvasRenderingContext2D): void {
-        let s = TerrainRenderable.GRID_CELL_SIZE;
+        let s = GameRenderable.TILE_SIZE;
         let hs = s / 2;
         ctx.translate(hs + s * this.x, hs + s * this.y);
         this.draw(ctx);

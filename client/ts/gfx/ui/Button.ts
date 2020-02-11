@@ -1,5 +1,5 @@
-import { Game } from "../Game";
-import { Res } from "../../game/Res";
+import Game from "../Game";
+import Res from "../../game/Res";
 import Label from "./Label";
 
 export default class Button extends Label {

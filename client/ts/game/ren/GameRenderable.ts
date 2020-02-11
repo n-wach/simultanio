@@ -1,13 +1,18 @@
-import { RenderableGroup } from "../../gfx/RenderableGroup";
-import { Game } from "../../gfx/Game";
-import { PlayerCommand } from "../../comms";
-import { TerrainRenderable } from "./TerrainRenderable";
-import {Renderable} from "../../gfx/Renderable";
-import {Simul} from "../../Simul";
-import {BasePlayerInterpolator} from "../interpolation/PlayerInterpolator";
+import TransformableLayer from "../../gfx/TransformableLayer";
+import Game from "../../gfx/Game";
+import {PlayerCommand} from "../../comms";
+import Renderable from "../../gfx/Renderable";
+import Simul from "../../Simul";
+import BasePlayerInterpolator from "../interpolation/PlayerInterpolator";
 
-class EntitiesRenderable implements Renderable {
+export default class GameRenderable implements Renderable {
+    static TILE_SIZE = 100;
+
     render(ctx: CanvasRenderingContext2D): void {
+        let w = Simul.match.terrainView.width * GameRenderable.TILE_SIZE;
+        let h = Simul.match.terrainView.height * GameRenderable.TILE_SIZE;
+        ctx.drawImage(Simul.terrainImage.terrainCanvas, 0, 0, w, h);
+
         this.renderPlayer(ctx, Simul.match.you);
 
         for(let o in Simul.match.otherPlayers) {
@@ -38,7 +43,7 @@ class EntitiesRenderable implements Renderable {
     }
 }
 
-export class GameRenderable extends RenderableGroup {
+export class GameTransformationLayer extends TransformableLayer {
     static EDGE_PAN_SPEED = 5;
     static EDGE_PAN_PROX = 8;
 
@@ -48,8 +53,8 @@ export class GameRenderable extends RenderableGroup {
             let p = this.transformToCanvas(event);
             Game.socketio.emit("player command", ({
                 command: "set target",
-                x: p.x / TerrainRenderable.GRID_CELL_SIZE,
-                y: p.y / TerrainRenderable.GRID_CELL_SIZE,
+                x: p.x / GameRenderable.TILE_SIZE,
+                y: p.y / GameRenderable.TILE_SIZE,
             } as PlayerCommand));
             return true;
         }, "mousedown", "touchstart");
@@ -64,14 +69,14 @@ export class GameRenderable extends RenderableGroup {
             this.zoomOnPoint(delta, this.transformToCanvas(event));
             return true;
         }, "wheel");
-        this.add(new TerrainRenderable(), new EntitiesRenderable());
+        this.add(new GameRenderable());
     }
 
     update(dt: number) {
         super.update(dt);
         let p = Game.input.mousePos;
-        let s = GameRenderable.EDGE_PAN_SPEED;
-        let prox = GameRenderable.EDGE_PAN_PROX;
+        let s = GameTransformationLayer.EDGE_PAN_SPEED;
+        let prox = GameTransformationLayer.EDGE_PAN_PROX;
         if(p.x < prox) {
             this.ctxOrigin.x += s;
         }
@@ -93,8 +98,8 @@ export class GameRenderable extends RenderableGroup {
         }
         let viewportWidth = window.innerWidth;
         let viewportHeight = window.innerHeight - 290;
-        let w = Simul.match.terrainView.width * TerrainRenderable.GRID_CELL_SIZE;
-        let h = Simul.match.terrainView.height * TerrainRenderable.GRID_CELL_SIZE;
+        let w = Simul.match.terrainView.width * TerrainImage.TILE_SIZE;
+        let h = Simul.match.terrainView.height * TerrainImage.TILE_SIZE;
         if(this.ctxOrigin.x < -w * this.ctxScale + viewportWidth) {
             this.ctxOrigin.x = -w * this.ctxScale + viewportWidth;
         }

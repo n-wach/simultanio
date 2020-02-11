@@ -4,7 +4,7 @@ import Interpolated from "./Interpolated";
 import getEntity from "../entity/EntityCreator";
 
 
-export class BasePlayerInterpolator extends Interpolated<BasePlayer>{
+export default class BasePlayerInterpolator extends Interpolated<BasePlayer>{
     color: Color;
     entities: {[id: number]: EntityInterpolator} = {}; // id is of type Id = number
 
