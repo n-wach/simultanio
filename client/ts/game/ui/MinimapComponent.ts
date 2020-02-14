@@ -6,6 +6,8 @@ import Game from "../../gfx/Game";
 
 export default class MinimapComponent extends Component {
     render(ctx: CanvasRenderingContext2D): void {
+        ctx.fillStyle = Res.pal_black;
+        ctx.fillRect(this.x, this.y, this.width, this.height);
         ctx.drawImage(Simul.mapImage.annotationCanvas, this.x, this.y, this.width, this.height);
         ctx.strokeStyle = Res.col_uifg;
 

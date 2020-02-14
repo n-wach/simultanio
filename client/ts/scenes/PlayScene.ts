@@ -9,7 +9,7 @@ import Simul from "../Simul";
 
 export default class PlayScene extends Scene {
     initialize() {
-        Game.clearColor = Res.col_bg;
+        Game.clearColor = Res.pal_black;
         this.stage = new GameTransformationLayer();
         this.ui = new HUD();
         Game.socketio.on("game update", (match: Match) => {

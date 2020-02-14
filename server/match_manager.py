@@ -1,6 +1,6 @@
 from flask import request
-from server.game.terrain import Terrain
 
+from server.game.terrain import Terrain
 from server.match import Match
 
 
@@ -8,7 +8,7 @@ class MatchManager:
     def __init__(self, socketio):
         self.socketio = socketio
         self.matches = []
-        self.terrain_queue = [Terrain(150, 150) for _ in range(5)]
+        self.terrain_queue = []
 
         self.tick_period = 5
         self.socketio.start_background_task(self.logic_loop)
@@ -16,7 +16,7 @@ class MatchManager:
     def logic_loop(self):
         while True:
             if len(self.terrain_queue) < 5:
-                self.terrain_queue.append(Terrain(150,150))
+                self.terrain_queue.append(Terrain(150, 150))
             self.socketio.sleep(self.tick_period)
 
     def create_match(self):

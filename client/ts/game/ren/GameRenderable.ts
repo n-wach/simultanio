@@ -1,6 +1,5 @@
 import TransformableLayer from "../../gfx/TransformableLayer";
 import Game from "../../gfx/Game";
-import {PlayerCommand} from "../../comms";
 import Renderable from "../../gfx/Renderable";
 import Simul from "../../Simul";
 import Res from "../Res";
@@ -49,15 +48,6 @@ export class GameTransformationLayer extends TransformableLayer {
 
     constructor() {
         super();
-        Game.input.addHandler((event) => {
-            let g = this.transformToGrid(event);
-            Game.socketio.emit("player command", ({
-                command: "set target",
-                x: g.x,
-                y: g.y,
-            } as PlayerCommand));
-            return true;
-        }, "mousedown", "touchstart");
         Game.input.addHandler((event) => {
             let delta = event.deltaY;
             //convert delta into pixels...
