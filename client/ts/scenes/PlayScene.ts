@@ -10,8 +10,8 @@ import Simul from "../Simul";
 export default class PlayScene extends Scene {
     initialize() {
         Game.clearColor = Res.col_bg;
-        this.ui = new HUD();
         this.stage = new GameTransformationLayer();
+        this.ui = new HUD();
         Game.socketio.on("game update", (match: Match) => {
             Simul.match.sync(match);
         });

@@ -26,7 +26,15 @@ export default class MinimapComponent extends Component {
     }
 
     update(dt: number): void {
-
+        super.update(dt);
+        if(Game.input.mouseDown && this.hovered) {
+            let hs = this.width / Simul.match.terrainView.width;
+            let vs = this.height / Simul.match.terrainView.height;
+            let ox = Game.input.mousePos.x - this.x;
+            let oy = Game.input.mousePos.y - this.y;
+            console.log(ox / hs, oy / vs);
+            (Game.scene.stage as GameTransformationLayer).centerOnGrid(ox / hs, oy / vs);
+        }
     }
 }
 

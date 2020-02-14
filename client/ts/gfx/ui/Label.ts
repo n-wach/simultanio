@@ -11,10 +11,6 @@ export default class Label extends Component {
         this.align = align;
     }
 
-    update(dt: number): void {
-
-    }
-
     render(ctx: CanvasRenderingContext2D): void {
         ctx.fillStyle = Res.col_uifg;
         ctx.font = Math.min(this.height - 10, Res.max_font) + "px " + Res.font_face;

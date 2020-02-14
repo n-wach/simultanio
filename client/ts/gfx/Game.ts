@@ -46,4 +46,8 @@ export default class Game {
         scene.initialize();
         scene.resize();
     }
+
+    static enterFullscreen() {
+        document.body.requestFullscreen().catch();
+    }
 }

@@ -116,6 +116,7 @@ export default class Grid extends Component {
     }
 
     update(dt: number): void {
+        super.update(dt);
         for(let c of this.components) {
             c.update(dt);
         }

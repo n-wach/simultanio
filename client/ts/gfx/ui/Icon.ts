@@ -11,10 +11,6 @@ export default class Icon extends Component {
         this.img.src = src;
     }
 
-    update(dt: number): void {
-
-    }
-
     render(ctx: CanvasRenderingContext2D): void {
         if(this.ready) ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
     }

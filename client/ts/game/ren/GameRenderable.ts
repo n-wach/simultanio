@@ -45,6 +45,7 @@ export class GameTransformationLayer extends TransformableLayer {
     topRightGrid: Vec2 = new Vec2(0, 0);
     bottomLeftGrid: Vec2 = new Vec2(0, 0);
     bottomRightGrid: Vec2 = new Vec2(0, 0);
+    center: Vec2 = new Vec2(0, 0);
 
     constructor() {
         super();
@@ -119,31 +120,21 @@ export class GameTransformationLayer extends TransformableLayer {
         let topRight = new Vec2(window.innerWidth, 40);
         let bottomLeft = new Vec2(250, window.innerHeight);
         let bottomRight = new Vec2(window.innerWidth, window.innerHeight);
-
+        let center = new Vec2((window.innerWidth + 250) / 2, (window.innerHeight + 40) / 2);
 
         this.topLeftGrid = this.transformVToGrid(topLeft);
         this.topRightGrid = this.transformVToGrid(topRight);
         this.bottomLeftGrid = this.transformVToGrid(bottomLeft);
         this.bottomRightGrid = this.transformVToGrid(bottomRight);
+        this.center = this.transformVToCanvas(center);
+    }
 
-        /* todo: keep center of screen within terrain view
-        if(this.ctxOrigin.x > 0) {
-            this.ctxOrigin.x = 0;
-        }
-        if(this.ctxOrigin.y > 40) {
-            this.ctxOrigin.y = 40;
-        }
-        let viewportWidth = window.innerWidth;
-        let viewportHeight = window.innerHeight - 290;
-        let w = Simul.match.terrainView.width * MapImage.TILE_SIZE;
-        let h = Simul.match.terrainView.height * MapImage.TILE_SIZE;
-        if(this.ctxOrigin.x < -w * this.ctxScale + viewportWidth) {
-            this.ctxOrigin.x = -w * this.ctxScale + viewportWidth;
-        }
-        if(this.ctxOrigin.y < -h * this.ctxScale + viewportHeight) {
-            this.ctxOrigin.y = -h * this.ctxScale + viewportHeight;
-        }
-        console.log(this.ctxOrigin);
-        */
+    centerOnGrid(x: number, y: number) {
+        let g = new Vec2(x * GameRenderable.TILE_SIZE, y * GameRenderable.TILE_SIZE);
+        let dx = this.center.x - g.x;
+        let dy = this.center.y - g.y;
+        this.ctxOrigin.x += dx * this.ctxScale;
+        this.ctxOrigin.y += dy * this.ctxScale;
+        this.update(0);
     }
 }

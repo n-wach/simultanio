@@ -35,6 +35,7 @@ export default class LobbyScene extends Scene {
             let o = new Vec2(window.innerWidth / 2, window.innerHeight / 2);
             let s = GameRenderable.TILE_SIZE;
             (play.stage as GameTransformationLayer).ctxOrigin = new Vec2(o.x - focal.x * s, o.y - focal.y * s);
+            Game.enterFullscreen();
         });
     }
 
