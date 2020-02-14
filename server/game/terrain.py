@@ -214,10 +214,11 @@ class TerrainView:
                     self.graph.add_edge((x - 1, y), p, weight=1)
                 if self.passable(x, y - 1):
                     self.graph.add_edge((x, y - 1), p, weight=1)
-                if self.passable(x - 1, y - 1):
-                    self.graph.add_edge((x - 1, y - 1), p, weight=1.414)
-                if self.passable(x + 1, y - 1):
-                    self.graph.add_edge((x + 1, y - 1), p, weight=1.414)
+                # todo: diagonals can lead to being stuck due to problems in entity align_x/y
+                # if self.passable(x - 1, y - 1):
+                #     self.graph.add_edge((x - 1, y - 1), p, weight=1.414)
+                # if self.passable(x + 1, y - 1):
+                #     self.graph.add_edge((x + 1, y - 1), p, weight=1.414)
 
     def path_length(self, origin, target):
         return networkx.astar_path_length(self.graph, origin, target, lambda s, d: (s[0] - d[0]) ** 2 + (s[1] - d[1]) ** 2, weight="weight")

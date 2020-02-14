@@ -13,7 +13,7 @@ class Match:
         STARTED = "started",
         ENDED = "ended",
 
-    def __init__(self, socketio, manager):
+    def __init__(self, socketio, manager, terrain):
         self.socketio = socketio
         self.manager = manager
         self.name = random_adjective().capitalize() + random_noun().capitalize()
@@ -23,7 +23,7 @@ class Match:
         self.tick_period = 0.2
         self.status = Match.Status.WAITING
         self.duration = 0
-        self.game = Game(self)
+        self.game = Game(self, terrain)
 
     def get_info(self):
         return {

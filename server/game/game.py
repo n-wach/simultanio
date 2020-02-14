@@ -3,10 +3,10 @@ from server.game.terrain import Terrain
 
 
 class Game:
-    def __init__(self, match):
+    def __init__(self, match, terrain):
         self.match = match
         self.players = []
-        self.terrain = Terrain(150, 150)
+        self.terrain = terrain
         self.player_slots = [True] * 4
 
     def gen_player_id(self):
