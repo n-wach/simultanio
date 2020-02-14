@@ -1,7 +1,7 @@
-import {Renderable} from "./Renderable";
+import Renderable from "./Renderable";
 import Grid from "./ui/Grid";
 
-export abstract class Scene {
+export default abstract class Scene {
     ui: Grid;
     stage: Renderable;
 

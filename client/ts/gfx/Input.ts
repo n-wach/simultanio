@@ -1,5 +1,5 @@
-import {Game} from "./Game";
-import {Vec2} from "./Vec2";
+import Game from "./Game";
+import Vec2 from "./Vec2";
 
 type InputHandlers = {
     [event: string]: ((event) => boolean)[],
@@ -9,7 +9,7 @@ type KeyStates = {
     [key: string]: KeyState,
 }
 
-export class Input {
+export default class Input {
     public mousePos: Vec2 = Vec2.zero;
     private keyStates: KeyStates = {};
     private handlers: InputHandlers = {};

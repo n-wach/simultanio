@@ -1,4 +1,4 @@
-import { Res } from "../../game/Res";
+import Res from "../../game/Res";
 import Component from "./Component";
 
 export default class Label extends Component {

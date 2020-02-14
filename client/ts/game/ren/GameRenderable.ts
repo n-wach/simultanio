@@ -1,55 +1,59 @@
-import { RenderableGroup } from "../../gfx/RenderableGroup";
-import { Game } from "../../gfx/Game";
-import { PlayerCommand } from "../../comms";
-import { TerrainRenderable } from "./TerrainRenderable";
-import {Renderable} from "../../gfx/Renderable";
-import {Simul} from "../../Simul";
-import {BasePlayerInterpolator} from "../interpolation/PlayerInterpolator";
+import TransformableLayer from "../../gfx/TransformableLayer";
+import Game from "../../gfx/Game";
+import {PlayerCommand} from "../../comms";
+import Renderable from "../../gfx/Renderable";
+import Simul from "../../Simul";
+import Res from "../Res";
+import Vec2 from "../../gfx/Vec2";
 
-class EntitiesRenderable implements Renderable {
+export default class GameRenderable implements Renderable {
+    static TILE_SIZE = 100;
+
     render(ctx: CanvasRenderingContext2D): void {
-        this.renderPlayer(ctx, Simul.match.you);
+        let t = GameRenderable.TILE_SIZE;
+        let w = Simul.match.terrainView.width * t;
+        let h = Simul.match.terrainView.height * t;
+        let smoothing = ctx.imageSmoothingEnabled;
 
-        for(let o in Simul.match.otherPlayers) {
-            this.renderPlayer(ctx, Simul.match.otherPlayers[o]);
-        }
-    }
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(Simul.mapImage.terrainCanvas, 0, 0, w, h);
+        ctx.imageSmoothingEnabled = smoothing;
 
-    renderPlayer(ctx: CanvasRenderingContext2D, player: BasePlayerInterpolator) {
-        ctx.fillStyle = player.color;
-        for(let o in player.entities) {
-            ctx.beginPath();
-            player.entities[o].render(ctx);
-            ctx.fill();
-        }
-    }
-
-    updatePlayerEntities(dt: number, player: BasePlayerInterpolator) {
-        for(let o in player.entities) {
-            player.entities[o].update(dt);
+        for(let player of Simul.match.allPlayers()) {
+            ctx.fillStyle = Res.player_colors[player.color].style;
+            for(let e in player.entities) {
+                ctx.beginPath();
+                player.entities[e].render(ctx);
+                ctx.fill();
+            }
         }
     }
 
     update(dt: number): void {
-        this.updatePlayerEntities(dt, Simul.match.you);
-        for(let o in Simul.match.otherPlayers) {
-            this.updatePlayerEntities(dt, Simul.match.otherPlayers[o]);
+        for(let player of Simul.match.allPlayers()) {
+            for(let o in player.entities) {
+                player.entities[o].update(dt);
+            }
         }
     }
 }
 
-export class GameRenderable extends RenderableGroup {
+export class GameTransformationLayer extends TransformableLayer {
     static EDGE_PAN_SPEED = 5;
     static EDGE_PAN_PROX = 8;
+    topLeftGrid: Vec2 = new Vec2(0, 0);
+    topRightGrid: Vec2 = new Vec2(0, 0);
+    bottomLeftGrid: Vec2 = new Vec2(0, 0);
+    bottomRightGrid: Vec2 = new Vec2(0, 0);
 
     constructor() {
         super();
         Game.input.addHandler((event) => {
-            let p = this.transformToCanvas(event);
+            let g = this.transformToGrid(event);
             Game.socketio.emit("player command", ({
                 command: "set target",
-                x: p.x / TerrainRenderable.GRID_CELL_SIZE,
-                y: p.y / TerrainRenderable.GRID_CELL_SIZE,
+                x: g.x,
+                y: g.y,
             } as PlayerCommand));
             return true;
         }, "mousedown", "touchstart");
@@ -61,17 +65,30 @@ export class GameRenderable extends RenderableGroup {
             } else if (event.deltaMode == WheelEvent.DOM_DELTA_PAGE) {
                 delta *= 800;  // also just a guess--no good way to predict these...
             }
-            this.zoomOnPoint(delta, this.transformToCanvas(event));
+            let minH = (window.innerWidth - 250) / (Simul.match.terrainView.width * GameRenderable.TILE_SIZE);
+            let minV = (window.innerHeight - 40) / (Simul.match.terrainView.height * GameRenderable.TILE_SIZE);
+            let minZoom = Math.max(minH, minV);
+            this.zoomOnPoint(delta, this.transformToCanvas(event), minZoom);
             return true;
         }, "wheel");
-        this.add(new TerrainRenderable(), new EntitiesRenderable());
+        this.add(new GameRenderable());
+    }
+
+    transformToGrid(event): Vec2 {
+        let c = this.transformToCanvas(event);
+        return new Vec2(c.x / GameRenderable.TILE_SIZE, c.y / GameRenderable.TILE_SIZE);
+    }
+
+    transformVToGrid(v: Vec2) {
+        let c = this.transformVToCanvas(v);
+        return new Vec2(c.x / GameRenderable.TILE_SIZE, c.y / GameRenderable.TILE_SIZE);
     }
 
     update(dt: number) {
         super.update(dt);
         let p = Game.input.mousePos;
-        let s = GameRenderable.EDGE_PAN_SPEED;
-        let prox = GameRenderable.EDGE_PAN_PROX;
+        let s = GameTransformationLayer.EDGE_PAN_SPEED;
+        let prox = GameTransformationLayer.EDGE_PAN_PROX;
         if(p.x < prox) {
             this.ctxOrigin.x += s;
         }
@@ -84,6 +101,31 @@ export class GameRenderable extends RenderableGroup {
         if(p.y > window.innerHeight - prox) {
             this.ctxOrigin.y -= s;
         }
+
+        if(this.ctxOrigin.x > 250) {
+            this.ctxOrigin.x = 250;
+        }
+        if(this.ctxOrigin.x < -Simul.match.terrainView.width * GameRenderable.TILE_SIZE  * this.ctxScale + window.innerWidth) {
+            this.ctxOrigin.x = -Simul.match.terrainView.width * GameRenderable.TILE_SIZE * this.ctxScale + window.innerWidth;
+        }
+        if(this.ctxOrigin.y > 40) {
+            this.ctxOrigin.y = 40;
+        }
+        if(this.ctxOrigin.y < -Simul.match.terrainView.height * GameRenderable.TILE_SIZE  * this.ctxScale + window.innerHeight) {
+            this.ctxOrigin.y = -Simul.match.terrainView.height * GameRenderable.TILE_SIZE * this.ctxScale + window.innerHeight;
+        }
+
+        let topLeft = new Vec2(250, 40);
+        let topRight = new Vec2(window.innerWidth, 40);
+        let bottomLeft = new Vec2(250, window.innerHeight);
+        let bottomRight = new Vec2(window.innerWidth, window.innerHeight);
+
+
+        this.topLeftGrid = this.transformVToGrid(topLeft);
+        this.topRightGrid = this.transformVToGrid(topRight);
+        this.bottomLeftGrid = this.transformVToGrid(bottomLeft);
+        this.bottomRightGrid = this.transformVToGrid(bottomRight);
+
         /* todo: keep center of screen within terrain view
         if(this.ctxOrigin.x > 0) {
             this.ctxOrigin.x = 0;
@@ -93,8 +135,8 @@ export class GameRenderable extends RenderableGroup {
         }
         let viewportWidth = window.innerWidth;
         let viewportHeight = window.innerHeight - 290;
-        let w = Simul.match.terrainView.width * TerrainRenderable.GRID_CELL_SIZE;
-        let h = Simul.match.terrainView.height * TerrainRenderable.GRID_CELL_SIZE;
+        let w = Simul.match.terrainView.width * MapImage.TILE_SIZE;
+        let h = Simul.match.terrainView.height * MapImage.TILE_SIZE;
         if(this.ctxOrigin.x < -w * this.ctxScale + viewportWidth) {
             this.ctxOrigin.x = -w * this.ctxScale + viewportWidth;
         }
