@@ -25,6 +25,7 @@ export default class TransformableLayer implements Renderable {
         ctx.save();
         ctx.translate(this.ctxOrigin.x, this.ctxOrigin.y);
         ctx.scale(this.ctxScale, this.ctxScale);
+        console.log(this.ctxOrigin);
         for (let renderable of this.renderables) {
             renderable.render(ctx);
         }

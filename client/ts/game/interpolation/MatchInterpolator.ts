@@ -42,4 +42,12 @@ export default class MatchInterpolator extends Interpolated<Match> {
             this.otherPlayers[o].interpolate(dt);
         }
     }
+
+    allPlayers(): BasePlayerInterpolator[] {
+        let players: BasePlayerInterpolator[] = [this.you];
+        for(let o in this.otherPlayers) {
+            players.push(this.otherPlayers[o])
+        }
+        return players;
+    }
 }

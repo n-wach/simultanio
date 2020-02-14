@@ -1,13 +1,13 @@
 import MatchInterpolator from "./game/interpolation/MatchInterpolator";
-import TerrainImage from "./game/ren/TerrainImage";
+import MapImage from "./game/ren/MapImage";
 
 export default class Simul {
     public static match: MatchInterpolator;
-    public static terrainImage: TerrainImage = new TerrainImage();
+    public static mapImage: MapImage = new MapImage();
     static update(dt: number) {
         if(Simul.match) {
             Simul.match.interpolate(dt);
-            Simul.terrainImage.update();
+            Simul.mapImage.update();
         }
     }
 }

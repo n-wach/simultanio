@@ -3,42 +3,38 @@ import Game from "../../gfx/Game";
 import {PlayerCommand} from "../../comms";
 import Renderable from "../../gfx/Renderable";
 import Simul from "../../Simul";
-import BasePlayerInterpolator from "../interpolation/PlayerInterpolator";
+import Res from "../Res";
 
 export default class GameRenderable implements Renderable {
     static TILE_SIZE = 100;
 
     render(ctx: CanvasRenderingContext2D): void {
-        let w = Simul.match.terrainView.width * GameRenderable.TILE_SIZE;
-        let h = Simul.match.terrainView.height * GameRenderable.TILE_SIZE;
-        ctx.drawImage(Simul.terrainImage.terrainCanvas, 0, 0, w, h);
+        let t = GameRenderable.TILE_SIZE;
+        let w = Simul.match.terrainView.width * t;
+        let h = Simul.match.terrainView.height * t;
+        let smoothing = ctx.imageSmoothingEnabled;
 
-        this.renderPlayer(ctx, Simul.match.you);
+        ctx.fillStyle = Res.col_uibg;
+        ctx.fillRect(-t, -t, w + 2*t, h + 2*t);
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(Simul.mapImage.terrainCanvas, 0, 0, w, h);
+        ctx.imageSmoothingEnabled = smoothing;
 
-        for(let o in Simul.match.otherPlayers) {
-            this.renderPlayer(ctx, Simul.match.otherPlayers[o]);
-        }
-    }
-
-    renderPlayer(ctx: CanvasRenderingContext2D, player: BasePlayerInterpolator) {
-        ctx.fillStyle = player.color;
-        for(let o in player.entities) {
-            ctx.beginPath();
-            player.entities[o].render(ctx);
-            ctx.fill();
-        }
-    }
-
-    updatePlayerEntities(dt: number, player: BasePlayerInterpolator) {
-        for(let o in player.entities) {
-            player.entities[o].update(dt);
+        for(let player of Simul.match.allPlayers()) {
+            ctx.fillStyle = Res.player_colors[player.color].style;
+            for(let e in player.entities) {
+                ctx.beginPath();
+                player.entities[e].render(ctx);
+                ctx.fill();
+            }
         }
     }
 
     update(dt: number): void {
-        this.updatePlayerEntities(dt, Simul.match.you);
-        for(let o in Simul.match.otherPlayers) {
-            this.updatePlayerEntities(dt, Simul.match.otherPlayers[o]);
+        for(let player of Simul.match.allPlayers()) {
+            for(let o in player.entities) {
+                player.entities[o].update(dt);
+            }
         }
     }
 }
@@ -98,8 +94,8 @@ export class GameTransformationLayer extends TransformableLayer {
         }
         let viewportWidth = window.innerWidth;
         let viewportHeight = window.innerHeight - 290;
-        let w = Simul.match.terrainView.width * TerrainImage.TILE_SIZE;
-        let h = Simul.match.terrainView.height * TerrainImage.TILE_SIZE;
+        let w = Simul.match.terrainView.width * MapImage.TILE_SIZE;
+        let h = Simul.match.terrainView.height * MapImage.TILE_SIZE;
         if(this.ctxOrigin.x < -w * this.ctxScale + viewportWidth) {
             this.ctxOrigin.x = -w * this.ctxScale + viewportWidth;
         }

@@ -1,24 +1,55 @@
 export default class Res {
     public static tile_colors = {
         "land": {
-            "minimapV": [0xac, 0xbd, 0x95, 0xff],
-            "minimapPV": [0xac * 0.8, 0xbd * 0.8, 0x95 * 0.8, 0xff],
+            "minimapV": 0xff95bdac,
+            "minimapPV": 0xff95bdac,
             "style": "#acbd95",
         },
         "water": {
-            "minimapV": [0x7c, 0xa1, 0x9f, 0xff],
-            "minimapPV": [0x7c * 0.8, 0xa1 * 0.8, 0x9f * 0.8, 0xff],
+            "minimapV": 0xff9fa17c,
+            "minimapPV": 0xff9fa17c,
             "style": "#7ca19f",
         },
         "matter_source": {
-            "minimapV": [0xcf, 0xb4, 0x94, 0xff],
-            "minimapPV": [0xcf * 0.8, 0xb4 * 0.8, 0x94 * 0.8, 0xff],
+            "minimapV": 0xff94b4cf,
+            "minimapPV": 0xff94b4cf,
             "style": "#cfb494",
         },
         "unknown": {
-            "minimapV": [0xad, 0xa4, 0x9c, 0xff],
-            "minimapPV": [0xad, 0xa4, 0x9c, 0xff],
+            "minimapV": 0xff9ca4ad,
+            "minimapPV": 0xff9ca4ad,
             "style": "#ada49c",
+        },
+    };
+
+    public static player_colors = {
+        "white": {
+            "minimapV": 0xffffffff,
+            "style": "white",
+        },
+        "red": {
+            "minimapV": 0xff0000ff,
+            "style": "red",
+        },
+        "orange": {
+            "minimapV": 0xff0080ff,
+            "style": "orange",
+        },
+        "yellow": {
+            "minimapV": 0xff00ffff,
+            "style": "yellow",
+        },
+        "green": {
+            "minimapV": 0xff00ff00,
+            "style": "green",
+        },
+        "blue": {
+            "minimapV": 0xffff0000,
+            "style": "blue",
+        },
+        "purple": {
+            "minimapV": 0xffff00ff,
+            "style": "purple",
         },
     };
 
