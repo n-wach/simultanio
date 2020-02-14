@@ -1,7 +1,7 @@
-import {Renderable} from "./Renderable";
-import {Vec2} from "./Vec2";
+import Renderable from "./Renderable";
+import Vec2 from "./Vec2";
 
-export class RenderableGroup implements Renderable {
+export default class TransformableLayer implements Renderable {
     renderables: Renderable[];
     ctxOrigin: Vec2 = new Vec2(0, 0);
     ctxScale: number = 1;
@@ -15,6 +15,11 @@ export class RenderableGroup implements Renderable {
         return new Vec2(scaled.x - this.ctxOrigin.x / this.ctxScale, scaled.y - this.ctxOrigin.y / this.ctxScale);
     }
 
+    transformVToCanvas(v: Vec2) {
+        let scaled = new Vec2(v.x / this.ctxScale, v.y / this.ctxScale);
+        return new Vec2(scaled.x - this.ctxOrigin.x / this.ctxScale, scaled.y - this.ctxOrigin.y / this.ctxScale);
+    }
+
     update(dt: number) {
         for (let renderable of this.renderables) {
             renderable.update(dt);
@@ -25,6 +30,7 @@ export class RenderableGroup implements Renderable {
         ctx.save();
         ctx.translate(this.ctxOrigin.x, this.ctxOrigin.y);
         ctx.scale(this.ctxScale, this.ctxScale);
+        console.log(this.ctxOrigin);
         for (let renderable of this.renderables) {
             renderable.render(ctx);
         }
@@ -43,10 +49,10 @@ export class RenderableGroup implements Renderable {
         this.renderables.splice(this.renderables.indexOf(ren), 1);
     }
 
-    zoomOnPoint(zoomFactor: number, point: Vec2) {
+    zoomOnPoint(zoomFactor: number, point: Vec2, minZoom: number=0.04, maxZoom: number=3) {
         let originalScale = this.ctxScale;
         let s = this.ctxScale - (zoomFactor * 0.005 * this.ctxScale);
-        s = Math.min(3, Math.max(0.04, s));
+        s = Math.min(maxZoom, Math.max(minZoom, s));
         this.ctxScale = s;
         let scaleChange = originalScale - this.ctxScale;
         this.ctxOrigin.x += (point.x * scaleChange);

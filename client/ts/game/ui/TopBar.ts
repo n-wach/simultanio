@@ -1,10 +1,10 @@
 import Grid from "../../gfx/ui/Grid";
 import Icon from "../../gfx/ui/Icon";
 import Button from "../../gfx/ui/Button";
-import {Game} from "../../gfx/Game";
-import {Res} from "../Res";
+import Game from "../../gfx/Game";
+import Res from "../Res";
 import Label from "../../gfx/ui/Label";
-import {Simul} from "../../Simul";
+import Simul from "../../Simul";
 
 export default class TopBar extends Grid {
     constructor() {

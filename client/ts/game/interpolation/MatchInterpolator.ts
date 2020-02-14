@@ -1,8 +1,8 @@
 import {Match, MatchListing, TerrainView} from "../../comms";
 import Interpolated from "./Interpolated";
-import {BasePlayerInterpolator, YouPlayerInterpolator} from "./PlayerInterpolator";
+import BasePlayerInterpolator, {YouPlayerInterpolator} from "./PlayerInterpolator";
 
-export class MatchInterpolator extends Interpolated<Match> {
+export default class MatchInterpolator extends Interpolated<Match> {
     you: YouPlayerInterpolator;
     otherPlayers: {[id: number]: BasePlayerInterpolator} = {};
     terrainView: TerrainView;
@@ -41,5 +41,13 @@ export class MatchInterpolator extends Interpolated<Match> {
         for(let o in this.otherPlayers) {
             this.otherPlayers[o].interpolate(dt);
         }
+    }
+
+    allPlayers(): BasePlayerInterpolator[] {
+        let players: BasePlayerInterpolator[] = [this.you];
+        for(let o in this.otherPlayers) {
+            players.push(this.otherPlayers[o])
+        }
+        return players;
     }
 }

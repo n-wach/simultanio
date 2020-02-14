@@ -1,11 +1,57 @@
-export class Res {
-    // map
-    public static col_land :string = "#acbd95";
-    public static col_water :string = "#7ca19f";
-    public static col_matter :string = "#cfb494";
-    public static col_fog :string = "#ada49c";
-    // a black mask is drawn over passively seen tiles at this alpha
-    public static passive_alpha :number = 0.2;
+export default class Res {
+    public static tile_colors = {
+        "land": {
+            "minimapV": 0xff95bdac,
+            "minimapPV": 0xff95bdac,
+            "style": "#acbd95",
+        },
+        "water": {
+            "minimapV": 0xff9fa17c,
+            "minimapPV": 0xff9fa17c,
+            "style": "#7ca19f",
+        },
+        "matter_source": {
+            "minimapV": 0xff94b4cf,
+            "minimapPV": 0xff94b4cf,
+            "style": "#cfb494",
+        },
+        "unknown": {
+            "minimapV": 0xff9ca4ad,
+            "minimapPV": 0xff9ca4ad,
+            "style": "#ada49c",
+        },
+    };
+
+    public static player_colors = {
+        "white": {
+            "minimapV": 0xffffffff,
+            "style": "white",
+        },
+        "red": {
+            "minimapV": 0xff0000ff,
+            "style": "red",
+        },
+        "orange": {
+            "minimapV": 0xff0080ff,
+            "style": "orange",
+        },
+        "yellow": {
+            "minimapV": 0xff00ffff,
+            "style": "yellow",
+        },
+        "green": {
+            "minimapV": 0xff00ff00,
+            "style": "green",
+        },
+        "blue": {
+            "minimapV": 0xffff0000,
+            "style": "blue",
+        },
+        "purple": {
+            "minimapV": 0xffff00ff,
+            "style": "purple",
+        },
+    };
 
     // ui
     public static col_bg :string = "#cfc5ba";

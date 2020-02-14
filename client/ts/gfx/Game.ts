@@ -1,10 +1,9 @@
-import {Scene} from './Scene'
-import {Input} from './Input';
-
+import Scene from './Scene'
+import Input from './Input';
 
 import * as io from 'socket.io-client';
 
-export class Game {
+export default class Game {
     static canvas: HTMLCanvasElement;
     static ctx: CanvasRenderingContext2D;
     static scene: Scene;
