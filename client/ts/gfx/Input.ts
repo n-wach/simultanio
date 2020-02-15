@@ -11,14 +11,23 @@ type KeyStates = {
 
 export default class Input {
     public mousePos: Vec2 = Vec2.zero;
+    public mouseDown: boolean = false;
     private keyStates: KeyStates = {};
     private handlers: InputHandlers = {};
-    private static supportedEvents: string[] = ["mousemove", "mousedown", "mouseup", "touchdown", "touchup", "touchmove", "wheel", "click"];
+    private static supportedEvents: string[] = ["mousemove", "mousedown", "mouseup", "touchdown", "touchup", "touchmove", "wheel", "click", "contextmenu"];
 
     constructor() {
         // mouse events
         Game.canvas.addEventListener("mousemove", (event) => {
             this.mousePos = new Vec2(event.offsetX, event.offsetY);
+        });
+
+        Game.canvas.addEventListener("mousedown", (event) => {
+            this.mouseDown = true;
+        });
+
+        Game.canvas.addEventListener("mouseup", (event) => {
+            this.mouseDown = false;
         });
 
         for(let supportedEvent of Input.supportedEvents) {
@@ -44,11 +53,14 @@ export default class Input {
     }
 
     handle(event) {
+        event.preventDefault();
+        event.stopPropagation();
         let handlers = this.handlers[event.type];
-        if(!handlers) return;
+        if(!handlers) return false;
         for(let handler of handlers) {
-            if(handler(event)) return;
+            if(handler(event)) return false;
         }
+        return false;
     }
 
     clearHandlers() {
@@ -60,7 +72,7 @@ export default class Input {
             if (!this.handlers[event]) {
                 this.handlers[event] = [handler];
             } else {
-                this.handlers[event].push(handler);
+                this.handlers[event].unshift(handler);
             }
         }
     }

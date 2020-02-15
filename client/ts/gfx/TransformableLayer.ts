@@ -30,7 +30,6 @@ export default class TransformableLayer implements Renderable {
         ctx.save();
         ctx.translate(this.ctxOrigin.x, this.ctxOrigin.y);
         ctx.scale(this.ctxScale, this.ctxScale);
-        console.log(this.ctxOrigin);
         for (let renderable of this.renderables) {
             renderable.render(ctx);
         }
@@ -49,7 +48,7 @@ export default class TransformableLayer implements Renderable {
         this.renderables.splice(this.renderables.indexOf(ren), 1);
     }
 
-    zoomOnPoint(zoomFactor: number, point: Vec2, minZoom: number=0.04, maxZoom: number=3) {
+    zoomOnPoint(zoomFactor: number, point: Vec2, minZoom: number=0.04, maxZoom: number=2) {
         let originalScale = this.ctxScale;
         let s = this.ctxScale - (zoomFactor * 0.005 * this.ctxScale);
         s = Math.min(maxZoom, Math.max(minZoom, s));
