@@ -6,9 +6,6 @@ import Res from "../Res";
 import Vec2 from "../../gfx/Vec2";
 
 export default class GameRenderable implements Renderable {
-    static ACTION_MAX_LIFETIME = 0.2;
-    static ACTION_MAX_RADIUS = 80;
-
     render(ctx: CanvasRenderingContext2D): void {
         let w = Simul.match.terrainView.width;
         let h = Simul.match.terrainView.height;
@@ -50,6 +47,8 @@ export default class GameRenderable implements Renderable {
 export class GameTransformationLayer extends TransformableLayer {
     static EDGE_PAN_SPEED = 5;
     static EDGE_PAN_PROX = 8;
+    static ACTION_MAX_LIFETIME = 0.2;
+    static ACTION_MAX_RADIUS = 80;
     topLeftGrid: Vec2 = new Vec2(0, 0);
     topRightGrid: Vec2 = new Vec2(0, 0);
     bottomLeftGrid: Vec2 = new Vec2(0, 0);
@@ -171,13 +170,13 @@ export class GameTransformationLayer extends TransformableLayer {
     }
 
     draw(ctx: CanvasRenderingContext2D) {
-        if(this.actionLocation && this.actionLifetime < GameRenderable.ACTION_MAX_LIFETIME) {
+        if(this.actionLocation && this.actionLifetime < GameTransformationLayer.ACTION_MAX_LIFETIME) {
             ctx.fillStyle = Res.map_action;
-            let l = this.actionLifetime / GameRenderable.ACTION_MAX_LIFETIME;
+            let l = this.actionLifetime / GameTransformationLayer.ACTION_MAX_LIFETIME;
             ctx.globalAlpha = l / 2;
             let x = this.actionLocation.x;
             let y = this.actionLocation.y;
-            let r = GameRenderable.ACTION_MAX_RADIUS * (1 - l) / this.ctxScale;
+            let r = GameTransformationLayer.ACTION_MAX_RADIUS * (1 - l) / this.ctxScale;
             ctx.beginPath();
             ctx.ellipse(x, y, r, r, 0, 0, Math.PI * 2);
             ctx.fill();
