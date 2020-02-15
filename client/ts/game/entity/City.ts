@@ -1,8 +1,7 @@
 import Building from "./Building";
-import GameRenderable from "../ren/GameRenderable";
 
 export default class City extends Building {
-    static MAX_CIRCLE_RADIUS = GameRenderable.TILE_SIZE * 2;
+    static MAX_CIRCLE_RADIUS = 2;
     circleRadius: number = 0;
 
     draw(ctx: CanvasRenderingContext2D): void {
@@ -12,14 +11,14 @@ export default class City extends Building {
         ctx.fill();
         ctx.globalAlpha = a;
         ctx.beginPath();
-        ctx.moveTo(0, 40);
-        ctx.lineTo(10, 10);
-        ctx.lineTo(40, 0);
-        ctx.lineTo(10, -10);
-        ctx.lineTo(0, -40);
-        ctx.lineTo(-10, -10);
-        ctx.lineTo(-40, 0);
-        ctx.lineTo(-10, 10);
+        ctx.moveTo(0, 0.4);
+        ctx.lineTo(0.1, 0.1);
+        ctx.lineTo(0.4, 0);
+        ctx.lineTo(0.1, -0.1);
+        ctx.lineTo(0, -0.4);
+        ctx.lineTo(-0.1, -0.1);
+        ctx.lineTo(-0.4, 0);
+        ctx.lineTo(-0.1, 0.1);
         ctx.closePath();
     }
 
