@@ -66,5 +66,6 @@ export default class Res {
     // fonts
     public static font_face :string = "Share Tech Mono";
     public static max_font :number = 24;
+    static map_action: string = "#18c043";
 
 }

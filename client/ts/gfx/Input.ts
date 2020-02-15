@@ -14,7 +14,7 @@ export default class Input {
     public mouseDown: boolean = false;
     private keyStates: KeyStates = {};
     private handlers: InputHandlers = {};
-    private static supportedEvents: string[] = ["mousemove", "mousedown", "mouseup", "touchdown", "touchup", "touchmove", "wheel", "click"];
+    private static supportedEvents: string[] = ["mousemove", "mousedown", "mouseup", "touchdown", "touchup", "touchmove", "wheel", "click", "contextmenu"];
 
     constructor() {
         // mouse events
@@ -53,11 +53,14 @@ export default class Input {
     }
 
     handle(event) {
+        event.preventDefault();
+        event.stopPropagation();
         let handlers = this.handlers[event.type];
-        if(!handlers) return;
+        if(!handlers) return false;
         for(let handler of handlers) {
-            if(handler(event)) return;
+            if(handler(event)) return false;
         }
+        return false;
     }
 
     clearHandlers() {

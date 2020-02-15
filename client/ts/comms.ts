@@ -91,13 +91,6 @@ export type Match = {
     terrainView: TerrainView,
 };
 
-export type SetTargetCommand = {
-    command: "set target",
-    id: Id,
-    x: number,
-    y: number,
-};
-
 export type SetTargetsCommand = {
     command: "set targets",
     ids: Id[],
@@ -105,5 +98,5 @@ export type SetTargetsCommand = {
     y: number,
 };
 
-export type PlayerCommand = SetTargetCommand | SetTargetsCommand;
+export type PlayerCommand = SetTargetsCommand;
 
