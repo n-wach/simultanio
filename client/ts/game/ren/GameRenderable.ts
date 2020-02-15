@@ -8,14 +8,6 @@ import Vec2 from "../../gfx/Vec2";
 export default class GameRenderable implements Renderable {
     static ACTION_MAX_LIFETIME = 0.2;
     static ACTION_MAX_RADIUS = 80;
-    actionLocation: Vec2 = null;
-    actionLifetime: number = 0;
-    layer: GameTransformationLayer;
-    selectionStart: Vec2 = null;
-
-    constructor(layer: GameTransformationLayer) {
-        this.layer = layer;
-    }
 
     render(ctx: CanvasRenderingContext2D): void {
         let w = Simul.match.terrainView.width;
@@ -44,56 +36,14 @@ export default class GameRenderable implements Renderable {
             }
         }
 
-
-        if(this.actionLocation && this.actionLifetime < GameRenderable.ACTION_MAX_LIFETIME) {
-            ctx.fillStyle = Res.map_action;
-            let l = this.actionLifetime / GameRenderable.ACTION_MAX_LIFETIME;
-            ctx.globalAlpha = l / 2;
-            let x = this.actionLocation.x;
-            let y = this.actionLocation.y;
-            let r = GameRenderable.ACTION_MAX_RADIUS * (1 - l) / this.layer.ctxScale;
-            ctx.beginPath();
-            ctx.ellipse(x, y, r, r, 0, 0, Math.PI * 2);
-            ctx.fill();
-        }
-
-        if(this.selectionStart) {
-            ctx.fillStyle = Res.map_action;
-            ctx.strokeStyle = Res.map_action;
-            let p = this.layer.transformVToCanvas(Game.input.mousePos);
-            let w = p.x - this.selectionStart.x;
-            let h = p.y - this.selectionStart.y;
-            ctx.globalAlpha = 1;
-            ctx.lineWidth = 2 / this.layer.ctxScale;
-            ctx.strokeRect(this.selectionStart.x, this.selectionStart.y, w, h);
-            ctx.globalAlpha = 0.5;
-            ctx.fillRect(this.selectionStart.x, this.selectionStart.y, w, h);
-        }
-        ctx.globalAlpha = 1;
     }
 
     update(dt: number): void {
-        let s = [];
-        let p = this.layer.transformVToCanvas(Game.input.mousePos);
         for(let player of Simul.match.allPlayers()) {
             for(let o in player.entities) {
-                let e = player.entities[o];
-                e.update(dt);
-                if(this.selectionStart && player == Simul.match.you) {
-                    let left = Math.min(this.selectionStart.x, p.x);
-                    let right = Math.max(this.selectionStart.x, p.x);
-                    let top = Math.min(this.selectionStart.y, p.y);
-                    let bot = Math.max(this.selectionStart.y, p.y);
-                    if(left < e.x && e.x < right && top < e.y && e.y < bot) {
-                        s.push(e);
-                    }
-                }
+                player.entities[o].update(dt);
             }
         }
-        if(this.selectionStart) {
-            Simul.selectedEntities = s;
-        }
-        this.actionLifetime += dt;
     }
 }
 
@@ -105,25 +55,27 @@ export class GameTransformationLayer extends TransformableLayer {
     bottomLeftGrid: Vec2 = new Vec2(0, 0);
     bottomRightGrid: Vec2 = new Vec2(0, 0);
     center: Vec2 = new Vec2(0, 0);
-    gameRenderable: GameRenderable = new GameRenderable(this);
+    actionLocation: Vec2 = null;
+    actionLifetime: number = 0;
+    selectionStart: Vec2 = null;
 
     constructor() {
         super();
         Game.input.addHandler((event) => {
             let g = this.transformToCanvas(event);
             if(event.button == 2) {
-                this.gameRenderable.actionLocation = g;
-                this.gameRenderable.actionLifetime = 0;
+                this.actionLocation = g;
+                this.actionLifetime = 0;
                 if(Simul.selectedEntityAction) Simul.selectedEntityAction.onuse(new Vec2(g.x + 0.5, g.y + 0.5));
                 return true;
             } else if(event.button == 0) {
-                this.gameRenderable.selectionStart = g;
+                this.selectionStart = g;
                 return true;
             }
             return false;
         }, "mousedown");
         Game.input.addHandler((event) => {
-            this.gameRenderable.selectionStart = null;
+            this.selectionStart = null;
             return false;
         }, "mouseup");
         Game.input.addHandler((event) => {
@@ -140,7 +92,7 @@ export class GameTransformationLayer extends TransformableLayer {
             this.zoomOnPoint(delta, this.transformToCanvas(event), minZoom);
             return true;
         }, "wheel");
-        this.add(this.gameRenderable);
+        this.add(new GameRenderable());
     }
 
     update(dt: number) {
@@ -162,14 +114,14 @@ export class GameTransformationLayer extends TransformableLayer {
         }
 
         let o = 0.5 * this.ctxScale;
-        if (this.ctxOrigin.x > 250 - o) {
-            this.ctxOrigin.x = 250 - o;
+        if (this.ctxOrigin.x > 250 + o) {
+            this.ctxOrigin.x = 250 + o;
         }
         if (this.ctxOrigin.x < o - Simul.match.terrainView.width * this.ctxScale + window.innerWidth) {
             this.ctxOrigin.x = o - Simul.match.terrainView.width * this.ctxScale + window.innerWidth;
         }
-        if (this.ctxOrigin.y > 40 - o) {
-            this.ctxOrigin.y = 40 - o;
+        if (this.ctxOrigin.y > 40 + o) {
+            this.ctxOrigin.y = 40 + o;
         }
         if (this.ctxOrigin.y < o - Simul.match.terrainView.height * this.ctxScale + window.innerHeight) {
             this.ctxOrigin.y = o - Simul.match.terrainView.height * this.ctxScale + window.innerHeight;
@@ -186,6 +138,28 @@ export class GameTransformationLayer extends TransformableLayer {
         this.bottomLeftGrid = this.transformVToCanvas(bottomLeft);
         this.bottomRightGrid = this.transformVToCanvas(bottomRight);
         this.center = this.transformVToCanvas(center);
+
+        this.actionLifetime += dt;
+
+        let px = this.transformVToCanvas(p);
+        if (this.selectionStart) {
+            let s = [];
+            for (let o in Simul.match.you.entities) {
+                let e = Simul.match.you.entities[o];
+                if (this.selectionStart) {
+                    let left = Math.min(this.selectionStart.x, px.x);
+                    let right = Math.max(this.selectionStart.x, px.x);
+                    let top = Math.min(this.selectionStart.y, px.y);
+                    let bot = Math.max(this.selectionStart.y, px.y);
+                    if (left < e.x && e.x < right && top < e.y && e.y < bot) {
+                        s.push(e);
+                    }
+                }
+            }
+            Simul.selectedEntities = s;
+        }
+
+        this.actionLifetime += dt;
     }
 
     centerOnGrid(x: number, y: number) {
@@ -194,5 +168,33 @@ export class GameTransformationLayer extends TransformableLayer {
         this.ctxOrigin.x += dx * this.ctxScale;
         this.ctxOrigin.y += dy * this.ctxScale;
         this.update(0);
+    }
+
+    draw(ctx: CanvasRenderingContext2D) {
+        if(this.actionLocation && this.actionLifetime < GameRenderable.ACTION_MAX_LIFETIME) {
+            ctx.fillStyle = Res.map_action;
+            let l = this.actionLifetime / GameRenderable.ACTION_MAX_LIFETIME;
+            ctx.globalAlpha = l / 2;
+            let x = this.actionLocation.x;
+            let y = this.actionLocation.y;
+            let r = GameRenderable.ACTION_MAX_RADIUS * (1 - l) / this.ctxScale;
+            ctx.beginPath();
+            ctx.ellipse(x, y, r, r, 0, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        if(this.selectionStart) {
+            ctx.fillStyle = Res.map_action;
+            ctx.strokeStyle = Res.map_action;
+            let p = this.transformVToCanvas(Game.input.mousePos);
+            let w = p.x - this.selectionStart.x;
+            let h = p.y - this.selectionStart.y;
+            ctx.globalAlpha = 1;
+            ctx.lineWidth = 2 / this.ctxScale;
+            ctx.strokeRect(this.selectionStart.x, this.selectionStart.y, w, h);
+            ctx.globalAlpha = 0.5;
+            ctx.fillRect(this.selectionStart.x, this.selectionStart.y, w, h);
+        }
+        ctx.globalAlpha = 1;
     }
 }

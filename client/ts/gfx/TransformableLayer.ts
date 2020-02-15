@@ -1,7 +1,7 @@
 import Renderable from "./Renderable";
 import Vec2 from "./Vec2";
 
-export default class TransformableLayer implements Renderable {
+export default abstract class TransformableLayer implements Renderable {
     renderables: Renderable[];
     ctxOrigin: Vec2 = new Vec2(0, 0);
     ctxScale: number = 100;
@@ -26,6 +26,8 @@ export default class TransformableLayer implements Renderable {
         }
     }
 
+    abstract draw(ctx: CanvasRenderingContext2D);
+
     render(ctx: CanvasRenderingContext2D): void {
         ctx.save();
         ctx.translate(this.ctxOrigin.x, this.ctxOrigin.y);
@@ -33,6 +35,7 @@ export default class TransformableLayer implements Renderable {
         for (let renderable of this.renderables) {
             renderable.render(ctx);
         }
+        this.draw(ctx);
         ctx.restore();
     }
 
