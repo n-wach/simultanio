@@ -4,6 +4,7 @@ import Game from "../../gfx/Game";
 import Simul from "../../Simul";
 import Res from "../Res";
 import GameRenderable from "./GameRenderable";
+import Unit from "../entity/Unit";
 
 export default class GameTransformationLayer extends TransformableLayer {
     static EDGE_PAN_SPEED = 5;
@@ -134,7 +135,7 @@ export default class GameTransformationLayer extends TransformableLayer {
             let s = [];
             for (let o in Simul.match.you.entities) {
                 let e = Simul.match.you.entities[o];
-                if (e.isUnit()) {
+                if (e instanceof Unit) {
                     let left = Math.min(this.selectionStart.x, px.x);
                     let right = Math.max(this.selectionStart.x, px.x);
                     let top = Math.min(this.selectionStart.y, px.y);

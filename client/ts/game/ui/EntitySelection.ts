@@ -30,7 +30,7 @@ export default class EntitySelection extends Component {
                 ctx.save();
                 ctx.translate(x * this.width / s, y * this.height / s);
                 ctx.save();
-                ctx.scale(this.width / 2 / s, this.width / 2 / s);
+                ctx.scale(this.width / 2 / s, this.height / 2 / s);
                 ctx.beginPath();
                 ctx.rect(-1, -1, 2, 2);
                 ctx.clip();

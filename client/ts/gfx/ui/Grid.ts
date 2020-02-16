@@ -9,7 +9,8 @@ export default class Grid extends Component {
     colWidths: number[] = [];
 
     components: Component[] = [];
-    positions: [number, number, number, number, number][] = [];
+    //row,col,rspan,cspan,hmargin,vmargin
+    positions: [number, number, number, number, number, number][] = [];
 
     constructor(rowHeights: number[], colWidths: number[]) {
         super();
@@ -43,8 +44,7 @@ export default class Grid extends Component {
         }
     }
 
-    evalPosition(row: number, col: number, rowSpan: number, colSpan: number, margin: number) {
-        let m = margin / 2;
+    evalPosition(row: number, col: number, rowSpan: number, colSpan: number, hmargin: number, vmargin) {
         let w = 0;
         let h = 0;
         for(let c = 0; c < colSpan; c++) {
@@ -54,21 +54,21 @@ export default class Grid extends Component {
             h += this.getHeight(row + r);
         }
         return {
-            x: this.getX(col) + m,
-            y: this.getY(row) + m,
-            width: w - m * 2,
-            height: h - m * 2,
+            x: this.getX(col) + hmargin / 2,
+            y: this.getY(row) + vmargin / 2,
+            width: w - hmargin,
+            height: h - vmargin,
         };
     }
 
-    addComponent(component: Component, row: number, col: number, rowSpan: number=1, colSpan: number=1, margin: number=0) {
-        let p = this.evalPosition(row, col, rowSpan, colSpan, margin);
+    addComponent(component: Component, row: number, col: number, rowSpan: number=1, colSpan: number=1, hmargin: number=0, vmargin: number=0) {
+        let p = this.evalPosition(row, col, rowSpan, colSpan, hmargin, vmargin);
         component.x = p.x;
         component.y = p.y;
         component.width = p.width;
         component.height = p.height;
         this.components.push(component);
-        this.positions.push([row, col, rowSpan, colSpan, margin]);
+        this.positions.push([row, col, rowSpan, colSpan, hmargin, vmargin]);
     }
 
     clear() {

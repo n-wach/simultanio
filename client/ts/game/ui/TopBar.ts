@@ -12,14 +12,14 @@ export default class TopBar extends Grid {
         Game.input.addHandler((event) => {
             return this.hovered;
         }, "mousedown");
-        this.addComponent(new Icon("/energy.png"), 0, 0, 1, 1, 10);
+        this.addComponent(new Icon("/energy.png"), 0, 0, 1, 1, 10, 10);
         this.addComponent(new EnergyLabel(), 0, 1);
-        this.addComponent(new Icon("/matter.png"), 0, 2, 1, 1, 10);
+        this.addComponent(new Icon("/matter.png"), 0, 2, 1, 1, 10, 10);
         this.addComponent(new MatterLabel(), 0, 3);
-        this.addComponent(new TimeLabel(), 0, 4, 1, 1, 0);
+        this.addComponent(new TimeLabel(), 0, 4);
         this.addComponent(new Button("X", () => {
             Game.socketio.emit("leave match");
-        }), 0, 6, 1, 1, 5);
+        }), 0, 6, 1, 1, 5, 5);
     }
     render(ctx: CanvasRenderingContext2D): void {
         ctx.fillStyle = Res.col_uibg;
