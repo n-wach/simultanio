@@ -3,9 +3,9 @@ import LobbyScene from "./LobbyScene";
 import Game from "../gfx/Game";
 import HUD from "../game/ui/HUD";
 import Res from "../game/Res";
-import {GameTransformationLayer} from "../game/ren/GameRenderable";
 import {Match} from "../comms";
 import Simul from "../Simul";
+import GameTransformationLayer from "../game/ren/GameTransformationLayer";
 
 export default class PlayScene extends Scene {
     stage: GameTransformationLayer;

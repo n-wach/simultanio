@@ -10,4 +10,8 @@ export default class Scout extends Unit {
         ctx.closePath();
         ctx.rotate(-this.orientation);
     }
+
+    getName(): string {
+        return "Scout";
+    }
 }

@@ -14,6 +14,7 @@ class MatchManager:
         self.socketio.start_background_task(self.logic_loop)
 
     def logic_loop(self):
+        self.socketio.sleep(0.1)
         while True:
             if len(self.terrain_queue) < 5:
                 self.terrain_queue.append(Terrain(150, 150))
