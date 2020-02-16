@@ -7,10 +7,13 @@ import GameRenderable from "./GameRenderable";
 import Unit from "../entity/Unit";
 
 export default class GameTransformationLayer extends TransformableLayer {
-    static EDGE_PAN_SPEED = 5;
+    static PAN_SPEED = 5;
+    static FAST_PAN_MULT = 5;
+    static KBD_ZOOM_DELTA = 48;
     static EDGE_PAN_PROX = 8;
     static ACTION_MAX_LIFETIME = 0.2;
     static ACTION_MAX_RADIUS = 80;
+    minZoom: number;
     topLeftGrid: Vec2 = new Vec2(0, 0);
     topRightGrid: Vec2 = new Vec2(0, 0);
     bottomLeftGrid: Vec2 = new Vec2(0, 0);
@@ -22,6 +25,10 @@ export default class GameTransformationLayer extends TransformableLayer {
 
     constructor() {
         super();
+
+        let minH = (window.innerWidth - 250) / Simul.match.terrainView.width;
+        let minV = (window.innerHeight - 40) / Simul.match.terrainView.height;
+        this.minZoom = Math.max(minH, minV);
         Game.input.addHandler((event) => {
             if(event.button == 0 && Simul.selectedEntities.length == 0) {
                 let p = this.transformToCanvas(event);
@@ -48,14 +55,15 @@ export default class GameTransformationLayer extends TransformableLayer {
             }
             return false;
         }, "click");
+
         Game.input.addHandler((event) => {
             let g = this.transformToCanvas(event);
-            if(event.button == 2) {
+            if (event.button == 2) {
                 this.actionLocation = g;
                 this.actionLifetime = 0;
-                if(Simul.selectedEntityAction) Simul.selectedEntityAction.onuse(new Vec2(g.x + 0.5, g.y + 0.5));
+                if (Simul.selectedEntityAction) Simul.selectedEntityAction.onuse(new Vec2(g.x + 0.5, g.y + 0.5));
                 return true;
-            } else if(event.button == 0) {
+            } else if (event.button == 0) {
                 this.selectionStart = g;
                 return true;
             }
@@ -75,10 +83,8 @@ export default class GameTransformationLayer extends TransformableLayer {
             } else if (event.deltaMode == WheelEvent.DOM_DELTA_PAGE) {
                 delta *= 800;  // also just a guess--no good way to predict these...
             }
-            let minH = (window.innerWidth - 250) / Simul.match.terrainView.width;
-            let minV = (window.innerHeight - 40) / Simul.match.terrainView.height;
-            let minZoom = Math.max(minH, minV);
-            this.zoomOnPoint(delta, this.transformToCanvas(event), minZoom);
+            // console.log('zm delta', delta);
+            this.zoomOnPoint(delta, this.transformToCanvas(event), this.minZoom);
             return true;
         }, "wheel");
         this.add(new GameRenderable());
@@ -86,8 +92,12 @@ export default class GameTransformationLayer extends TransformableLayer {
 
     update(dt: number) {
         super.update(dt);
+
+        // - view navigation
+        this.updateNavigationInput();
+
         let p = Game.input.mousePos;
-        let s = GameTransformationLayer.EDGE_PAN_SPEED;
+        let s = GameTransformationLayer.PAN_SPEED;
         let prox = GameTransformationLayer.EDGE_PAN_PROX;
         if (p.x < prox) {
             this.ctxOrigin.x += s;
@@ -151,6 +161,33 @@ export default class GameTransformationLayer extends TransformableLayer {
         this.actionLifetime += dt;
     }
 
+    updateNavigationInput() {
+        var panSpeed = GameTransformationLayer.PAN_SPEED;
+        if (Game.input.isKeyDown('Shift')) {
+            panSpeed *= GameTransformationLayer.FAST_PAN_MULT;
+        }
+        if (Game.input.isKeyDown('ArrowRight', 'd')) {
+            this.ctxOrigin.x -= panSpeed;
+        }
+        if (Game.input.isKeyDown('ArrowLeft', 'a')) {
+            this.ctxOrigin.x += panSpeed;
+        }
+        if (Game.input.isKeyDown('ArrowUp', 'w')) {
+            this.ctxOrigin.y += panSpeed;
+        }
+        if (Game.input.isKeyDown('ArrowDown', 's')) {
+            this.ctxOrigin.y -= panSpeed;
+        }
+
+        // keyboard zoom
+        if (Game.input.isKeyPressed('-')) {
+            this.zoomOnPoint(GameTransformationLayer.KBD_ZOOM_DELTA, this.center, this.minZoom);
+        }
+        if (Game.input.isKeyPressed('=')) {
+            this.zoomOnPoint(-GameTransformationLayer.KBD_ZOOM_DELTA, this.center, this.minZoom);
+        }
+    }
+
     centerOnGrid(x: number, y: number) {
         let dx = this.center.x - x;
         let dy = this.center.y - y;
@@ -160,7 +197,7 @@ export default class GameTransformationLayer extends TransformableLayer {
     }
 
     draw(ctx: CanvasRenderingContext2D) {
-        if(this.actionLocation && this.actionLifetime < GameTransformationLayer.ACTION_MAX_LIFETIME) {
+        if (this.actionLocation && this.actionLifetime < GameTransformationLayer.ACTION_MAX_LIFETIME) {
             ctx.fillStyle = Res.map_action;
             let l = this.actionLifetime / GameTransformationLayer.ACTION_MAX_LIFETIME;
             ctx.globalAlpha = l / 2;
@@ -172,7 +209,7 @@ export default class GameTransformationLayer extends TransformableLayer {
             ctx.fill();
         }
 
-        if(this.selectionStart) {
+        if (this.selectionStart) {
             ctx.fillStyle = Res.map_action;
             ctx.strokeStyle = Res.map_action;
             let p = this.transformVToCanvas(Game.input.mousePos);
