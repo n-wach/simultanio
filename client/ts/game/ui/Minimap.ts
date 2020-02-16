@@ -1,10 +1,10 @@
 import Component from "../../gfx/ui/Component";
 import Simul from "../../Simul";
 import Res from "../Res";
-import {GameTransformationLayer} from "../ren/GameRenderable";
 import Game from "../../gfx/Game";
+import GameTransformationLayer from "../ren/GameTransformationLayer";
 
-export default class MinimapComponent extends Component {
+export default class Minimap extends Component {
     render(ctx: CanvasRenderingContext2D): void {
         ctx.fillStyle = Res.pal_black;
         ctx.fillRect(this.x, this.y, this.width, this.height);
@@ -16,6 +16,7 @@ export default class MinimapComponent extends Component {
 
         let hs = this.width / Simul.match.terrainView.width;
         let vs = this.height / Simul.match.terrainView.height;
+
         let x = tl.x * hs;
         let y = tl.y * vs;
 

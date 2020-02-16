@@ -34,4 +34,10 @@ export default abstract class UnitInterpolator extends EntityInterpolator {
             }
         }
     }
+    isUnit(): boolean {
+        return true;
+    }
+    isBuilding(): boolean {
+        return false;
+    }
 }

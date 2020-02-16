@@ -5,6 +5,7 @@ from server.game.unit import Scout, Unit
 
 
 class Player:
+
     class Color:
         RED = "red"
         ORANGE = "orange"
@@ -24,9 +25,8 @@ class Player:
         spawn_pos = game.terrain.spawn_positions[player_id]
 
         self.capital = City(self, spawn_pos[0], spawn_pos[1])
-        self.scout = Scout(self, self.capital.grid_x, self.capital.grid_y)
 
-        self.entities = [self.capital, self.scout]
+        self.entities = [self.capital] + [Scout(self, p[0], p[1]) for p in self.terrain_view.terrain.neighboring_points(*spawn_pos)]
         self.id = id(self)
         self.player_id = player_id
 

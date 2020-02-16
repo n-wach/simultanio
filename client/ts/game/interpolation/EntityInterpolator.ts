@@ -25,6 +25,12 @@ export default abstract class EntityInterpolator extends Interpolated<BaseEntity
         ctx.translate(-this.x, -this.y);
     }
 
+    abstract isUnit(): boolean;
+
+    abstract isBuilding(): boolean;
+
+    abstract getName(): string;
+
     abstract draw(ctx: CanvasRenderingContext2D): void;
 
     abstract update(dt: number): void;

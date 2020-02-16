@@ -7,7 +7,7 @@ import Simul from "../Simul";
 import MatchInterpolator from "../game/interpolation/MatchInterpolator";
 import Button from "../gfx/ui/Button";
 import Grid from "../gfx/ui/Grid";
-import {GameTransformationLayer} from "../game/ren/GameRenderable";
+import GameTransformationLayer from "../game/ren/GameTransformationLayer";
 
 export default class LobbyScene extends Scene {
     initialize() {
