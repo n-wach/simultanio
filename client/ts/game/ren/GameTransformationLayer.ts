@@ -22,6 +22,32 @@ export default class GameTransformationLayer extends TransformableLayer {
     constructor() {
         super();
         Game.input.addHandler((event) => {
+            if(event.button == 0 && Simul.selectedEntities.length == 0) {
+                let p = this.transformToCanvas(event);
+                let closest = null;
+                let closestDist = 0;
+                for(let e in Simul.match.you.entities) {
+                    let en = Simul.match.you.entities[e];
+                    let dx = en.x - p.x;
+                    let dy = en.y - p.y;
+                    let dd2 = dx * dx + dy * dy;
+                    if(dd2 < 0.3) {
+                        if(!closest || (closest && closestDist > dd2)) {
+                            closest = en;
+                            closestDist = dd2;
+                        }
+                    }
+                }
+                if(closest) {
+                    Simul.selectedEntities = [closest];
+                } else {
+                    Simul.selectedEntities = [];
+                }
+                return true;
+            }
+            return false;
+        }, "click");
+        Game.input.addHandler((event) => {
             let g = this.transformToCanvas(event);
             if(event.button == 2) {
                 this.actionLocation = g;
@@ -35,7 +61,9 @@ export default class GameTransformationLayer extends TransformableLayer {
             return false;
         }, "mousedown");
         Game.input.addHandler((event) => {
-            this.selectionStart = null;
+            if(event.button == 0) {
+                this.selectionStart = null;
+            }
             return false;
         }, "mouseup");
         Game.input.addHandler((event) => {
@@ -106,7 +134,7 @@ export default class GameTransformationLayer extends TransformableLayer {
             let s = [];
             for (let o in Simul.match.you.entities) {
                 let e = Simul.match.you.entities[o];
-                if (this.selectionStart) {
+                if (e.isUnit()) {
                     let left = Math.min(this.selectionStart.x, px.x);
                     let right = Math.max(this.selectionStart.x, px.x);
                     let top = Math.min(this.selectionStart.y, px.y);

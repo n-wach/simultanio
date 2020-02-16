@@ -14,7 +14,7 @@ export default class Input {
     public mouseDown: boolean = false;
     private keyStates: KeyStates = {};
     private handlers: InputHandlers = {};
-    private static supportedEvents: string[] = ["mousemove", "mousedown", "mouseup", "touchdown", "touchup", "touchmove", "wheel", "click", "contextmenu"];
+    private static supportedEvents: string[] = ["mousemove", "mousedown", "mouseup", "wheel", "click", "contextmenu"];
 
     constructor() {
         // mouse events
