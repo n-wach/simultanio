@@ -35,7 +35,7 @@ export default class Input {
         }
 
         // keyboard events
-        Game.canvas.addEventListener("keydown", (event) => {
+        Game.window.addEventListener("keydown", (event) => {
             if (!this.keyStates[event.key]) {
                 this.keyStates[event.key] = new KeyState();
             }
@@ -43,13 +43,13 @@ export default class Input {
                 this.keyStates[event.key].down = true;
                 this.keyStates[event.key].pressFrame = Game.frame;
             }
-        });
-        Game.canvas.addEventListener("keyup", (event) => {
+        }, true);
+        Game.window.addEventListener("keyup", (event) => {
             if (!this.keyStates[event.key]) {
                 this.keyStates[event.key] = new KeyState();
             }
             this.keyStates[event.key].down = false;
-        });
+        }, true);
     }
 
     handle(event) {
@@ -81,6 +81,7 @@ export default class Input {
 
     }
 
+    // whether the key is down
     isKeyDown(key: string): boolean {
         if (!this.keyStates[key]) {
             this.keyStates[key] = new KeyState();
@@ -88,6 +89,7 @@ export default class Input {
         return this.keyStates[key].down;
     }
 
+    // whether the key was pressed this frame
     isKeyPressed(key: string): boolean {
         if (!this.keyStates[key]) {
             this.keyStates[key] = new KeyState();
@@ -98,6 +100,6 @@ export default class Input {
 }
 
 class KeyState {
-    public down: boolean;
-    public pressFrame: number;
+    public down: boolean = false;
+    public pressFrame: number = -1;
 }
