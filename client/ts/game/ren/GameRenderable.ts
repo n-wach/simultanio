@@ -45,7 +45,8 @@ export default class GameRenderable implements Renderable {
 }
 
 export class GameTransformationLayer extends TransformableLayer {
-    static EDGE_PAN_SPEED = 5;
+    static PAN_SPEED = 5;
+    static FAST_PAN_MULT = 5;
     static EDGE_PAN_PROX = 8;
     static ACTION_MAX_LIFETIME = 0.2;
     static ACTION_MAX_RADIUS = 80;
@@ -96,8 +97,12 @@ export class GameTransformationLayer extends TransformableLayer {
 
     update(dt: number) {
         super.update(dt);
+
+        // - view navigation
+        this.updateNavigationInput();
+
         let p = Game.input.mousePos;
-        let s = GameTransformationLayer.EDGE_PAN_SPEED;
+        let s = GameTransformationLayer.PAN_SPEED;
         let prox = GameTransformationLayer.EDGE_PAN_PROX;
         if (p.x < prox) {
             this.ctxOrigin.x += s;
@@ -159,6 +164,27 @@ export class GameTransformationLayer extends TransformableLayer {
         }
 
         this.actionLifetime += dt;
+    }
+    updateNavigationInput() {
+        // use SPACE as the master pan key
+        if (Game.input.isKeyDown(' ')) {
+            var panSpeed = GameTransformationLayer.PAN_SPEED;
+            if (Game.input.isKeyDown('Shift')) {
+                panSpeed *= GameTransformationLayer.FAST_PAN_MULT;
+            }
+            if (Game.input.isKeyDown('ArrowRight')) {
+                this.ctxOrigin.x -= panSpeed;
+            }
+            if (Game.input.isKeyDown('ArrowLeft')) {
+                this.ctxOrigin.x += panSpeed;
+            }
+            if (Game.input.isKeyDown('ArrowUp')) {
+                this.ctxOrigin.y += panSpeed;
+            }
+            if (Game.input.isKeyDown('ArrowDown')) {
+                this.ctxOrigin.y -= panSpeed;
+            }
+        }
     }
 
     centerOnGrid(x: number, y: number) {
