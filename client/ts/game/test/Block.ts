@@ -14,7 +14,8 @@ export default class Block implements Renderable {
     }
 
     update(dt: number) {
-        if (Game.input.isKeyDown('a')) {
+        if (Game.input.isKeyPressed('a')) {
+            console.log('button hit');
             this.color = 'red';
         } else {
             this.color = 'black';
