@@ -7,8 +7,6 @@ import Simul from "../Simul";
 import MatchInterpolator from "../game/interpolation/MatchInterpolator";
 import Button from "../gfx/ui/Button";
 import Grid from "../gfx/ui/Grid";
-import Block from "../game/test/Block";
-import Vec2 from "../gfx/Vec2";
 
 export default class LobbyScene extends Scene {
     initialize() {
@@ -36,9 +34,6 @@ export default class LobbyScene extends Scene {
             play.stage.centerOnGrid(focal.x, focal.y);
             Game.enterFullscreen();
         });
-
-        var block = new Block(new Vec2(20, 20), 40);
-        this.renderables.push(block);
     }
 
     destroy() { }

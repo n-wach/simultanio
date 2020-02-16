@@ -1,11 +1,11 @@
 import Renderable from "../../gfx/Renderable";
-import Component from "../../gfx/ui/Component";
-import Res from "../Res";
 import Vec2 from "../../gfx/Vec2";
+import Game from "../../gfx/Game";
 
 export default class Block implements Renderable {
-    size: number;
     pos: Vec2;
+    size: number;
+    color: string;
 
     constructor(pos: Vec2, size: number) {
         this.pos = pos;
@@ -13,10 +13,16 @@ export default class Block implements Renderable {
         console.log('created block: ', size);
     }
 
-    update(dt: number) {}
+    update(dt: number) {
+        if (Game.input.isKeyDown('a')) {
+            this.color = 'red';
+        } else {
+            this.color = 'black';
+        }
+    }
 
     render(ctx: CanvasRenderingContext2D): void {
-        ctx.fillStyle = Res.col_uifg;
-        ctx.rect(this.pos.x, this.pos.y, this.size, this.size);
+        ctx.fillStyle = this.color;
+        ctx.fillRect(this.pos.x, this.pos.y, this.size, this.size);
     }
 }
