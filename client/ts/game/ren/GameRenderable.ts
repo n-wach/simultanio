@@ -171,33 +171,29 @@ export class GameTransformationLayer extends TransformableLayer {
         this.actionLifetime += dt;
     }
     updateNavigationInput() {
-        // use SPACE as the master pan key
-        if (Game.input.isKeyDown(' ')) {
-            var panSpeed = GameTransformationLayer.PAN_SPEED;
-            if (Game.input.isKeyDown('Shift')) {
-                panSpeed *= GameTransformationLayer.FAST_PAN_MULT;
-            }
-            if (Game.input.isKeyDown('ArrowRight')) {
-                this.ctxOrigin.x -= panSpeed;
-            }
-            if (Game.input.isKeyDown('ArrowLeft')) {
-                this.ctxOrigin.x += panSpeed;
-            }
-            if (Game.input.isKeyDown('ArrowUp')) {
-                this.ctxOrigin.y += panSpeed;
-            }
-            if (Game.input.isKeyDown('ArrowDown')) {
-                this.ctxOrigin.y -= panSpeed;
-            }
+        var panSpeed = GameTransformationLayer.PAN_SPEED;
+        if (Game.input.isKeyDown('Shift')) {
+            panSpeed *= GameTransformationLayer.FAST_PAN_MULT;
+        }
+        if (Game.input.isKeyDown('ArrowRight', 'd')) {
+            this.ctxOrigin.x -= panSpeed;
+        }
+        if (Game.input.isKeyDown('ArrowLeft', 'a')) {
+            this.ctxOrigin.x += panSpeed;
+        }
+        if (Game.input.isKeyDown('ArrowUp', 'w')) {
+            this.ctxOrigin.y += panSpeed;
+        }
+        if (Game.input.isKeyDown('ArrowDown', 's')) {
+            this.ctxOrigin.y -= panSpeed;
         }
 
         // keyboard zoom
-        // TODO: use center of the screen
         if (Game.input.isKeyPressed('-')) {
-            this.zoomOnPoint(GameTransformationLayer.KBD_ZOOM_DELTA, Game.input.mousePos, this.minZoom);
+            this.zoomOnPoint(GameTransformationLayer.KBD_ZOOM_DELTA, this.center, this.minZoom);
         }
         if (Game.input.isKeyPressed('=')) {
-            this.zoomOnPoint(-GameTransformationLayer.KBD_ZOOM_DELTA, Game.input.mousePos, this.minZoom);
+            this.zoomOnPoint(-GameTransformationLayer.KBD_ZOOM_DELTA, this.center, this.minZoom);
         }
     }
 

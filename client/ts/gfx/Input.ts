@@ -36,19 +36,21 @@ export default class Input {
 
         // keyboard events
         Game.window.addEventListener("keydown", (event) => {
-            if (!this.keyStates[event.key]) {
-                this.keyStates[event.key] = new KeyState();
+            let k = event.key.toLowerCase();
+            if (!this.keyStates[k]) {
+                this.keyStates[k] = new KeyState();
             }
             if (!event.repeat) {
-                this.keyStates[event.key].down = true;
-                this.keyStates[event.key].pressFrame = Game.frame;
+                this.keyStates[k].down = true;
+                this.keyStates[k].pressFrame = Game.frame;
             }
         }, true);
         Game.window.addEventListener("keyup", (event) => {
-            if (!this.keyStates[event.key]) {
-                this.keyStates[event.key] = new KeyState();
+            let k = event.key.toLowerCase();
+            if (!this.keyStates[k]) {
+                this.keyStates[k] = new KeyState();
             }
-            this.keyStates[event.key].down = false;
+            this.keyStates[k].down = false;
         }, true);
     }
 
@@ -82,19 +84,24 @@ export default class Input {
     }
 
     // whether the key is down
-    isKeyDown(key: string): boolean {
-        if (!this.keyStates[key]) {
-            this.keyStates[key] = new KeyState();
+    isKeyDown(...keys: string[]): boolean {
+        for(let key of keys) {
+            let k = key.toLowerCase();
+            if (!this.keyStates[k]) {
+                this.keyStates[k] = new KeyState();
+            }
+            if(this.keyStates[k].down) return true;
         }
-        return this.keyStates[key].down;
+        return false;
     }
 
     // whether the key was pressed this frame
     isKeyPressed(key: string): boolean {
-        if (!this.keyStates[key]) {
-            this.keyStates[key] = new KeyState();
+        let k = key.toLowerCase();
+        if (!this.keyStates[k]) {
+            this.keyStates[k] = new KeyState();
         }
-        let ks = this.keyStates[key];
+        let ks = this.keyStates[k];
         return ks.pressFrame == Game.frame;
     }
 }
