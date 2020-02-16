@@ -18,15 +18,15 @@ export default class GameRenderable implements Renderable {
         ctx.fillStyle = Res.map_action;
         ctx.globalAlpha = 0.5;
         ctx.beginPath();
-        for(let e of Simul.selectedEntities) {
+        for (let e of Simul.selectedEntities) {
             ctx.ellipse(e.x, e.y, 0.5, 0.5, 0, 0, Math.PI * 2);
         }
         ctx.fill();
         ctx.globalAlpha = 1;
 
-        for(let player of Simul.match.allPlayers()) {
+        for (let player of Simul.match.allPlayers()) {
             ctx.fillStyle = Res.player_colors[player.color].style;
-            for(let e in player.entities) {
+            for (let e in player.entities) {
                 ctx.beginPath();
                 player.entities[e].render(ctx);
                 ctx.fill();
@@ -36,8 +36,8 @@ export default class GameRenderable implements Renderable {
     }
 
     update(dt: number): void {
-        for(let player of Simul.match.allPlayers()) {
-            for(let o in player.entities) {
+        for (let player of Simul.match.allPlayers()) {
+            for (let o in player.entities) {
                 player.entities[o].update(dt);
             }
         }
@@ -47,9 +47,11 @@ export default class GameRenderable implements Renderable {
 export class GameTransformationLayer extends TransformableLayer {
     static PAN_SPEED = 5;
     static FAST_PAN_MULT = 5;
+    static KBD_ZOOM_DELTA = 48;
     static EDGE_PAN_PROX = 8;
     static ACTION_MAX_LIFETIME = 0.2;
     static ACTION_MAX_RADIUS = 80;
+    minZoom: number;
     topLeftGrid: Vec2 = new Vec2(0, 0);
     topRightGrid: Vec2 = new Vec2(0, 0);
     bottomLeftGrid: Vec2 = new Vec2(0, 0);
@@ -61,14 +63,19 @@ export class GameTransformationLayer extends TransformableLayer {
 
     constructor() {
         super();
+
+        let minH = (window.innerWidth - 250) / Simul.match.terrainView.width;
+        let minV = (window.innerHeight - 40) / Simul.match.terrainView.height;
+        this.minZoom = Math.max(minH, minV);
+
         Game.input.addHandler((event) => {
             let g = this.transformToCanvas(event);
-            if(event.button == 2) {
+            if (event.button == 2) {
                 this.actionLocation = g;
                 this.actionLifetime = 0;
-                if(Simul.selectedEntityAction) Simul.selectedEntityAction.onuse(new Vec2(g.x + 0.5, g.y + 0.5));
+                if (Simul.selectedEntityAction) Simul.selectedEntityAction.onuse(new Vec2(g.x + 0.5, g.y + 0.5));
                 return true;
-            } else if(event.button == 0) {
+            } else if (event.button == 0) {
                 this.selectionStart = g;
                 return true;
             }
@@ -86,10 +93,8 @@ export class GameTransformationLayer extends TransformableLayer {
             } else if (event.deltaMode == WheelEvent.DOM_DELTA_PAGE) {
                 delta *= 800;  // also just a guess--no good way to predict these...
             }
-            let minH = (window.innerWidth - 250) / Simul.match.terrainView.width;
-            let minV = (window.innerHeight - 40) / Simul.match.terrainView.height;
-            let minZoom = Math.max(minH, minV);
-            this.zoomOnPoint(delta, this.transformToCanvas(event), minZoom);
+            // console.log('zm delta', delta);
+            this.zoomOnPoint(delta, this.transformToCanvas(event), this.minZoom);
             return true;
         }, "wheel");
         this.add(new GameRenderable());
@@ -185,6 +190,15 @@ export class GameTransformationLayer extends TransformableLayer {
                 this.ctxOrigin.y -= panSpeed;
             }
         }
+
+        // keyboard zoom
+        // TODO: use center of the screen
+        if (Game.input.isKeyPressed('-')) {
+            this.zoomOnPoint(GameTransformationLayer.KBD_ZOOM_DELTA, Game.input.mousePos, this.minZoom);
+        }
+        if (Game.input.isKeyPressed('=')) {
+            this.zoomOnPoint(-GameTransformationLayer.KBD_ZOOM_DELTA, Game.input.mousePos, this.minZoom);
+        }
     }
 
     centerOnGrid(x: number, y: number) {
@@ -196,7 +210,7 @@ export class GameTransformationLayer extends TransformableLayer {
     }
 
     draw(ctx: CanvasRenderingContext2D) {
-        if(this.actionLocation && this.actionLifetime < GameTransformationLayer.ACTION_MAX_LIFETIME) {
+        if (this.actionLocation && this.actionLifetime < GameTransformationLayer.ACTION_MAX_LIFETIME) {
             ctx.fillStyle = Res.map_action;
             let l = this.actionLifetime / GameTransformationLayer.ACTION_MAX_LIFETIME;
             ctx.globalAlpha = l / 2;
@@ -208,7 +222,7 @@ export class GameTransformationLayer extends TransformableLayer {
             ctx.fill();
         }
 
-        if(this.selectionStart) {
+        if (this.selectionStart) {
             ctx.fillStyle = Res.map_action;
             ctx.strokeStyle = Res.map_action;
             let p = this.transformVToCanvas(Game.input.mousePos);
