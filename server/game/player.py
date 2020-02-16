@@ -25,8 +25,13 @@ class Player:
         spawn_pos = game.terrain.spawn_positions[player_id]
 
         self.capital = City(self, spawn_pos[0], spawn_pos[1])
-
-        self.entities = [self.capital] + [Scout(self, p[0], p[1]) for p in self.terrain_view.terrain.neighboring_points(*spawn_pos)]
+        self.starting_units = []
+        for p in self.terrain_view.terrain.neighboring_points(*spawn_pos):
+            scout = Scout(self, *spawn_pos)
+            scout.set_target(*p)
+            self.starting_units.append(scout)
+            
+        self.entities = [self.capital] + self.starting_units
         self.id = id(self)
         self.player_id = player_id
 
