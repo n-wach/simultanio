@@ -7,8 +7,7 @@ import Simul from "../Simul";
 import MatchInterpolator from "../game/interpolation/MatchInterpolator";
 import Button from "../gfx/ui/Button";
 import Grid from "../gfx/ui/Grid";
-import GameRenderable, {GameTransformationLayer} from "../game/ren/GameRenderable";
-import Vec2 from "../gfx/Vec2";
+import {GameTransformationLayer} from "../game/ren/GameRenderable";
 
 export default class LobbyScene extends Scene {
     initialize() {
@@ -32,9 +31,9 @@ export default class LobbyScene extends Scene {
             let focal = match.you.entities[0];
             let play = new PlayScene();
             Game.setScene(play);
-            let o = new Vec2(window.innerWidth / 2, window.innerHeight / 2);
-            let s = GameRenderable.TILE_SIZE;
-            (play.stage as GameTransformationLayer).ctxOrigin = new Vec2(o.x - focal.x * s, o.y - focal.y * s);
+            (play.stage as GameTransformationLayer).update(0);
+            (play.stage as GameTransformationLayer).centerOnGrid(focal.x, focal.y);
+            Game.enterFullscreen();
         });
     }
 

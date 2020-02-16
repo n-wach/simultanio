@@ -1,12 +1,12 @@
 import Game from "../Game";
 import Res from "../../game/Res";
-import Label from "./Label";
+import Icon from "./Icon";
 
-export default class Button extends Label {
+export default class IconButton extends Icon {
     onclick: () => void;
 
-    constructor(text: string, onclick?: () => void) {
-        super(text);
+    constructor(src: string, onclick?: () => void) {
+        super(src);
         this.onclick = onclick;
         Game.input.addHandler((event) => {
             if(this.hovered) {
@@ -16,7 +16,7 @@ export default class Button extends Label {
             return false;
         }, "mouseup");
     }
-    
+
     render(ctx: CanvasRenderingContext2D): void {
         ctx.fillStyle = Res.col_uibg;
         ctx.fillRect(this.x, this.y, this.width, this.height);

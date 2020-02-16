@@ -1,10 +1,10 @@
 import Renderable from "./Renderable";
 import Vec2 from "./Vec2";
 
-export default class TransformableLayer implements Renderable {
+export default abstract class TransformableLayer implements Renderable {
     renderables: Renderable[];
     ctxOrigin: Vec2 = new Vec2(0, 0);
-    ctxScale: number = 1;
+    ctxScale: number = 100;
 
     constructor(...renderables: Renderable[]) {
         this.renderables = renderables;
@@ -26,14 +26,16 @@ export default class TransformableLayer implements Renderable {
         }
     }
 
+    abstract draw(ctx: CanvasRenderingContext2D);
+
     render(ctx: CanvasRenderingContext2D): void {
         ctx.save();
         ctx.translate(this.ctxOrigin.x, this.ctxOrigin.y);
         ctx.scale(this.ctxScale, this.ctxScale);
-        console.log(this.ctxOrigin);
         for (let renderable of this.renderables) {
             renderable.render(ctx);
         }
+        this.draw(ctx);
         ctx.restore();
     }
 
@@ -49,7 +51,7 @@ export default class TransformableLayer implements Renderable {
         this.renderables.splice(this.renderables.indexOf(ren), 1);
     }
 
-    zoomOnPoint(zoomFactor: number, point: Vec2, minZoom: number=0.04, maxZoom: number=3) {
+    zoomOnPoint(zoomFactor: number, point: Vec2, minZoom: number=0.04, maxZoom: number=300) {
         let originalScale = this.ctxScale;
         let s = this.ctxScale - (zoomFactor * 0.005 * this.ctxScale);
         s = Math.min(maxZoom, Math.max(minZoom, s));

@@ -1,11 +1,15 @@
 import Grid from "../../gfx/ui/Grid";
 import Res from "../Res";
 import MinimapComponent from "./MinimapComponent";
+import Game from "../../gfx/Game";
 
 export default class SideBar extends Grid {
     constructor() {
-        super([1.0, 250], [1.0]);
-        this.addComponent(new MinimapComponent(), 1, 0, 1, 1, 10);
+        super([250, 1.0, 250], [1.0]);
+        this.addComponent(new MinimapComponent(), 2, 0, 1, 1, 10);
+        Game.input.addHandler((event) => {
+            return this.hovered;
+        }, "mousedown");
     }
     render(ctx: CanvasRenderingContext2D): void {
         ctx.fillStyle = Res.col_uibg;

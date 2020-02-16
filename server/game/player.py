@@ -1,7 +1,7 @@
 from server.game.building import City
 
 from server.game.terrain import TerrainView
-from server.game.unit import Scout
+from server.game.unit import Scout, Unit
 
 
 class Player:
@@ -74,8 +74,11 @@ class Player:
             entity.tick(dt)
 
         for message in self.pending_messages:
-            if message["command"] == "set target":
-                self.scout.set_target(message["x"], message["y"])
+            if message["command"] == "set targets":
+                for e in self.entities:
+                    if id(e) in message["ids"]:
+                        if isinstance(e, Unit):
+                            e.set_target(message["x"], message["y"])
         self.pending_messages.clear()
 
         # Human player will act based on WS events received since last call

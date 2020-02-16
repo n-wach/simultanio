@@ -2,17 +2,17 @@ export default class Res {
     public static tile_colors = {
         "land": {
             "minimapV": 0xff95bdac,
-            "minimapPV": 0xff95bdac,
+            "minimapPV": 0xcc95bdac,
             "style": "#acbd95",
         },
         "water": {
             "minimapV": 0xff9fa17c,
-            "minimapPV": 0xff9fa17c,
+            "minimapPV": 0xcc9fa17c,
             "style": "#7ca19f",
         },
         "matter_source": {
             "minimapV": 0xff94b4cf,
-            "minimapPV": 0xff94b4cf,
+            "minimapPV": 0xcc94b4cf,
             "style": "#cfb494",
         },
         "unknown": {
@@ -66,5 +66,6 @@ export default class Res {
     // fonts
     public static font_face :string = "Share Tech Mono";
     public static max_font :number = 24;
+    static map_action: string = "#18c043";
 
 }
