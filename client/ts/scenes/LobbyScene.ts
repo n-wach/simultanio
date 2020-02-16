@@ -1,13 +1,12 @@
 import Scene from "../gfx/Scene";
 import Game from "../gfx/Game";
-import {Match, MatchList} from "../comms";
+import { Match, MatchList } from "../comms";
 import PlayScene from "./PlayScene";
 import Res from "../game/Res";
 import Simul from "../Simul";
 import MatchInterpolator from "../game/interpolation/MatchInterpolator";
 import Button from "../gfx/ui/Button";
 import Grid from "../gfx/ui/Grid";
-import {GameTransformationLayer} from "../game/ren/GameRenderable";
 
 export default class LobbyScene extends Scene {
     initialize() {
@@ -22,8 +21,8 @@ export default class LobbyScene extends Scene {
             for (let match of matchList.matches) {
                 row++;
                 this.ui.addComponent(new Button("Join " + match.name + " (" + match.playerCount + "/" + match.maxPlayers + ")", () => {
-                        Game.socketio.emit("join match", match.id);
-                    }), row, 2, 1, 2, 10);
+                    Game.socketio.emit("join match", match.id);
+                }), row, 2, 1, 2, 10);
             }
         });
         Game.socketio.on("join match", (match: Match) => {
@@ -31,11 +30,11 @@ export default class LobbyScene extends Scene {
             let focal = match.you.entities[0];
             let play = new PlayScene();
             Game.setScene(play);
-            (play.stage as GameTransformationLayer).update(0);
-            (play.stage as GameTransformationLayer).centerOnGrid(focal.x, focal.y);
+            play.stage.update(0);
+            play.stage.centerOnGrid(focal.x, focal.y);
             Game.enterFullscreen();
         });
     }
 
-    destroy(){}
+    destroy() { }
 }

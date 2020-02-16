@@ -8,9 +8,14 @@ import {Match} from "../comms";
 import Simul from "../Simul";
 
 export default class PlayScene extends Scene {
+    stage: GameTransformationLayer;
+
     initialize() {
         Game.clearColor = Res.pal_black;
+        
         this.stage = new GameTransformationLayer();
+        this.renderables.push(this.stage);
+
         this.ui = new HUD();
         Game.socketio.on("game update", (match: Match) => {
             Simul.match.sync(match);

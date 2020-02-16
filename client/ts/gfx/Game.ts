@@ -4,17 +4,19 @@ import Input from './Input';
 import * as io from 'socket.io-client';
 
 export default class Game {
+    static window: Window;
     static canvas: HTMLCanvasElement;
     static ctx: CanvasRenderingContext2D;
     static scene: Scene;
     static input: Input;
-    static frame: number;
+    static frame: number = 0;
     static socketio: SocketIOClient.Socket;
     static clearColor: string = "black";
 
     static initialize(): void {
+        this.window = window;
         this.canvas = document.getElementById("canvas") as HTMLCanvasElement;
-        this.canvas.setAttribute("tabindex", "0");
+        this.canvas.setAttribute("tabindex", "1");
         this.ctx = this.canvas.getContext("2d");
         this.input = new Input();
         this.socketio = io();
