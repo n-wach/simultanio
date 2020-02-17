@@ -1,11 +1,11 @@
 import math
 from random import random
 
+import networkx
 # for terrain generation
 import numpy as np
 from scipy.ndimage.filters import gaussian_filter
 
-import networkx
 from server.game.entity import UnalignedEntity
 
 
@@ -172,6 +172,13 @@ class TerrainView:
             "active": self.visibility_grid[x][y],
         } for y in range(self.terrain.height)] for x in range(self.terrain.width)]
 
+    def discover_single_view(self, entity):
+        x = entity.grid_x
+        y = entity.grid_y
+        for point in self.terrain.points_near(x, y, entity.PASSIVE_SIGHT):
+            if not self.discovered_grid[point[0]][point[1]]:
+                self.discover(point)
+
     def update_view(self):
         for y in range(self.terrain.height):
             for x in range(self.terrain.width):
@@ -184,9 +191,6 @@ class TerrainView:
             else:
                 x = entity.grid_x
                 y = entity.grid_y
-            for point in self.terrain.points_near(x, y, entity.PASSIVE_SIGHT):
-                if not self.discovered_grid[point[0]][point[1]]:
-                    self.discover(point)
             for point in self.terrain.points_near(x, y, entity.ACTIVE_SIGHT):
                 self.visibility_grid[point[0]][point[1]] = True
 

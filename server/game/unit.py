@@ -45,7 +45,7 @@ class Unit(UnalignedEntity):
                 self.y = next_pos[1]
                 self.path.pop(0)
                 remaining_distance -= dd
-                self.terrain_view.update_view()
+                self.terrain_view.discover_single_view(self)
             else:
                 self.x += (dx / dd) * remaining_distance
                 self.y += (dy / dd) * remaining_distance
