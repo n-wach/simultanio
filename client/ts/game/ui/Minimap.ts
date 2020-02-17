@@ -3,7 +3,6 @@ import Simul from "../../Simul";
 import Res from "../Res";
 import Game from "../../gfx/Game";
 import PlayScene from "../../scenes/PlayScene";
-import GameTransformationLayer from "../ren/GameTransformationLayer";
 
 export default class Minimap extends Component {
     render(ctx: CanvasRenderingContext2D): void {

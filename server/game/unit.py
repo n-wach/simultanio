@@ -76,3 +76,23 @@ class Scout(Unit):
     MOVEMENT_SPEED = 3
     TYPE = "scout"
 
+
+class Builder(Unit):
+    ACTIVE_SIGHT = 5
+    PASSIVE_SIGHT = 5
+    ENERGY_COST = 10
+    MATTER_COST = 10
+    TIME_COST = 10
+    MOVEMENT_SPEED = 1
+    TYPE = "builder"
+
+
+class Fighter(Unit):
+    ACTIVE_SIGHT = 5
+    PASSIVE_SIGHT = 5
+    ENERGY_COST = 10
+    MATTER_COST = 10
+    TIME_COST = 10
+    MOVEMENT_SPEED = 1.5
+    TYPE = "fighter"
+

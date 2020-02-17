@@ -1,12 +1,14 @@
 import Game from "../Game";
 import Res from "../../game/Res";
-import Label from "./Label";
+import Component from "./Component";
 
-export default class Button extends Label {
+export default class Button extends Component {
     onclick: () => void;
+    subComponent: Component;
 
-    constructor(text: string, onclick?: () => void) {
-        super(text);
+    constructor(subComponent: Component, onclick?: () => void) {
+        super();
+        this.subComponent = subComponent;
         this.onclick = onclick;
         Game.input.addHandler((event) => {
             if(this.hovered) {
@@ -24,6 +26,19 @@ export default class Button extends Label {
             ctx.fillStyle = Res.col_uibg;
         }
         ctx.fillRect(this.x, this.y , this.width, this.height);
-        super.render(ctx);
+        this.subComponent.render(ctx);
+    }
+
+    resize() {
+        this.subComponent.x = this.x;
+        this.subComponent.y = this.y;
+        this.subComponent.width = this.width;
+        this.subComponent.height = this.height;
+        this.subComponent.resize();
+    }
+
+    update(dt: number): void {
+        super.update(dt);
+        this.subComponent.update(dt);
     }
 }

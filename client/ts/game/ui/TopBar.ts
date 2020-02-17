@@ -1,10 +1,10 @@
 import Grid from "../../gfx/ui/Grid";
 import Icon from "../../gfx/ui/Icon";
-import Button from "../../gfx/ui/Button";
 import Game from "../../gfx/Game";
 import Res from "../Res";
 import Label from "../../gfx/ui/Label";
 import Simul from "../../Simul";
+import LabelButton from "../../gfx/ui/LabelButton";
 
 export default class TopBar extends Grid {
     constructor() {
@@ -17,7 +17,7 @@ export default class TopBar extends Grid {
         this.addComponent(new Icon("/matter.png"), 0, 2, 1, 1, 10, 10);
         this.addComponent(new MatterLabel(), 0, 3);
         this.addComponent(new TimeLabel(), 0, 4);
-        this.addComponent(new Button("Leave Match", () => {
+        this.addComponent(new LabelButton("Leave Match", "center", () => {
             Game.socketio.emit("leave match");
         }), 0, 6, 1, 1, 5, 5);
     }

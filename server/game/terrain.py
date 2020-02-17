@@ -2,11 +2,8 @@ import math
 from random import random
 
 import networkx
-# for terrain generation
 import numpy as np
 from scipy.ndimage.filters import gaussian_filter
-
-from server.game.entity import UnalignedEntity
 
 
 class Tile:
@@ -185,12 +182,8 @@ class TerrainView:
                 self.visibility_grid[x][y] = False
 
         for entity in self.player.entities:
-            if isinstance(entity, UnalignedEntity):
-                x = entity.x
-                y = entity.y
-            else:
-                x = entity.grid_x
-                y = entity.grid_y
+            x = entity.grid_x
+            y = entity.grid_y
             for point in self.terrain.points_near(x, y, entity.ACTIVE_SIGHT):
                 self.visibility_grid[point[0]][point[1]] = True
 

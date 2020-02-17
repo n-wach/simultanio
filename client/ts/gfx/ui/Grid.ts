@@ -67,6 +67,7 @@ export default class Grid extends Component {
         component.y = p.y;
         component.width = p.width;
         component.height = p.height;
+        component.resize();
         this.components.push(component);
         this.positions.push([row, col, rowSpan, colSpan, hmargin, vmargin]);
     }

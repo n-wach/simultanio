@@ -5,8 +5,8 @@ import PlayScene from "./PlayScene";
 import Res from "../game/Res";
 import Simul from "../Simul";
 import MatchInterpolator from "../game/interpolation/MatchInterpolator";
-import Button from "../gfx/ui/Button";
 import Grid from "../gfx/ui/Grid";
+import LabelButton from "../gfx/ui/LabelButton";
 
 export default class LobbyScene extends Scene {
     initialize() {
@@ -15,12 +15,13 @@ export default class LobbyScene extends Scene {
         Game.socketio.on("list matches", (matchList: MatchList) => {
             this.ui.clear();
             let row = 1;
-            this.ui.addComponent(new Button("Create Match", () => {
+            this.ui.addComponent(new LabelButton("Create Match", "center", () => {
                 Game.socketio.emit("create match");
             }), row, 2, 1, 2, 0,10);
             for (let match of matchList.matches) {
                 row++;
-                this.ui.addComponent(new Button("Join " + match.name + " (" + match.playerCount + "/" + match.maxPlayers + ")", () => {
+                let name = "Join " + match.name + " (" + match.playerCount + "/" + match.maxPlayers + ")";
+                this.ui.addComponent(new LabelButton(name, "center", () => {
                     Game.socketio.emit("join match", match.id);
                 }), row, 2, 1, 2, 0, 10);
             }
