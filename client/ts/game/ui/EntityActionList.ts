@@ -35,7 +35,7 @@ export default class EntityActionList extends Grid {
     }
 
     render(ctx: CanvasRenderingContext2D): void {
-        ctx.fillStyle = Res.col_uibg_accent;
+        ctx.fillStyle = Res.col_uibg_secondary;
         ctx.fillRect(this.x, this.y, this.width, this.height);
         if(this.activeGrid) this.activeGrid.render(ctx);
     }

@@ -18,14 +18,12 @@ export default class Button extends Label {
     }
     
     render(ctx: CanvasRenderingContext2D): void {
-        ctx.fillStyle = Res.col_uibg;
-        ctx.fillRect(this.x, this.y, this.width, this.height);
         if(this.hovered) {
             ctx.fillStyle = Res.col_uibg_accent;
         } else {
             ctx.fillStyle = Res.col_uibg;
         }
-        ctx.fillRect(this.x + 5, this.y + 5, this.width - 10, this.height - 10);
+        ctx.fillRect(this.x, this.y , this.width, this.height);
         super.render(ctx);
     }
 }

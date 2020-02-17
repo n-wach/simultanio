@@ -8,7 +8,7 @@ import Simul from "../../Simul";
 
 export default class TopBar extends Grid {
     constructor() {
-        super([1.0], [40, 60, 40, 60, 100, 1.0, 40]);
+        super([1.0], [40, 60, 40, 60, 100, 1.0, 120]);
         Game.input.addHandler((event) => {
             return this.hovered;
         }, "mousedown");
@@ -17,7 +17,7 @@ export default class TopBar extends Grid {
         this.addComponent(new Icon("/matter.png"), 0, 2, 1, 1, 10, 10);
         this.addComponent(new MatterLabel(), 0, 3);
         this.addComponent(new TimeLabel(), 0, 4);
-        this.addComponent(new Button("X", () => {
+        this.addComponent(new Button("Leave Match", () => {
             Game.socketio.emit("leave match");
         }), 0, 6, 1, 1, 5, 5);
     }
