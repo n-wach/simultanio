@@ -102,5 +102,12 @@ export type SetTargetsCommand = {
     y: number,
 };
 
+export type BuildCommand = {
+    command: "build",
+    ids: Id[],
+    x: number,
+    y: number,
+};
+
 export type PlayerCommand = SetTargetsCommand;
 

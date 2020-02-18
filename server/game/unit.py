@@ -86,6 +86,12 @@ class Builder(Unit):
     MOVEMENT_SPEED = 1
     TYPE = "builder"
 
+    def set_build_target(self, x, y):
+        self.set_target(x, y)
+
+    def tick(self, dt):
+        super().tick(dt)
+
 
 class Fighter(Unit):
     ACTIVE_SIGHT = 5

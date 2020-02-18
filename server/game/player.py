@@ -85,6 +85,11 @@ class Player:
                     if id(e) in message["ids"]:
                         if isinstance(e, Unit):
                             e.set_target(message["x"], message["y"])
+            elif message["command"] == "build":
+                for e in self.entities:
+                    if id(e) in message["ids"]:
+                        if isinstance(e, Builder):
+                            e.set_build_target(message["x"], message["y"])
         self.pending_messages.clear()
 
         # Human player will act based on WS events received since last call
