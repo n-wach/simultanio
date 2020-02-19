@@ -14,7 +14,7 @@ export default class Input {
     public mouseDown: boolean = false;
     private keyStates: KeyStates = {};
     private handlers: InputHandlers = {};
-    private static supportedEvents: string[] = ["mousemove", "mousedown", "mouseup", "touchdown", "touchup", "touchmove", "wheel", "click", "contextmenu"];
+    private static supportedEvents: string[] = ["mousemove", "mousedown", "mouseup", "wheel", "click", "contextmenu"];
 
     constructor() {
         // mouse events
@@ -35,21 +35,23 @@ export default class Input {
         }
 
         // keyboard events
-        Game.canvas.addEventListener("keydown", (event) => {
-            if (!this.keyStates[event.key]) {
-                this.keyStates[event.key] = new KeyState();
+        Game.window.addEventListener("keydown", (event) => {
+            let k = event.key.toLowerCase();
+            if (!this.keyStates[k]) {
+                this.keyStates[k] = new KeyState();
             }
             if (!event.repeat) {
-                this.keyStates[event.key].down = true;
-                this.keyStates[event.key].pressFrame = Game.frame;
+                this.keyStates[k].down = true;
+                this.keyStates[k].pressFrame = Game.frame;
             }
-        });
-        Game.canvas.addEventListener("keyup", (event) => {
-            if (!this.keyStates[event.key]) {
-                this.keyStates[event.key] = new KeyState();
+        }, true);
+        Game.window.addEventListener("keyup", (event) => {
+            let k = event.key.toLowerCase();
+            if (!this.keyStates[k]) {
+                this.keyStates[k] = new KeyState();
             }
-            this.keyStates[event.key].down = false;
-        });
+            this.keyStates[k].down = false;
+        }, true);
     }
 
     handle(event) {
@@ -81,23 +83,30 @@ export default class Input {
 
     }
 
-    isKeyDown(key: string): boolean {
-        if (!this.keyStates[key]) {
-            this.keyStates[key] = new KeyState();
+    // whether the key is down
+    isKeyDown(...keys: string[]): boolean {
+        for(let key of keys) {
+            let k = key.toLowerCase();
+            if (!this.keyStates[k]) {
+                this.keyStates[k] = new KeyState();
+            }
+            if(this.keyStates[k].down) return true;
         }
-        return this.keyStates[key].down;
+        return false;
     }
 
+    // whether the key was pressed this frame
     isKeyPressed(key: string): boolean {
-        if (!this.keyStates[key]) {
-            this.keyStates[key] = new KeyState();
+        let k = key.toLowerCase();
+        if (!this.keyStates[k]) {
+            this.keyStates[k] = new KeyState();
         }
-        let ks = this.keyStates[key];
+        let ks = this.keyStates[k];
         return ks.pressFrame == Game.frame;
     }
 }
 
 class KeyState {
-    public down: boolean;
-    public pressFrame: number;
+    public down: boolean = false;
+    public pressFrame: number = -1;
 }

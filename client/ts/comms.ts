@@ -61,11 +61,15 @@ export type YouPlayer = BasePlayer & {
 };
 
 export enum UnitType {
-    SCOUT = "scout"
+    BUILDER = "builder",
+    FIGHTER = "fighter",
+    SCOUT = "scout",
 }
 
 export enum BuildingType {
-    CITY = "city"
+    CITY = "city",
+    ENERGY_GENERATOR = "energyGenerator",
+    MATTER_COLLECTOR = "matterCollector",
 }
 
 export type BaseEntity = {

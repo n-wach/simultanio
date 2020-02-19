@@ -8,16 +8,18 @@ class Building(Entity):
 
 class EnergyGenerator(Building):
     GENERATION_RATE = 1
+    TYPE = "energyGenerator"
 
     def tick(self, dt):
-        self.owner.energy += dt * self.GENERATION_RATE
+        self.owner.stored_energy += dt * self.GENERATION_RATE
 
 
 class MatterCollector(Building):
     GENERATION_RATE = 1
+    TYPE = "matterCollector"
 
     def tick(self, dt):
-        self.owner.matter += dt * self.GENERATION_RATE
+        self.owner.stored_matter += dt * self.GENERATION_RATE
 
 
 class City(Building):

@@ -29,4 +29,8 @@ export default class City extends Building {
         this.circleRadius += (City.MAX_CIRCLE_RADIUS * dt);
         while(this.circleRadius > City.MAX_CIRCLE_RADIUS) this.circleRadius -= City.MAX_CIRCLE_RADIUS;
     }
+
+    getName(): string {
+        return "City";
+    }
 }

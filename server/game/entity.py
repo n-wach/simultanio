@@ -11,6 +11,7 @@ class Entity:
         self.terrain_view = owner.terrain_view
         self.grid_x = grid_x
         self.grid_y = grid_y
+        self.owner.terrain_view.discover_single_view(self)
 
     def tick(self, dt):
         pass

@@ -1,10 +1,11 @@
-from server.game.building import City
+from server.game.building import City, EnergyGenerator, MatterCollector
 
 from server.game.terrain import TerrainView
-from server.game.unit import Scout, Unit
+from server.game.unit import Scout, Unit, Fighter, Builder
 
 
 class Player:
+
     class Color:
         RED = "red"
         ORANGE = "orange"
@@ -24,9 +25,14 @@ class Player:
         spawn_pos = game.terrain.spawn_positions[player_id]
 
         self.capital = City(self, spawn_pos[0], spawn_pos[1])
-        self.scout = Scout(self, self.capital.grid_x, self.capital.grid_y)
-
-        self.entities = [self.capital, self.scout]
+        self.starting_units = []
+        for c, p in zip([Scout, Builder, Fighter], self.terrain_view.terrain.neighboring_points(*spawn_pos)):
+            unit = c(self, *spawn_pos)
+            unit.set_target(*p)
+            self.starting_units.append(unit)
+        self.starting_units.append(EnergyGenerator(self, spawn_pos[0] + 1, spawn_pos[1] + 1))
+        self.starting_units.append(MatterCollector(self, spawn_pos[0] - 1, spawn_pos[1] - 1))
+        self.entities = [self.capital] + self.starting_units
         self.id = id(self)
         self.player_id = player_id
 
