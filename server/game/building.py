@@ -24,6 +24,7 @@ class MatterCollector(Building):
 
 class City(Building):
     GENERATION_RATE = 1
+    BUILD_TIME = 5
 
     TYPE = "city"
     ACTIVE_SIGHT = 10

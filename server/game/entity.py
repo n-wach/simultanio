@@ -1,6 +1,14 @@
 from math import floor
 
 
+class EntityState:
+    def __init__(self, entity):
+        self.parent = entity
+
+    def tick(self, dt):
+        pass
+
+
 class Entity:
     ACTIVE_SIGHT = 0
     PASSIVE_SIGHT = 0
@@ -12,9 +20,10 @@ class Entity:
         self.grid_x = grid_x
         self.grid_y = grid_y
         self.owner.terrain_view.discover_single_view(self)
+        self.state = EntityState(self)
 
     def tick(self, dt):
-        pass
+        self.state.tick(dt)
 
     def get_self(self):
         return {

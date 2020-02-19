@@ -1,6 +1,7 @@
 from server.game.building import City, EnergyGenerator, MatterCollector
 
 from server.game.terrain import TerrainView
+from server.game.unit import PathingState
 from server.game.unit import Scout, Unit, Fighter, Builder
 
 
@@ -28,7 +29,7 @@ class Player:
         self.starting_units = []
         for c, p in zip([Scout, Builder, Fighter], self.terrain_view.terrain.neighboring_points(*spawn_pos)):
             unit = c(self, *spawn_pos)
-            unit.set_target(*p)
+            unit.state = PathingState(*p, unit)
             self.starting_units.append(unit)
         self.starting_units.append(EnergyGenerator(self, spawn_pos[0] + 1, spawn_pos[1] + 1))
         self.starting_units.append(MatterCollector(self, spawn_pos[0] - 1, spawn_pos[1] - 1))
@@ -37,6 +38,13 @@ class Player:
         self.player_id = player_id
 
         self.pending_messages = []
+
+    def begin_construction(self, building):
+
+        pass
+
+    def add_entity(self, entity):
+        self.entities.append(entity)
 
     def get_self(self):
         return {
@@ -84,7 +92,7 @@ class Player:
                 for e in self.entities:
                     if id(e) in message["ids"]:
                         if isinstance(e, Unit):
-                            e.set_target(message["x"], message["y"])
+                            e.state = PathingState(e.align_x(message["x"]), e.align_y(message["y"]), e)
             elif message["command"] == "build":
                 for e in self.entities:
                     if id(e) in message["ids"]:
