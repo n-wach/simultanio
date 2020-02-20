@@ -1,7 +1,7 @@
 from server.game.building import City, EnergyGenerator, MatterCollector
 
 from server.game.terrain import TerrainView
-from server.game.unit import PathingState
+from server.game.unit import PathingState, PathingToBuildState
 from server.game.unit import Scout, Unit, Fighter, Builder
 
 
@@ -97,7 +97,7 @@ class Player:
                 for e in self.entities:
                     if id(e) in message["ids"]:
                         if isinstance(e, Builder):
-                            e.set_build_target(message["x"], message["y"])
+                            e.state = PathingToBuildState(e.BUILD_RANGE, e.align_x(message["x"]), e.align_y(message["y"]), e)
         self.pending_messages.clear()
 
         # Human player will act based on WS events received since last call

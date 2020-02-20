@@ -36,7 +36,12 @@ class PathingState(EntityState):
                 self.parent.x += (dx / dd) * remaining_distance
                 self.parent.y += (dy / dd) * remaining_distance
                 remaining_distance = 0
-        pass
+
+        if len(self.path) == 0:
+            self.transition()
+
+    def transition(self):
+        self.parent.state = EntityState(self.parent)
 
 
 class Unit(UnalignedEntity):
@@ -78,6 +83,28 @@ class Scout(Unit):
     TYPE = "scout"
 
 
+class BuildingState(EntityState):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def tick(self, dt):
+        print("hi")
+
+
+class PathingToBuildState(PathingState):
+    def __init__(self, build_range, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.build_range = build_range
+
+    def tick(self, dt):
+        super().tick(dt)
+        if (self.target_x - self.parent.x) ** 2 + (self.target_y - self.parent.y) ** 2 < self.build_range ** 2:
+            self.parent.owner.add_entity(City(self.parent.owner, self.target_x, self.target_y))
+
+    def transition(self):
+        self.parent.state = BuildingState(self.parent)
+
+
 class Builder(Unit):
     ACTIVE_SIGHT = 5
     PASSIVE_SIGHT = 5
@@ -89,27 +116,12 @@ class Builder(Unit):
 
     BUILD_RANGE = 1
 
-    def __init__(self, owner, x, y):
-        super().__init__(owner, x, y)
-
-        self.build_target_set = False
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         print(id(self))
-
-    def set_build_target(self, x, y):
-        self.set_target(x, y)
-        self.build_target_set = True
 
     def tick(self, dt):
         super().tick(dt)
-
-        if self.build_target_set:
-            # need to check if picked location is actually available
-            if False:
-                pass
-            else:
-                if (self.target_x-self.x)**2 + (self.target_y-self.y)**2 < self.BUILD_RANGE**2:
-                    self.owner.add_entity(City(self.owner, self.target_x, self.target_y))
-                    self.build_target_set = False
 
 
 class Fighter(Unit):
