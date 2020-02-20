@@ -91,8 +91,9 @@ class BuildingState(EntityState):
         super().__init__(*args, **kwargs)
         self.building = building
 
+    # contribute to health of the building
     def tick(self, dt):
-        self.building.repair(1.0)
+        pass
 
 
 class PathingToBuildState(PathingState):
@@ -101,8 +102,7 @@ class PathingToBuildState(PathingState):
         self.building_type = building_type
 
     def start(self):
-        if self.parent.owner.is_entity_type_at(self.target_x, self.target_y, self.building_type):
-            self.parent.state = EntityState()
+        pass
 
     def condition(self):
         return \
@@ -114,17 +114,18 @@ class PathingToBuildState(PathingState):
         if not (self.target_x - self.parent.x) ** 2 + (
                 self.target_y - self.parent.y) ** 2 < self.parent.BUILD_RANGE ** 2 \
                 or not self.parent.owner.terrain_view.passable(self.target_x, self.target_y):
-            self.parent.state = BuildingState(self.parent)
+            self.parent.state = EntityState(self.parent)
         else:
             building_at_location = self.parent.owner.get_building_at(self.target_x, self.target_y)
             if building_at_location is not None:
                 if isinstance(building_at_location, self.building_type):
-                    self.parent.state = BuildingState()
+                    self.parent.state = BuildingState(building_at_location, self.parent)
                 else:
-                    self.parent.state = EntityState()
+                    self.parent.state = EntityState(self.parent)
             else:
-                self.parent.owner.add_entity(City(self.parent.owner, self.target_x, self.target_y))
-                self.parent.state = BuildingState()
+                building = City(self.parent.owner, self.target_x, self.target_y)
+                self.parent.owner.add_entity(building)
+                self.parent.state = BuildingState(building, self.parent)
 
 
 class Builder(Unit):

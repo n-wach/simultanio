@@ -112,7 +112,7 @@ class Player:
                     yield entity
 
     def get_building_at(self, x, y):
-        for entity in self.parent.get_entities_at(self.target_x, self.target_y):
+        for entity in self.get_entities_at(x, y):
             if isinstance(entity, Building):
                 return entity
         return None
