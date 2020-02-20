@@ -11,6 +11,7 @@ import LabelButton from "../../gfx/ui/LabelButton";
 import Builder from "../entity/Builder";
 import MatterCollector from "../entity/MatterCollector";
 import EnergyGenerator from "../entity/EnergyGenerator";
+import {BuildAction} from "./EntityAction";
 
 export default class EntityActionList extends Grid {
     cityGrid: Grid;
@@ -44,7 +45,9 @@ export default class EntityActionList extends Grid {
         this.builderGrid.addComponent(new LabelButton("Set Target"), 0, 0, 1, 1, 10, 10);
         this.builderGrid.addComponent(new LabelButton("Cancel Path"), 1, 0, 1, 1, 10, 10);
         this.builderGrid.addComponent(new Label("Build:", "left"), 2, 0);
-        this.builderGrid.addComponent(new EntityCreationOption("City", 200, 200, 20), 3, 0, 1, 1, 10, 10);
+        this.builderGrid.addComponent(new EntityCreationOption("City", 200, 200, 20, () => {
+            Simul.selectedEntityAction = new BuildAction("City")
+        }), 3, 0, 1, 1, 10, 10);
         this.builderGrid.addComponent(new EntityCreationOption("Generator", 0, 100, 20), 4, 0, 1, 1, 10, 10);
         this.builderGrid.addComponent(new EntityCreationOption("Collector", 100, 0, 20), 5, 0, 1, 1, 10, 10);
 
@@ -100,8 +103,8 @@ class ResourceInfoGrid extends Grid {
 }
 
 class EntityCreationOption extends Button {
-    constructor(name: string, energy: number, matter: number, time: number) {
-        super(new Grid([1], [1, 30, 30, 30, 30, 50]));
+    constructor(name: string, energy: number, matter: number, time: number, onclick?: () => void) {
+        super(new Grid([1], [1, 30, 30, 30, 30, 50]), onclick);
         (this.subComponent as Grid).addComponent(new Label(name), 0, 0);
         (this.subComponent as Grid).addComponent(new Icon("/energy.png"), 0, 1, 1, 1, 0, 10);
         (this.subComponent as Grid).addComponent(new Label(energy.toFixed(0)), 0, 2);

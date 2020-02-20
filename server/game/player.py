@@ -98,6 +98,7 @@ class Player:
                 for e in self.entities:
                     if id(e) in message["ids"]:
                         if isinstance(e, Builder):
+                            # todo make it so it doesn't only do city but instead look at message
                             e.state = PathingToBuildState(City, e.align_x(message["x"]), e.align_y(message["y"]), e)
         self.pending_messages.clear()
 
