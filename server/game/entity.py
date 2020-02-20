@@ -5,6 +5,9 @@ class EntityState:
     def __init__(self, entity):
         self.parent = entity
 
+    def start(self):
+        pass
+
     def tick(self, dt):
         pass
 
@@ -21,9 +24,19 @@ class Entity:
         self.grid_y = grid_y
         self.owner.terrain_view.discover_single_view(self)
         self.state = EntityState(self)
+        self.health = 0
 
     def tick(self, dt):
         self.state.tick(dt)
+
+    @property
+    def state(self):
+        return self._state
+
+    @state.setter
+    def state(self, state):
+        self._state = state
+        state.start()
 
     def get_self(self):
         return {

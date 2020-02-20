@@ -1,4 +1,4 @@
-from server.game.building import City, EnergyGenerator, MatterCollector
+from server.game.building import City, EnergyGenerator, MatterCollector, Building
 
 from server.game.terrain import TerrainView
 from server.game.unit import PathingState, PathingToBuildState
@@ -44,6 +44,7 @@ class Player:
         pass
 
     def add_entity(self, entity):
+        print("building")
         self.entities.append(entity)
 
     def get_self(self):
@@ -97,9 +98,21 @@ class Player:
                 for e in self.entities:
                     if id(e) in message["ids"]:
                         if isinstance(e, Builder):
-                            e.state = PathingToBuildState(e.BUILD_RANGE, e.align_x(message["x"]), e.align_y(message["y"]), e)
+                            e.state = PathingToBuildState(City, e.align_x(message["x"]), e.align_y(message["y"]), e)
         self.pending_messages.clear()
 
         # Human player will act based on WS events received since last call
         # AI player will act using AI
         pass
+
+    def get_entities_at(self, x, y):
+        for player in self.game.players:
+            for entity in player.entities:
+                if self.terrain_view.entity_visible(entity) and (entity.grid_x == x and entity.grid_y == y):
+                    yield entity
+
+    def get_building_at(self, x, y):
+        for entity in self.parent.get_entities_at(self.target_x, self.target_y):
+            if isinstance(entity, Building):
+                return entity
+        return None

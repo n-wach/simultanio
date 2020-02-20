@@ -4,6 +4,7 @@ from server.game.entity import Entity
 class Building(Entity):
     ACTIVE_SIGHT = 7
     PASSIVE_SIGHT = 8
+    BASE_HEALTH = 10.0
 
 
 class EnergyGenerator(Building):

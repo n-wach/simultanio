@@ -1,8 +1,8 @@
 import math
 
 from server.game.building import City
-from server.game.entity import UnalignedEntity
 from server.game.entity import EntityState
+from server.game.entity import UnalignedEntity
 
 
 class PathingState(EntityState):
@@ -37,8 +37,11 @@ class PathingState(EntityState):
                 self.parent.y += (dy / dd) * remaining_distance
                 remaining_distance = 0
 
-        if len(self.path) == 0:
+        if self.condition():
             self.transition()
+
+    def condition(self):
+        len(self.path) == 0
 
     def transition(self):
         self.parent.state = EntityState(self.parent)
@@ -84,25 +87,44 @@ class Scout(Unit):
 
 
 class BuildingState(EntityState):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, building, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.building = building
 
     def tick(self, dt):
-        print("hi")
+        self.building.repair(1.0)
 
 
 class PathingToBuildState(PathingState):
-    def __init__(self, build_range, *args, **kwargs):
+    def __init__(self, building_type, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.build_range = build_range
+        self.building_type = building_type
 
-    def tick(self, dt):
-        super().tick(dt)
-        if (self.target_x - self.parent.x) ** 2 + (self.target_y - self.parent.y) ** 2 < self.build_range ** 2:
-            self.parent.owner.add_entity(City(self.parent.owner, self.target_x, self.target_y))
+    def start(self):
+        if self.parent.owner.is_entity_type_at(self.target_x, self.target_y, self.building_type):
+            self.parent.state = EntityState()
+
+    def condition(self):
+        return \
+            (self.target_x - self.parent.x) ** 2 + (self.target_y - self.parent.y) ** 2 < self.parent.BUILD_RANGE ** 2 \
+            or len(self.path) == 0
 
     def transition(self):
-        self.parent.state = BuildingState(self.parent)
+        # check to see if pathing actually terminated nearby / if buildable in location
+        if not (self.target_x - self.parent.x) ** 2 + (
+                self.target_y - self.parent.y) ** 2 < self.parent.BUILD_RANGE ** 2 \
+                or not self.parent.owner.terrain_view.passable(self.target_x, self.target_y):
+            self.parent.state = BuildingState(self.parent)
+        else:
+            building_at_location = self.parent.owner.get_building_at(self.target_x, self.target_y)
+            if building_at_location is not None:
+                if isinstance(building_at_location, self.building_type):
+                    self.parent.state = BuildingState()
+                else:
+                    self.parent.state = EntityState()
+            else:
+                self.parent.owner.add_entity(City(self.parent.owner, self.target_x, self.target_y))
+                self.parent.state = BuildingState()
 
 
 class Builder(Unit):
@@ -119,9 +141,6 @@ class Builder(Unit):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         print(id(self))
-
-    def tick(self, dt):
-        super().tick(dt)
 
 
 class Fighter(Unit):
