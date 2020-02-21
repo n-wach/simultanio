@@ -105,7 +105,7 @@ export type SetTargetsCommand = {
 export type BuildCommand = {
     command: "build",
     ids: Id[],
-    buildingType: string,
+    buildingType: BuildingType,
     x: number,
     y: number,
 };

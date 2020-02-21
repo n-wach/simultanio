@@ -1,4 +1,4 @@
-from server.game.building import City, EnergyGenerator, MatterCollector, Building
+from server.game.building import City, EnergyGenerator, MatterCollector, Building, BUILDING_TYPES
 
 from server.game.terrain import TerrainView
 from server.game.unit import PathingState, PathingToBuildState
@@ -39,13 +39,14 @@ class Player:
 
         self.pending_messages = []
 
-    def begin_construction(self, building):
-
-        pass
-
     def add_entity(self, entity):
-        print("building")
         self.entities.append(entity)
+
+    def construct_building(self, building):
+        if building.MATTER_COST <= self.stored_matter and building.ENERGY_COST <= self.stored_energy:
+            self.stored_matter -= building.MATTER_COST
+            self.stored_energy -= building.ENERGY_COST
+            self.entities.append(building)
 
     def get_self(self):
         return {
@@ -98,8 +99,8 @@ class Player:
                 for e in self.entities:
                     if id(e) in message["ids"]:
                         if isinstance(e, Builder):
-                            # todo make it so it doesn't only do city but instead look at message
-                            e.state = PathingToBuildState(City, e.align_x(message["x"]), e.align_y(message["y"]), e)
+                            e.state = PathingToBuildState(BUILDING_TYPES[message["buildingType"]],
+                                                          e.align_x(message["x"]), e.align_y(message["y"]), e)
         self.pending_messages.clear()
 
         # Human player will act based on WS events received since last call

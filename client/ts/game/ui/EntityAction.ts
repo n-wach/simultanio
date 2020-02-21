@@ -1,6 +1,6 @@
 import Vec2 from "../../gfx/Vec2";
 import Game from "../../gfx/Game";
-import {BuildCommand, PlayerCommand} from "../../comms";
+import {BuildCommand, BuildingType, PlayerCommand} from "../../comms";
 import Simul from "../../Simul";
 
 export class EntityAction {
@@ -32,7 +32,7 @@ export class TargetAction extends EntityAction {
 }
 
 export class BuildAction extends EntityAction {
-    constructor(buildingType) {
+    constructor(buildingType: BuildingType) {
         super("Build", (gridPos: Vec2) => {
             let ids = [];
             for (let e of Simul.selectedEntities) {
@@ -47,6 +47,7 @@ export class BuildAction extends EntityAction {
                     y: gridPos.y,
                 } as BuildCommand));
             }
+            // Simul.selectedEntityAction = new TargetAction();
         });
     }
 }

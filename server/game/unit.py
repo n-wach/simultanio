@@ -1,6 +1,6 @@
 import math
 
-from server.game.building import City
+from server.game.building import InConstructionState
 from server.game.entity import EntityState
 from server.game.entity import UnalignedEntity
 
@@ -91,9 +91,8 @@ class BuildingState(EntityState):
         super().__init__(*args, **kwargs)
         self.building = building
 
-    # contribute to health of the building
     def tick(self, dt):
-        pass
+        self.building.repair()
 
 
 class PathingToBuildState(PathingState):
@@ -123,8 +122,9 @@ class PathingToBuildState(PathingState):
                 else:
                     self.parent.state = EntityState(self.parent)
             else:
-                building = City(self.parent.owner, self.target_x, self.target_y)
-                self.parent.owner.add_entity(building)
+                building = self.building_type(self.parent.owner, self.target_x, self.target_y)
+                building.state = InConstructionState(building)
+                self.parent.owner.construct_building(building)
                 self.parent.state = BuildingState(building, self.parent)
 
 

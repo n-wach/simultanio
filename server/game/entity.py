@@ -17,14 +17,14 @@ class Entity:
     PASSIVE_SIGHT = 0
     TYPE = "unknown"
 
-    def __init__(self, owner, grid_x, grid_y):
+    def __init__(self, owner, grid_x, grid_y, health=1.0):
         self.owner = owner
         self.terrain_view = owner.terrain_view
         self.grid_x = grid_x
         self.grid_y = grid_y
         self.owner.terrain_view.discover_single_view(self)
         self.state = EntityState(self)
-        self.health = 0
+        self.health = health
 
     def tick(self, dt):
         self.state.tick(dt)
