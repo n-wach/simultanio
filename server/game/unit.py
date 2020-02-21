@@ -141,7 +141,6 @@ class Builder(Unit):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        print(id(self))
 
 
 class Fighter(Unit):

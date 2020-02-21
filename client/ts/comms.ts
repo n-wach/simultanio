@@ -75,8 +75,15 @@ export enum BuildingType {
 export type BaseEntity = {
     x: number,
     y: number,
-    id: Id
+    id: Id,
+    state: AnyEntityState,
 }
+
+export type BaseEntityState = {
+    type: string,
+}
+
+export type AnyEntityState = BaseEntityState;
 
 export type Unit = BaseEntity & {
     path: Path,

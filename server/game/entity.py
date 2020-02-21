@@ -2,6 +2,8 @@ from math import floor
 
 
 class EntityState:
+    TYPE = "unknown"
+
     def __init__(self, entity):
         self.parent = entity
 
@@ -11,6 +13,10 @@ class EntityState:
     def tick(self, dt):
         pass
 
+    def get_self(self):
+        return {
+            "type": self.TYPE,
+        }
 
 class Entity:
     ACTIVE_SIGHT = 0
@@ -41,6 +47,7 @@ class Entity:
     def get_self(self):
         return {
             "type": self.TYPE,
+            "state": self.state.get_self(),
             "x": self.grid_x,
             "y": self.grid_y,
             "id": id(self),
