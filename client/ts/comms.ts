@@ -75,8 +75,15 @@ export enum BuildingType {
 export type BaseEntity = {
     x: number,
     y: number,
-    id: Id
+    id: Id,
+    state: AnyEntityState,
 }
+
+export type BaseEntityState = {
+    type: string,
+}
+
+export type AnyEntityState = BaseEntityState;
 
 export type Unit = BaseEntity & {
     path: Path,
@@ -98,6 +105,14 @@ export type Match = {
 export type SetTargetsCommand = {
     command: "set targets",
     ids: Id[],
+    x: number,
+    y: number,
+};
+
+export type BuildCommand = {
+    command: "build",
+    ids: Id[],
+    buildingType: BuildingType,
     x: number,
     y: number,
 };

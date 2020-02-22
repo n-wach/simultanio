@@ -1,6 +1,7 @@
-from server.game.building import City, EnergyGenerator, MatterCollector
+from server.game.building import City, EnergyGenerator, MatterCollector, Building, BUILDING_TYPES
 
 from server.game.terrain import TerrainView
+from server.game.unit import PathingState, PathingToBuildState
 from server.game.unit import Scout, Unit, Fighter, Builder
 
 
@@ -28,7 +29,7 @@ class Player:
         self.starting_units = []
         for c, p in zip([Scout, Builder, Fighter], self.terrain_view.terrain.neighboring_points(*spawn_pos)):
             unit = c(self, *spawn_pos)
-            unit.set_target(*p)
+            unit.state = PathingState(*p, unit)
             self.starting_units.append(unit)
         self.starting_units.append(EnergyGenerator(self, spawn_pos[0] + 1, spawn_pos[1] + 1))
         self.starting_units.append(MatterCollector(self, spawn_pos[0] - 1, spawn_pos[1] - 1))
@@ -37,6 +38,15 @@ class Player:
         self.player_id = player_id
 
         self.pending_messages = []
+
+    def add_entity(self, entity):
+        self.entities.append(entity)
+
+    def construct_building(self, building):
+        if building.MATTER_COST <= self.stored_matter and building.ENERGY_COST <= self.stored_energy:
+            self.stored_matter -= building.MATTER_COST
+            self.stored_energy -= building.ENERGY_COST
+            self.entities.append(building)
 
     def get_self(self):
         return {
@@ -84,9 +94,27 @@ class Player:
                 for e in self.entities:
                     if id(e) in message["ids"]:
                         if isinstance(e, Unit):
-                            e.set_target(message["x"], message["y"])
+                            e.state = PathingState(e.align_x(message["x"]), e.align_y(message["y"]), e)
+            elif message["command"] == "build":
+                for e in self.entities:
+                    if id(e) in message["ids"]:
+                        if isinstance(e, Builder):
+                            e.state = PathingToBuildState(BUILDING_TYPES[message["buildingType"]],
+                                                          e.align_x(message["x"]), e.align_y(message["y"]), e)
         self.pending_messages.clear()
 
         # Human player will act based on WS events received since last call
         # AI player will act using AI
         pass
+
+    def get_entities_at(self, x, y):
+        for player in self.game.players:
+            for entity in player.entities:
+                if self.terrain_view.entity_visible(entity) and (entity.grid_x == x and entity.grid_y == y):
+                    yield entity
+
+    def get_building_at(self, x, y):
+        for entity in self.get_entities_at(x, y):
+            if isinstance(entity, Building):
+                return entity
+        return None

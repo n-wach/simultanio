@@ -5,6 +5,7 @@ import Simul from "../../Simul";
 import Res from "../Res";
 import GameRenderable from "./GameRenderable";
 import Unit from "../entity/Unit";
+import {TargetAction} from "../ui/EntityAction";
 
 export default class GameTransformationLayer extends TransformableLayer {
     static PAN_SPEED = 5;
@@ -142,6 +143,8 @@ export default class GameTransformationLayer extends TransformableLayer {
 
         let px = this.transformVToCanvas(p);
         if (this.selectionStart) {
+            // reset entity action to default
+            Simul.selectedEntityAction = new TargetAction();
             let s = [];
             for (let o in Simul.match.you.entities) {
                 let e = Simul.match.you.entities[o];
