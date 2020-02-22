@@ -72,18 +72,27 @@ export enum BuildingType {
     MATTER_COLLECTOR = "matterCollector",
 }
 
+export enum EntityStateType {
+    DEFAULT = "default",
+    PATHING_STATE = "pathingState",
+    BUILDING_STATE = "buildingState",
+    PATHING_TO_BUILD_STATE = "pathingToBuildState",
+    GENERATING_STATE = "generatingState",
+    IN_CONSTRUCTION_STATE = "inConstructionState"
+}
+
 export type BaseEntity = {
     x: number,
     y: number,
     id: Id,
-    state: AnyEntityState,
+    state: EntityState,
 }
 
 export type BaseEntityState = {
     type: string,
 }
 
-export type AnyEntityState = BaseEntityState;
+export type EntityState = BaseEntityState;
 
 export type Unit = BaseEntity & {
     path: Path,

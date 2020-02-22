@@ -2,7 +2,7 @@ from math import floor
 
 
 class EntityState:
-    TYPE = "unknown"
+    TYPE = "default"
 
     def __init__(self, entity):
         self.parent = entity

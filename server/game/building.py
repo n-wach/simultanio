@@ -2,6 +2,8 @@ from server.game.entity import Entity, EntityState
 
 
 class GeneratingState(EntityState):
+    TYPE = "generatingState"
+
     def __init__(self, energy_rate, matter_rate, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.energy_rate = energy_rate
@@ -13,6 +15,8 @@ class GeneratingState(EntityState):
 
 
 class InConstructionState(EntityState):
+    TYPE = "inConstructionState"
+
     def tick(self, dt):
         if self.parent.health >= 1.0:
             self.parent.state = self.parent.active_state
@@ -24,8 +28,8 @@ class Building(Entity):
     ENERGY_COST = 10
     MATTER_COST = 10
 
-    def repair(self):
-        self.health += 0.1
+    def repair(self, amount):
+        self.health += amount
         if self.health > 1.0:
             self.health = 1.0
 
@@ -33,6 +37,8 @@ class Building(Entity):
 class EnergyGenerator(Building):
     GENERATION_RATE = 1
     TYPE = "energyGenerator"
+    ENERGY_COST = 0
+    MATTER_COST = 100
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -43,6 +49,8 @@ class EnergyGenerator(Building):
 class MatterCollector(Building):
     GENERATION_RATE = 1
     TYPE = "matterCollector"
+    ENERGY_COST = 100
+    MATTER_COST = 0
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -52,7 +60,9 @@ class MatterCollector(Building):
 
 class City(Building):
     GENERATION_RATE = 1
-    BUILD_TIME = 5
+
+    ENERGY_COST = 200
+    MATTER_COST = 200
 
     TYPE = "city"
     ACTIVE_SIGHT = 10
