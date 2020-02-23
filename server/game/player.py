@@ -1,4 +1,5 @@
 from server.game.building import City, EnergyGenerator, MatterCollector, Building, BUILDING_TYPES, InConstructionState
+from server.game.entity import IdleState
 
 from server.game.terrain import TerrainView
 from server.game.unit import PathingState, PathingToBuildState
@@ -95,11 +96,16 @@ class Player:
             entity.tick(dt)
 
         for message in self.pending_messages:
-            if message["command"] == "set targets":
+            if message["command"] == "set target":
                 for e in self.entities:
                     if id(e) in message["ids"]:
                         if isinstance(e, Unit):
                             e.state = PathingState(e.align_x(message["x"]), e.align_y(message["y"]), e)
+            elif message["command"] == "clear target":
+                for e in self.entities:
+                    if id(e) in message["ids"]:
+                        if isinstance(e, Unit) and isinstance(e.state, PathingState):
+                            e.state = IdleState(e)
             elif message["command"] == "build":
                 for e in self.entities:
                     if id(e) in message["ids"]:

@@ -1,13 +1,13 @@
-import {AnyEntity, BuildingType, UnitType} from "../../comms";
-import Scout from "./Scout";
-import City from "./City";
-import EntityInterpolator from "../interpolation/EntityInterpolator";
-import Builder from "./Builder";
-import EnergyGenerator from "./EnergyGenerator";
-import MatterCollector from "./MatterCollector";
-import Fighter from "./Fighter";
+import {BuildingType, Entity, UnitType} from "../../comms";
+import Scout from "./entity/Scout";
+import City from "./entity/City";
+import EntityInterpolator from "./EntityInterpolator";
+import Builder from "./entity/Builder";
+import EnergyGenerator from "./entity/EnergyGenerator";
+import MatterCollector from "./entity/MatterCollector";
+import Fighter from "./entity/Fighter";
 
-export default function getEntity(e: AnyEntity): EntityInterpolator {
+export default function getEntity(e: Entity): EntityInterpolator {
     switch (e.type) {
         case UnitType.FIGHTER:
             return new Fighter(e);
@@ -15,7 +15,6 @@ export default function getEntity(e: AnyEntity): EntityInterpolator {
             return new Scout(e);
         case UnitType.BUILDER:
             return new Builder(e);
-
         case BuildingType.CITY:
             return new City(e);
         case BuildingType.ENERGY_GENERATOR:

@@ -1,8 +1,8 @@
-from server.game.entity import Entity, EntityState
+from server.game.entity import Entity, IdleState
 
 
-class GeneratingState(EntityState):
-    TYPE = "generatingState"
+class GeneratingState(IdleState):
+    TYPE = "generating"
 
     def __init__(self, energy_rate, matter_rate, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -14,8 +14,8 @@ class GeneratingState(EntityState):
         self.parent.owner.stored_matter += dt * self.matter_rate
 
 
-class InConstructionState(EntityState):
-    TYPE = "inConstructionState"
+class InConstructionState(IdleState):
+    TYPE = "inConstruction"
 
     def tick(self, dt):
         if self.parent.health >= 1.0:

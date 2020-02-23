@@ -4,7 +4,7 @@ import Game from "../../gfx/Game";
 import Simul from "../../Simul";
 import Res from "../Res";
 import GameRenderable from "./GameRenderable";
-import Unit from "../entity/Unit";
+import Unit from "../interpolation/entity/Unit";
 import {TargetAction} from "../ui/EntityAction";
 
 export default class GameTransformationLayer extends TransformableLayer {
