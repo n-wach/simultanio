@@ -1,11 +1,12 @@
 import Renderable from "../../gfx/Renderable";
-import {BaseEntity, Id} from "../../comms";
+import {BaseEntity, EntityState, Id} from "../../comms";
 import Interpolated from "./Interpolated";
 
 export default abstract class EntityInterpolator extends Interpolated<BaseEntity> implements Renderable {
     x: number;
     y: number;
     id: Id;
+    state: EntityState;
 
     constructor(ref: BaseEntity) {
         super();
@@ -17,6 +18,7 @@ export default abstract class EntityInterpolator extends Interpolated<BaseEntity
         this.id = ref.id;
         this.x = ref.x;
         this.y = ref.y;
+        this.state = ref.state;
     }
 
     render(ctx: CanvasRenderingContext2D): void {

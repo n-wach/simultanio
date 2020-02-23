@@ -1,11 +1,12 @@
 import math
 
-from server.game.building import InConstructionState
 from server.game.entity import EntityState
 from server.game.entity import UnalignedEntity
 
 
 class PathingState(EntityState):
+    TYPE = "pathingState"
+
     def __init__(self, target_x, target_y, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.target_x = target_x
@@ -14,7 +15,8 @@ class PathingState(EntityState):
         self.calculate_path()
 
     def calculate_path(self):
-        self.path = self.parent.terrain_view.get_path((self.parent.grid_x, self.parent.grid_y), (self.target_x, self.target_y))
+        self.path = self.parent.terrain_view.get_path((self.parent.grid_x, self.parent.grid_y),
+                                                      (self.target_x, self.target_y))
 
     def tick(self, dt):
         remaining_distance = dt * self.parent.MOVEMENT_SPEED
@@ -87,15 +89,19 @@ class Scout(Unit):
 
 
 class BuildingState(EntityState):
+    TYPE = "buildingState"
+
     def __init__(self, building, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.building = building
 
     def tick(self, dt):
-        self.building.repair()
+        self.building.repair(dt * self.parent.REBUILD_RATE)
 
 
 class PathingToBuildState(PathingState):
+    TYPE = "pathingToBuildState"
+
     def __init__(self, building_type, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.building_type = building_type
@@ -122,10 +128,9 @@ class PathingToBuildState(PathingState):
                 else:
                     self.parent.state = EntityState(self.parent)
             else:
-                building = self.building_type(self.parent.owner, self.target_x, self.target_y)
-                building.state = InConstructionState(building)
-                self.parent.owner.construct_building(building)
-                self.parent.state = BuildingState(building, self.parent)
+                building = self.parent.owner.construct_building(self.building_type, self.target_x, self.target_y)
+                if building is not None:
+                    self.parent.state = BuildingState(building, self.parent)
 
 
 class Builder(Unit):
@@ -136,6 +141,8 @@ class Builder(Unit):
     TIME_COST = 10
     MOVEMENT_SPEED = 1
     TYPE = "builder"
+
+    REBUILD_RATE = 0.2
 
     BUILD_RANGE = 1
 

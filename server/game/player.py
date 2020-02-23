@@ -1,4 +1,4 @@
-from server.game.building import City, EnergyGenerator, MatterCollector, Building, BUILDING_TYPES
+from server.game.building import City, EnergyGenerator, MatterCollector, Building, BUILDING_TYPES, InConstructionState
 
 from server.game.terrain import TerrainView
 from server.game.unit import PathingState, PathingToBuildState
@@ -42,11 +42,16 @@ class Player:
     def add_entity(self, entity):
         self.entities.append(entity)
 
-    def construct_building(self, building):
-        if building.MATTER_COST <= self.stored_matter and building.ENERGY_COST <= self.stored_energy:
-            self.stored_matter -= building.MATTER_COST
-            self.stored_energy -= building.ENERGY_COST
+    def construct_building(self, building_type, target_x, target_y):
+        if building_type.MATTER_COST <= self.stored_matter and building_type.ENERGY_COST <= self.stored_energy:
+            self.stored_matter -= building_type.MATTER_COST
+            self.stored_energy -= building_type.ENERGY_COST
+            building = building_type(self, target_x, target_y)
+            building.health = 0
+            building.state = InConstructionState(building)
             self.entities.append(building)
+            return building
+        return None
 
     def get_self(self):
         return {
