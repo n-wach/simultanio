@@ -21,6 +21,18 @@ export enum TerrainTileType {
     UNKNOWN = "unknown",
 }
 
+export enum UnitType {
+    BUILDER = "builder",
+    FIGHTER = "fighter",
+    SCOUT = "scout",
+}
+
+export enum BuildingType {
+    CITY = "city",
+    ENERGY_GENERATOR = "energyGenerator",
+    MATTER_COLLECTOR = "matterCollector",
+}
+
 export type Id = number;
 
 export type Path = { x: number, y: number }[]
@@ -51,7 +63,7 @@ export type TerrainView = {
 
 export type BasePlayer = {
     color: Color,
-    entities: AnyEntity[]
+    entities: Entity[]
     id: Id,
 }
 
@@ -60,33 +72,51 @@ export type YouPlayer = BasePlayer & {
     storedMatter: number,
 };
 
-export enum UnitType {
-    BUILDER = "builder",
-    FIGHTER = "fighter",
-    SCOUT = "scout",
-}
+export type EntityType = "unknown" | UnitType | BuildingType;
 
-export enum BuildingType {
-    CITY = "city",
-    ENERGY_GENERATOR = "energyGenerator",
-    MATTER_COLLECTOR = "matterCollector",
-}
-
-export type BaseEntity = {
+export type Entity = {
     x: number,
     y: number,
-    id: Id
+    id: Id,
+    state: EntityState,
+    type: EntityType,
+    health: number,
 }
 
-export type Unit = BaseEntity & {
-    path: Path,
-    type: UnitType,
-}
-export type Building = BaseEntity & {
-    type: BuildingType,
+export type IdleState = {
+    type: "idle",
 };
 
-export type AnyEntity = Unit | Building;
+export type InConstructionState = {
+    type: "inConstruction",
+}
+
+export type GeneratingState = {
+    type: "generating",
+}
+
+export type PathingState = {
+    type: "pathing",
+    path: Path,
+}
+
+export type ConstructingState = {
+    type: "constructing",
+    building: Id,
+}
+
+export type PathingToBuildState = {
+    type: "pathingToBuild",
+    buildingType: BuildingType,
+    path: Path,
+}
+
+export type EntityState = PathingState
+    | ConstructingState
+    | PathingToBuildState
+    | GeneratingState
+    | InConstructionState
+    | IdleState;
 
 export type Match = {
     info: MatchListing,
@@ -95,12 +125,25 @@ export type Match = {
     terrainView: TerrainView,
 };
 
-export type SetTargetsCommand = {
-    command: "set targets",
+export type SetTargetCommand = {
+    command: "set target",
     ids: Id[],
     x: number,
     y: number,
 };
 
-export type PlayerCommand = SetTargetsCommand;
+export type BuildCommand = {
+    command: "build",
+    ids: Id[],
+    buildingType: BuildingType,
+    x: number,
+    y: number,
+};
+
+export type ClearTargetCommand = {
+    command: "clear target",
+    ids: Id[],
+}
+
+export type PlayerCommand = SetTargetCommand | ClearTargetCommand | BuildCommand;
 

@@ -1,17 +1,14 @@
 from math import floor
 
 
-class Entity:
-    ACTIVE_SIGHT = 0
-    PASSIVE_SIGHT = 0
-    TYPE = "unknown"
+class IdleState:
+    TYPE = "idle"
 
-    def __init__(self, owner, grid_x, grid_y):
-        self.owner = owner
-        self.terrain_view = owner.terrain_view
-        self.grid_x = grid_x
-        self.grid_y = grid_y
-        self.owner.terrain_view.discover_single_view(self)
+    def __init__(self, entity):
+        self.parent = entity
+
+    def start(self):
+        pass
 
     def tick(self, dt):
         pass
@@ -19,6 +16,40 @@ class Entity:
     def get_self(self):
         return {
             "type": self.TYPE,
+        }
+
+
+class Entity:
+    ACTIVE_SIGHT = 0
+    PASSIVE_SIGHT = 0
+    TYPE = "unknown"
+
+    def __init__(self, owner, grid_x, grid_y, starting_health=1.0):
+        self.owner = owner
+        self.terrain_view = owner.terrain_view
+        self.grid_x = grid_x
+        self.grid_y = grid_y
+        self.owner.terrain_view.discover_single_view(self)
+        self.state = IdleState(self)
+        self.health = starting_health
+
+    def tick(self, dt):
+        self.state.tick(dt)
+
+    @property
+    def state(self):
+        return self._state
+
+    @state.setter
+    def state(self, state):
+        self._state = state
+        state.start()
+
+    def get_self(self):
+        return {
+            "type": self.TYPE,
+            "state": self.state.get_self(),
+            "health": self.health,
             "x": self.grid_x,
             "y": self.grid_y,
             "id": id(self),
@@ -60,6 +91,8 @@ class UnalignedEntity(Entity):
     def get_self(self):
         return {
             "type": self.TYPE,
+            "state": self.state.get_self(),
+            "health": self.health,
             "x": self.x,
             "y": self.y,
             "id": id(self),

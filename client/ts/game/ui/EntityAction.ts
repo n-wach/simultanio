@@ -1,6 +1,6 @@
 import Vec2 from "../../gfx/Vec2";
 import Game from "../../gfx/Game";
-import {PlayerCommand} from "../../comms";
+import {BuildingType, PlayerCommand} from "../../comms";
 import Simul from "../../Simul";
 
 export class EntityAction {
@@ -21,12 +21,33 @@ export class TargetAction extends EntityAction {
             }
             if(ids.length > 0) {
                 Game.socketio.emit("player command", ({
-                    command: "set targets",
+                    command: "set target",
                     ids: ids,
                     x: gridPos.x,
                     y: gridPos.y,
                 } as PlayerCommand));
             }
+        });
+    }
+}
+
+export class BuildAction extends EntityAction {
+    constructor(buildingType: BuildingType) {
+        super("Build", (gridPos: Vec2) => {
+            let ids = [];
+            for (let e of Simul.selectedEntities) {
+                ids.push(e.id);
+            }
+            if (ids.length > 0) {
+                Game.socketio.emit("player command", ({
+                    command: "build",
+                    buildingType: buildingType,
+                    ids: ids,
+                    x: gridPos.x,
+                    y: gridPos.y,
+                } as PlayerCommand));
+            }
+            // Simul.selectedEntityAction = new TargetAction();
         });
     }
 }

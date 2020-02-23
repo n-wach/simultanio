@@ -1,4 +1,4 @@
-import EntityInterpolator from "../interpolation/EntityInterpolator";
+import EntityInterpolator from "../EntityInterpolator";
 
 export default abstract class Building extends EntityInterpolator {
 

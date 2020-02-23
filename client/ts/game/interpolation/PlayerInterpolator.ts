@@ -1,7 +1,7 @@
 import {BasePlayer, Color, YouPlayer} from "../../comms";
 import EntityInterpolator from "./EntityInterpolator";
 import Interpolated from "./Interpolated";
-import getEntity from "../entity/EntityCreator";
+import getEntity from "./EntityCreator";
 
 
 export default class BasePlayerInterpolator extends Interpolated<BasePlayer>{

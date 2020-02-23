@@ -24,9 +24,7 @@ export default class GameRenderable implements Renderable {
         for (let player of Simul.match.allPlayers()) {
             ctx.fillStyle = Res.player_colors[player.color].style;
             for (let e in player.entities) {
-                ctx.beginPath();
                 player.entities[e].render(ctx);
-                ctx.fill();
             }
         }
 
