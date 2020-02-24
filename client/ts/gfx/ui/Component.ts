@@ -7,6 +7,7 @@ export default abstract class Component implements Renderable {
     width: number;
     height: number;
     hovered: boolean;
+    visible: boolean = true;
 
     resize(): void {}
 
@@ -14,6 +15,6 @@ export default abstract class Component implements Renderable {
     update(dt: number): void {
         let ox = Game.input.mousePos.x - this.x;
         let oy = Game.input.mousePos.y - this.y;
-        this.hovered = (ox >= 0 && ox <= this.width && oy >= 0 && oy <= this.height);
+        this.hovered = this.visible && (ox >= 0 && ox <= this.width && oy >= 0 && oy <= this.height);
     }
 }

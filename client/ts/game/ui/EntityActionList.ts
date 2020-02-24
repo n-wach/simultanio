@@ -12,6 +12,7 @@ import Builder from "../interpolation/entity/Builder";
 import MatterCollector from "../interpolation/entity/MatterCollector";
 import EnergyGenerator from "../interpolation/entity/EnergyGenerator";
 import {BuildAction, TargetAction} from "./EntityAction";
+import {PlayerCommand} from "../../comms";
 
 export default class EntityActionList extends Grid {
     cityGrid: Grid;
@@ -32,7 +33,14 @@ export default class EntityActionList extends Grid {
         let i = 3;
         for (let type of Simul.STATS["city"]["can_train"]) {
             let e = Simul.STATS[type];
-            this.cityGrid.addComponent(new EntityCreationOption(e.name, e.cost.energy, e.cost.matter, e.cost.time),
+            this.cityGrid.addComponent(new EntityCreationOption(e.name, e.cost.energy, e.cost.matter, e.cost.time, () => {
+                    Game.socketio.emit("player command", ({
+                        command: "train",
+                        unitType: type,
+                        building: Simul.selectedEntities[0].id,
+                    } as PlayerCommand));
+                    console.log("train");
+                }),
                 i, 0, 1, 1, 10, 10);
             i++;
         }
@@ -60,15 +68,25 @@ export default class EntityActionList extends Grid {
             let b = Simul.STATS[type];
             this.builderGrid.addComponent(new EntityCreationOption(b.name, b.cost.energy, b.cost.matter, 0, () => {
                 Simul.selectedEntityAction = new BuildAction(type);
+                console.log("build");
             }), i, 0, 1, 1, 10, 10);
             i++;
         }
 
         this.addComponent(this.cityGrid, 0, 0);
+        this.cityGrid.visible = false;
+
         this.addComponent(this.unitGrid, 0, 0);
+        this.unitGrid.visible = false;
+
         this.addComponent(this.builderGrid, 0, 0);
+        this.builderGrid.visible = false;
+
         this.addComponent(this.generatorGrid, 0, 0);
+        this.generatorGrid.visible = false;
+
         this.addComponent(this.collectorGrid, 0, 0);
+        this.collectorGrid.visible = false;
     }
 
     render(ctx: CanvasRenderingContext2D): void {
@@ -79,6 +97,7 @@ export default class EntityActionList extends Grid {
 
     update(dt: number): void {
         super.update(dt);
+        if (this.activeGrid) this.activeGrid.visible = false;
         if(Simul.selectedEntities.length == 0) {
             this.activeGrid = null;
         } else {
@@ -98,6 +117,7 @@ export default class EntityActionList extends Grid {
                 else this.activeGrid = this.unitGrid;
             }
         }
+        if (this.activeGrid) this.activeGrid.visible = true;
     }
 }
 

@@ -5,9 +5,9 @@ from server.shared import entity_stats
 class GeneratingState(IdleState):
     TYPE = "generating"
 
-    def __init__(self, rates, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.rates = rates
+        self.rates = self.parent.STATS["generates"]
 
     def tick(self, dt):
         self.parent.owner.stored_energy += dt * self.rates["energy"]
@@ -35,7 +35,7 @@ class EnergyGenerator(Building):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.active_state = GeneratingState(self.STATS["generates"], self)
+        self.active_state = GeneratingState(self)
         self.state = self.active_state
 
 
@@ -45,7 +45,7 @@ class MatterCollector(Building):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.active_state = GeneratingState(self.STATS["generates"], self)
+        self.active_state = GeneratingState(self)
         self.state = self.active_state
 
 
@@ -55,7 +55,7 @@ class City(Building):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.active_state = GeneratingState(self.STATS["generates"], self)
+        self.active_state = GeneratingState(self)
         self.state = self.active_state
 
 

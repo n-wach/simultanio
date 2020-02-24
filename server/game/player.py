@@ -2,7 +2,7 @@ from server.game.building import City, EnergyGenerator, MatterCollector, Buildin
 from server.game.entity import IdleState
 
 from server.game.terrain import TerrainView
-from server.game.unit import PathingState, PathingToBuildState
+from server.game.unit import PathingState, PathingToBuildState, UNIT_TYPES, TrainingState
 from server.game.unit import Scout, Unit, Fighter, Builder
 
 
@@ -54,6 +54,17 @@ class Player:
             building.state = InConstructionState(building)
             self.entities.append(building)
             return building
+        return None
+
+    def train_unit(self, unit_type, target_x, target_y):
+        mc = unit_type.STATS["cost"]["matter"]
+        ec = unit_type.STATS["cost"]["energy"]
+        if mc <= self.stored_matter and ec <= self.stored_energy:
+            self.stored_matter -= mc
+            self.stored_energy -= ec
+            unit = unit_type(self, target_x, target_y)
+            self.entities.append(unit)
+            return unit
         return None
 
     def get_self(self):
@@ -122,8 +133,12 @@ class Player:
                         if isinstance(e, Builder) and building_type in e.STATS["can_build"]:
                             e.state = PathingToBuildState(BUILDING_TYPES[building_type],
                                                           e.align_x(message["x"]), e.align_y(message["y"]), e)
+            elif message["command"] == "train":
+                for e in self.entities:
+                    if id(e) == message["building"]:
+                        if isinstance(e, Building) and message["unitType"] in e.STATS["can_train"]:
+                            e.state = TrainingState(UNIT_TYPES[message["unitType"]], e)
         self.pending_messages.clear()
-
 
     def get_entities_at(self, x, y):
         for player in self.game.players:
