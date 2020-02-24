@@ -14,8 +14,4 @@ export default class City extends Building {
         ctx.closePath();
         ctx.fill();
     }
-
-    getName(): string {
-        return "City";
-    }
 }

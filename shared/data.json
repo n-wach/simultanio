@@ -1,0 +1,97 @@
+{
+  "entities": {
+    "unknown": {
+      "active_sight": 0,
+      "passive_sight": 0,
+      "cost": {
+        "energy": 0,
+        "matter": 0,
+        "time": 0
+      },
+      "movement_speed": 0
+    },
+    "scout": {
+      "name": "Scout",
+      "active_sight": 7,
+      "passive_sight": 7,
+      "cost": {
+        "energy": 10,
+        "matter": 10,
+        "time": 10
+      },
+      "movement_speed": 3
+    },
+    "builder": {
+      "name": "Builder",
+      "active_sight": 5,
+      "passive_sight": 5,
+      "cost": {
+        "energy": 10,
+        "matter": 10,
+        "time": 10
+      },
+      "movement_speed": 1,
+      "build_range": 1,
+      "rebuild_rate": 0.2,
+      "can_build": [
+        "city",
+        "matterCollector",
+        "energyGenerator"
+      ]
+    },
+    "fighter": {
+      "name": "Fighter",
+      "active_sight": 5,
+      "passive_sight": 5,
+      "cost": {
+        "energy": 10,
+        "matter": 10,
+        "time": 10
+      },
+      "movement_speed": 1.5
+    },
+    "city": {
+      "name": "City",
+      "active_sight": 10,
+      "passive_sight": 12,
+      "cost": {
+        "energy": 100,
+        "matter": 100
+      },
+      "generates": {
+        "energy": 1,
+        "matter": 1
+      },
+      "can_train": [
+        "builder",
+        "scout"
+      ]
+    },
+    "energyGenerator": {
+      "name": "Generator",
+      "active_sight": 7,
+      "passive_sight": 8,
+      "cost": {
+        "energy": 25,
+        "matter": 50
+      },
+      "generates": {
+        "energy": 1,
+        "matter": 0
+      }
+    },
+    "matterCollector": {
+      "name": "Collector",
+      "active_sight": 7,
+      "passive_sight": 8,
+      "cost": {
+        "energy": 50,
+        "matter": 25
+      },
+      "generates": {
+        "energy": 0,
+        "matter": 1
+      }
+    }
+  }
+}

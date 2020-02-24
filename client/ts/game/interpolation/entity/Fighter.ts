@@ -11,8 +11,4 @@ export default class Fighter extends Unit {
         ctx.rotate(-this.orientation);
         ctx.fill();
     }
-
-    getName(): string {
-        return "Fighter";
-    }
 }

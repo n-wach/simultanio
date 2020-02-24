@@ -3,6 +3,7 @@ import {Entity, EntityState, Id} from "../../comms";
 import Interpolated from "./Interpolated";
 import getState from "./StateCreator";
 import StateInterpolator from "./StateInterpolator";
+import Simul from "../../Simul";
 
 export default abstract class EntityInterpolator extends Interpolated<Entity> implements Renderable {
     x: number;
@@ -46,7 +47,9 @@ export default abstract class EntityInterpolator extends Interpolated<Entity> im
         ctx.translate(-this.x, -this.y);
     }
 
-    abstract getName(): string;
+    getName(): string {
+        return Simul.STATS[this.type]["name"];
+    }
 
     abstract draw(ctx: CanvasRenderingContext2D): void;
 

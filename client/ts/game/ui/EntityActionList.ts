@@ -12,7 +12,6 @@ import Builder from "../interpolation/entity/Builder";
 import MatterCollector from "../interpolation/entity/MatterCollector";
 import EnergyGenerator from "../interpolation/entity/EnergyGenerator";
 import {BuildAction, TargetAction} from "./EntityAction";
-import {BuildingType} from "../../comms";
 
 export default class EntityActionList extends Grid {
     cityGrid: Grid;
@@ -26,12 +25,17 @@ export default class EntityActionList extends Grid {
         super([1], [1]);
 
         this.cityGrid = new Grid([40, 50, 50], [1]);
-        this.cityGrid.addComponent(new ResourceInfoGrid("1", "1", "per second"), 0, 0);
+        let rates = Simul.STATS["city"]["generates"];
+        this.cityGrid.addComponent(new ResourceInfoGrid(rates.energy, rates.matter, "per second"), 0, 0);
         this.cityGrid.addComponent(new LabelButton("Set Gather Point"), 1, 0, 1, 1, 10, 10);
         this.cityGrid.addComponent(new Label("Train:", "left"), 2, 0);
-        this.cityGrid.addComponent(new EntityCreationOption("Scout", 80, 20, 20), 3, 0, 1, 1, 10, 10);
-        this.cityGrid.addComponent(new EntityCreationOption("Builder", 20, 80, 20), 4, 0, 1, 1, 10, 10);
-        this.cityGrid.addComponent(new EntityCreationOption("Fighter", 60, 10, 20), 5, 0, 1, 1, 10, 10);
+        let i = 3;
+        for (let type of Simul.STATS["city"]["can_train"]) {
+            let e = Simul.STATS[type];
+            this.cityGrid.addComponent(new EntityCreationOption(e.name, e.cost.energy, e.cost.matter, e.cost.time),
+                i, 0, 1, 1, 10, 10);
+            i++;
+        }
 
         this.collectorGrid = new Grid([40], [1]);
         this.collectorGrid.addComponent(new ResourceInfoGrid("0", "1", "per second"), 0, 0);
@@ -51,15 +55,14 @@ export default class EntityActionList extends Grid {
         this.builderGrid.addComponent(new LabelButton("Set Target", "center", resetAction), 0, 0, 1, 1, 10, 10);
         this.builderGrid.addComponent(new LabelButton("Cancel Path", "center", resetAction), 1, 0, 1, 1, 10, 10);
         this.builderGrid.addComponent(new Label("Build:", "left"), 2, 0);
-        this.builderGrid.addComponent(new EntityCreationOption("City", 200, 200, 20, () => {
-            Simul.selectedEntityAction = new BuildAction(BuildingType.CITY);
-        }), 3, 0, 1, 1, 10, 10);
-        this.builderGrid.addComponent(new EntityCreationOption("Generator", 0, 100, 20, () => {
-            Simul.selectedEntityAction = new BuildAction(BuildingType.ENERGY_GENERATOR);
-        }), 4, 0, 1, 1, 10, 10);
-        this.builderGrid.addComponent(new EntityCreationOption("Collector", 100, 0, 20, () => {
-            Simul.selectedEntityAction = new BuildAction(BuildingType.MATTER_COLLECTOR);
-        }), 5, 0, 1, 1, 10, 10);
+        i = 3;
+        for (let type of Simul.STATS["builder"]["can_build"]) {
+            let b = Simul.STATS[type];
+            this.builderGrid.addComponent(new EntityCreationOption(b.name, b.cost.energy, b.cost.matter, 0, () => {
+                Simul.selectedEntityAction = new BuildAction(type);
+            }), i, 0, 1, 1, 10, 10);
+            i++;
+        }
 
         this.addComponent(this.cityGrid, 0, 0);
         this.addComponent(this.unitGrid, 0, 0);

@@ -1,5 +1,7 @@
 from math import floor
 
+from server.shared import entity_stats
+
 
 class IdleState:
     TYPE = "idle"
@@ -20,9 +22,8 @@ class IdleState:
 
 
 class Entity:
-    ACTIVE_SIGHT = 0
-    PASSIVE_SIGHT = 0
     TYPE = "unknown"
+    STATS = entity_stats(TYPE)
 
     def __init__(self, owner, grid_x, grid_y, starting_health=1.0):
         self.owner = owner
