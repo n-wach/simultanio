@@ -95,6 +95,11 @@ export type GeneratingState = {
     type: "generating",
 }
 
+export type TrainingState = {
+    trainingStatus: number;
+    type: "training",
+}
+
 export type PathingState = {
     type: "pathing",
     path: Path,
@@ -116,6 +121,7 @@ export type EntityState = PathingState
     | PathingToBuildState
     | GeneratingState
     | InConstructionState
+    | TrainingState
     | IdleState;
 
 export type Match = {
@@ -145,5 +151,11 @@ export type ClearTargetCommand = {
     ids: Id[],
 }
 
-export type PlayerCommand = SetTargetCommand | ClearTargetCommand | BuildCommand;
+export type TrainCommand = {
+    command: "train",
+    building: Id,
+    unitType: UnitType,
+}
+
+export type PlayerCommand = SetTargetCommand | ClearTargetCommand | BuildCommand | TrainCommand;
 

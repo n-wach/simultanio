@@ -1,6 +1,7 @@
+import os
+
 from flask import Flask, render_template, send_file, request
 from flask_socketio import SocketIO, emit, rooms, join_room, leave_room
-import os
 
 from server.match_manager import MatchManager
 
@@ -27,6 +28,11 @@ def index():
 @app.route("/js/bundle.js")
 def js_bundle():
     return send_file(os.path.join("..", "client", "dist", "bundle.js"))
+
+
+@app.route("/shared/data.json")
+def json_data():
+    return send_file(os.path.join("..", "shared", "data.json"))
 
 
 @socketio.on("connect")

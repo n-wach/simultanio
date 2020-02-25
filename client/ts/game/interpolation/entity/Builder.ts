@@ -13,8 +13,4 @@ export default class Builder extends Unit {
         ctx.rotate(-this.orientation);
         ctx.fill();
     }
-
-    getName(): string {
-        return "Builder";
-    }
 }

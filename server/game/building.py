@@ -1,17 +1,17 @@
 from server.game.entity import Entity, IdleState
+from server.shared import entity_stats
 
 
 class GeneratingState(IdleState):
     TYPE = "generating"
 
-    def __init__(self, energy_rate, matter_rate, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.energy_rate = energy_rate
-        self.matter_rate = matter_rate
+        self.rates = self.parent.STATS["generates"]
 
     def tick(self, dt):
-        self.parent.owner.stored_energy += dt * self.energy_rate
-        self.parent.owner.stored_matter += dt * self.matter_rate
+        self.parent.owner.stored_energy += dt * self.rates["energy"]
+        self.parent.owner.stored_matter += dt * self.rates["matter"]
 
 
 class InConstructionState(IdleState):
@@ -19,15 +19,37 @@ class InConstructionState(IdleState):
 
     def tick(self, dt):
         if self.parent.health >= 1.0:
-            self.parent.state = self.parent.active_state
+            self.parent.reset()
+
+
+class TrainingState(IdleState):
+    TYPE = "training"
+
+    def __init__(self, unit, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.unit = unit
+        self.duration = 0
+
+    def tick(self, dt):
+        if self.parent.owner.stored_energy < self.unit.STATS["cost"]["energy"]:
+            self.duration = 0
+            return
+        elif self.parent.owner.stored_matter < self.unit.STATS["cost"]["matter"]:
+            self.duration = 0
+            return
+        self.duration += dt
+        if self.duration > self.unit.STATS["cost"]["time"]:
+            self.parent.owner.train_unit(self.unit, self.parent.grid_x, self.parent.grid_y)
+            self.parent.reset()
+
+    def get_self(self):
+        return {
+            "type": self.TYPE,
+            "trainingStatus": self.duration / self.unit.STATS["cost"]["time"]
+        }
 
 
 class Building(Entity):
-    ACTIVE_SIGHT = 7
-    PASSIVE_SIGHT = 8
-    ENERGY_COST = 10
-    MATTER_COST = 10
-
     def repair(self, amount):
         self.health += amount
         if self.health > 1.0:
@@ -35,43 +57,33 @@ class Building(Entity):
 
 
 class EnergyGenerator(Building):
-    GENERATION_RATE = 1
     TYPE = "energyGenerator"
-    ENERGY_COST = 0
-    MATTER_COST = 100
+    STATS = entity_stats(TYPE)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.active_state = GeneratingState(self.GENERATION_RATE, 0.0, self)
-        self.state = self.active_state
+        self.default_state = GeneratingState(self)
+        self.reset()
 
 
 class MatterCollector(Building):
-    GENERATION_RATE = 1
     TYPE = "matterCollector"
-    ENERGY_COST = 100
-    MATTER_COST = 0
+    STATS = entity_stats(TYPE)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.active_state = GeneratingState(0.0, self.GENERATION_RATE, self)
-        self.state = self.active_state
+        self.default_state = GeneratingState(self)
+        self.reset()
 
 
 class City(Building):
-    GENERATION_RATE = 1
-
-    ENERGY_COST = 200
-    MATTER_COST = 200
-
     TYPE = "city"
-    ACTIVE_SIGHT = 10
-    PASSIVE_SIGHT = 12
+    STATS = entity_stats(TYPE)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.active_state = GeneratingState(self.GENERATION_RATE, self.GENERATION_RATE, self)
-        self.state = self.active_state
+        self.default_state = GeneratingState(self)
+        self.reset()
 
 
 BUILDING_TYPES = {cls.TYPE: cls for cls in Building.__subclasses__() if hasattr(cls, "TYPE")}

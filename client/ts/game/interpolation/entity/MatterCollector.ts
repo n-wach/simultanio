@@ -10,8 +10,4 @@ export default class MatterCollector extends Building {
         ctx.closePath();
         ctx.fill();
     }
-
-    getName(): string {
-        return "Collector";
-    }
 }

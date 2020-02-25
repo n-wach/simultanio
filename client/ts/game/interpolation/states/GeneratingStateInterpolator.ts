@@ -8,7 +8,6 @@ export default class GeneratingStateInterpolator extends StateInterpolator {
         let a = ctx.globalAlpha;
         let r = GeneratingStateInterpolator.MAX_CIRCLE_RADIUS;
         ctx.globalAlpha = 0.3 * (r - this.circleRadius) / r;
-        console.log(ctx.globalAlpha);
         ctx.beginPath();
         ctx.ellipse(0, 0, this.circleRadius, this.circleRadius, 0, 0, Math.PI * 2);
         ctx.fill();

@@ -72,9 +72,8 @@ class Terrain:
 
             no_path = False
 
-            # guarantee large paths between bases
+            # TODO: add blur to guarantee large paths (using numpy so its fast)
             tiles_saved = self.tiles
-            #self.tiles = self.tile_blur(1)
             # DONT call player grid pls
             total_view = TerrainView(self, None, True)
             lengths = []
@@ -93,11 +92,6 @@ class Terrain:
                 continue
             else:
                 break
-
-    def tile_blur(self, radius=0):
-        return tuple(tuple(
-            Water() if any(not self.tile_at(*t).passable for t in self.points_near(x, y, radius)) else Land()
-            for y in range(self.height)) for x in range(self.width))
 
     def gen_terrain(self, weight_blur, bias, source_chance):
         vals = noise(weight_blur, self.width, self.height)
@@ -172,7 +166,7 @@ class TerrainView:
     def discover_single_view(self, entity):
         x = entity.grid_x
         y = entity.grid_y
-        for point in self.terrain.points_near(x, y, entity.PASSIVE_SIGHT):
+        for point in self.terrain.points_near(x, y, entity.STATS["passive_sight"]):
             if not self.discovered_grid[point[0]][point[1]]:
                 self.discover(point)
 
@@ -184,7 +178,7 @@ class TerrainView:
         for entity in self.player.entities:
             x = entity.grid_x
             y = entity.grid_y
-            for point in self.terrain.points_near(x, y, entity.ACTIVE_SIGHT):
+            for point in self.terrain.points_near(x, y, entity.STATS["active_sight"]):
                 self.visibility_grid[point[0]][point[1]] = True
 
     def entity_visible(self, entity):

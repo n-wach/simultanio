@@ -1,6 +1,6 @@
 import StateInterpolator from "../StateInterpolator";
-import {UNIT_SPEEDS} from "../../../consts";
 import {Path, PathingState} from "../../../comms";
+import Simul from "../../../Simul";
 
 export default class PathingStateInterpolator extends StateInterpolator {
     path: Path;
@@ -16,7 +16,7 @@ export default class PathingStateInterpolator extends StateInterpolator {
 
     interpolate(dt: number) {
         let p = this.parent;
-        let remainingD = dt * UNIT_SPEEDS[p.type];
+        let remainingD = dt * Simul.STATS[p.type]["movement_speed"];
         while(remainingD > 0 && this.path.length > 0) {
             let next = this.path[0];
             let dx = next.x - p.x;

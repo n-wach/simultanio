@@ -2,48 +2,26 @@ import math
 
 from server.game.entity import IdleState
 from server.game.entity import UnalignedEntity
+from server.shared import entity_stats
 
 
 class Unit(UnalignedEntity):
-    ACTIVE_SIGHT = 5
-    PASSIVE_SIGHT = 5
-    ENERGY_COST = 10
-    MATTER_COST = 10
-    TIME_COST = 10
-    MOVEMENT_SPEED = 2
-    TYPE = "unit"
+    pass
 
 
 class Scout(Unit):
-    ACTIVE_SIGHT = 7
-    PASSIVE_SIGHT = 7
-    ENERGY_COST = 10
-    MATTER_COST = 10
-    TIME_COST = 10
-    MOVEMENT_SPEED = 3
     TYPE = "scout"
+    STATS = entity_stats(TYPE)
 
 
 class Builder(Unit):
-    ACTIVE_SIGHT = 5
-    PASSIVE_SIGHT = 5
-    ENERGY_COST = 10
-    MATTER_COST = 10
-    TIME_COST = 10
-    MOVEMENT_SPEED = 1
     TYPE = "builder"
-    BUILD_RANGE = 1
-    REBUILD_RATE = 0.2
+    STATS = entity_stats(TYPE)
 
 
 class Fighter(Unit):
-    ACTIVE_SIGHT = 5
-    PASSIVE_SIGHT = 5
-    ENERGY_COST = 10
-    MATTER_COST = 10
-    TIME_COST = 10
-    MOVEMENT_SPEED = 1.5
     TYPE = "fighter"
+    STATS = entity_stats(TYPE)
 
 
 class PathingState(IdleState):
@@ -61,7 +39,7 @@ class PathingState(IdleState):
                                                       (self.target_x, self.target_y))
 
     def tick(self, dt):
-        remaining_distance = dt * self.parent.MOVEMENT_SPEED
+        remaining_distance = dt * self.parent.STATS["movement_speed"]
         while remaining_distance > 0 and len(self.path) > 0:
             next_pos = self.path[0]
             if not self.parent.terrain_view.passable(*next_pos):
@@ -88,7 +66,7 @@ class PathingState(IdleState):
         return len(self.path) == 0
 
     def transition(self):
-        self.parent.state = IdleState(self.parent)
+        self.parent.reset()
 
     def get_self(self):
         return {
@@ -105,7 +83,7 @@ class ConstructingState(IdleState):
         self.building = building
 
     def tick(self, dt):
-        self.building.repair(dt * self.parent.REBUILD_RATE)
+        self.building.repair(dt * self.parent.STATS["rebuild_rate"])
 
     def get_self(self):
         return {
@@ -122,23 +100,24 @@ class PathingToBuildState(PathingState):
         self.building_type = building_type
 
     def condition(self):
-        return \
-            (self.target_x - self.parent.x) ** 2 + (self.target_y - self.parent.y) ** 2 < self.parent.BUILD_RANGE ** 2 \
-            or len(self.path) == 0
+        dx = self.target_x - self.parent.x
+        dy = self.target_y - self.parent.y
+        return len(self.path) == 0 or dx * dx + dy * dy < self.parent.STATS["build_range"] ** 2
 
     def transition(self):
         # check to see if pathing actually terminated nearby / if buildable in location
-        if not (self.target_x - self.parent.x) ** 2 + (
-                self.target_y - self.parent.y) ** 2 < self.parent.BUILD_RANGE ** 2 \
+        dx = self.target_x - self.parent.x
+        dy = self.target_y - self.parent.y
+        if not dx * dx + dy * dy < self.parent.STATS["build_range"] ** 2 \
                 or not self.parent.owner.terrain_view.passable(self.target_x, self.target_y):
-            self.parent.state = IdleState(self.parent)
+            self.parent.reset()
         else:
             building_at_location = self.parent.owner.get_building_at(self.target_x, self.target_y)
             if building_at_location is not None:
                 if isinstance(building_at_location, self.building_type):
                     self.parent.state = ConstructingState(building_at_location, self.parent)
                 else:
-                    self.parent.state = IdleState(self.parent)
+                    self.parent.reset()
             else:
                 building = self.parent.owner.construct_building(self.building_type, self.target_x, self.target_y)
                 if building is not None:
@@ -151,3 +130,5 @@ class PathingToBuildState(PathingState):
             "path": [{"x": p[0], "y": p[1]} for p in self.path]
         }
 
+
+UNIT_TYPES = {cls.TYPE: cls for cls in Unit.__subclasses__() if hasattr(cls, "TYPE")}

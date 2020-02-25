@@ -1,8 +1,9 @@
-from server.game.building import City, EnergyGenerator, MatterCollector, Building, BUILDING_TYPES, InConstructionState
+from server.game.building import City, EnergyGenerator, MatterCollector, Building, BUILDING_TYPES, InConstructionState, \
+    GeneratingState, TrainingState
 from server.game.entity import IdleState
 
 from server.game.terrain import TerrainView
-from server.game.unit import PathingState, PathingToBuildState
+from server.game.unit import PathingState, PathingToBuildState, UNIT_TYPES
 from server.game.unit import Scout, Unit, Fighter, Builder
 
 
@@ -44,14 +45,27 @@ class Player:
         self.entities.append(entity)
 
     def construct_building(self, building_type, target_x, target_y):
-        if building_type.MATTER_COST <= self.stored_matter and building_type.ENERGY_COST <= self.stored_energy:
-            self.stored_matter -= building_type.MATTER_COST
-            self.stored_energy -= building_type.ENERGY_COST
+        mc = building_type.STATS["cost"]["matter"]
+        ec = building_type.STATS["cost"]["energy"]
+        if mc <= self.stored_matter and ec <= self.stored_energy:
+            self.stored_matter -= mc
+            self.stored_energy -= ec
             building = building_type(self, target_x, target_y)
             building.health = 0
             building.state = InConstructionState(building)
             self.entities.append(building)
             return building
+        return None
+
+    def train_unit(self, unit_type, target_x, target_y):
+        mc = unit_type.STATS["cost"]["matter"]
+        ec = unit_type.STATS["cost"]["energy"]
+        if mc <= self.stored_matter and ec <= self.stored_energy:
+            self.stored_matter -= mc
+            self.stored_energy -= ec
+            unit = unit_type(self, target_x, target_y)
+            self.entities.append(unit)
+            return unit
         return None
 
     def get_self(self):
@@ -92,10 +106,17 @@ class Player:
         socketio.emit("game update", self.get_update(), room=self.sid)
 
     def tick(self, dt):
+        self.process_messages()
+
         for entity in self.entities:
             entity.tick(dt)
 
+        # Human player will act based on WS events received since last call
+        # AI player will act using AI
+
+    def process_messages(self):
         for message in self.pending_messages:
+            print(message)
             if message["command"] == "set target":
                 for e in self.entities:
                     if id(e) in message["ids"]:
@@ -104,19 +125,25 @@ class Player:
             elif message["command"] == "clear target":
                 for e in self.entities:
                     if id(e) in message["ids"]:
-                        if isinstance(e, Unit) and isinstance(e.state, PathingState):
+                        if isinstance(e, Unit) \
+                                and isinstance(e.state, PathingState):
                             e.state = IdleState(e)
             elif message["command"] == "build":
+                building_type = message["buildingType"]
                 for e in self.entities:
                     if id(e) in message["ids"]:
-                        if isinstance(e, Builder):
-                            e.state = PathingToBuildState(BUILDING_TYPES[message["buildingType"]],
+                        if isinstance(e, Builder) \
+                                and building_type in e.STATS["can_build"]:
+                            e.state = PathingToBuildState(BUILDING_TYPES[building_type],
                                                           e.align_x(message["x"]), e.align_y(message["y"]), e)
+            elif message["command"] == "train":
+                for e in self.entities:
+                    if id(e) == message["building"]:
+                        if isinstance(e, Building) \
+                                and message["unitType"] in e.STATS["can_train"] \
+                                and isinstance(e.state, GeneratingState):
+                            e.state = TrainingState(UNIT_TYPES[message["unitType"]], e)
         self.pending_messages.clear()
-
-        # Human player will act based on WS events received since last call
-        # AI player will act using AI
-        pass
 
     def get_entities_at(self, x, y):
         for player in self.game.players:
