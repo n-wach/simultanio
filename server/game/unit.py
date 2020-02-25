@@ -66,7 +66,7 @@ class PathingState(IdleState):
         return len(self.path) == 0
 
     def transition(self):
-        self.parent.state = IdleState(self.parent)
+        self.parent.reset()
 
     def get_self(self):
         return {
@@ -110,14 +110,14 @@ class PathingToBuildState(PathingState):
         dy = self.target_y - self.parent.y
         if not dx * dx + dy * dy < self.parent.STATS["build_range"] ** 2 \
                 or not self.parent.owner.terrain_view.passable(self.target_x, self.target_y):
-            self.parent.state = IdleState(self.parent)
+            self.parent.reset()
         else:
             building_at_location = self.parent.owner.get_building_at(self.target_x, self.target_y)
             if building_at_location is not None:
                 if isinstance(building_at_location, self.building_type):
                     self.parent.state = ConstructingState(building_at_location, self.parent)
                 else:
-                    self.parent.state = IdleState(self.parent)
+                    self.parent.reset()
             else:
                 building = self.parent.owner.construct_building(self.building_type, self.target_x, self.target_y)
                 if building is not None:

@@ -31,6 +31,7 @@ class Entity:
         self.grid_x = grid_x
         self.grid_y = grid_y
         self.owner.terrain_view.discover_single_view(self)
+        self.default_state = IdleState(self)
         self.state = IdleState(self)
         self.health = starting_health
 
@@ -55,6 +56,9 @@ class Entity:
             "y": self.grid_y,
             "id": id(self),
         }
+
+    def reset(self):
+        self.state = self.default_state
 
 
 class UnalignedEntity(Entity):
