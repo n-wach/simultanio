@@ -1,4 +1,5 @@
-from server.game.building import City, EnergyGenerator, MatterCollector, Building, BUILDING_TYPES, InConstructionState
+from server.game.building import City, EnergyGenerator, MatterCollector, Building, BUILDING_TYPES, InConstructionState, \
+    GeneratingState
 from server.game.entity import IdleState
 
 from server.game.terrain import TerrainView
@@ -124,19 +125,23 @@ class Player:
             elif message["command"] == "clear target":
                 for e in self.entities:
                     if id(e) in message["ids"]:
-                        if isinstance(e, Unit) and isinstance(e.state, PathingState):
+                        if isinstance(e, Unit) \
+                                and isinstance(e.state, PathingState):
                             e.state = IdleState(e)
             elif message["command"] == "build":
                 building_type = message["buildingType"]
                 for e in self.entities:
                     if id(e) in message["ids"]:
-                        if isinstance(e, Builder) and building_type in e.STATS["can_build"]:
+                        if isinstance(e, Builder) \
+                                and building_type in e.STATS["can_build"]:
                             e.state = PathingToBuildState(BUILDING_TYPES[building_type],
                                                           e.align_x(message["x"]), e.align_y(message["y"]), e)
             elif message["command"] == "train":
                 for e in self.entities:
                     if id(e) == message["building"]:
-                        if isinstance(e, Building) and message["unitType"] in e.STATS["can_train"]:
+                        if isinstance(e, Building) \
+                                and message["unitType"] in e.STATS["can_train"] \
+                                and isinstance(e.state, GeneratingState):
                             e.state = TrainingState(UNIT_TYPES[message["unitType"]], e)
         self.pending_messages.clear()
 

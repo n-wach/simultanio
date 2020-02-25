@@ -2,122 +2,92 @@ import Grid from "../../gfx/ui/Grid";
 import Simul from "../../Simul";
 import Label from "../../gfx/ui/Label";
 import Button from "../../gfx/ui/Button";
-import City from "../interpolation/entity/City";
-import Unit from "../interpolation/entity/Unit";
 import Res from "../Res";
 import Game from "../../gfx/Game";
 import Icon from "../../gfx/ui/Icon";
 import LabelButton from "../../gfx/ui/LabelButton";
-import Builder from "../interpolation/entity/Builder";
-import MatterCollector from "../interpolation/entity/MatterCollector";
-import EnergyGenerator from "../interpolation/entity/EnergyGenerator";
-import {BuildAction, TargetAction} from "./EntityAction";
-import {PlayerCommand} from "../../comms";
+import {BuildAction} from "./EntityAction";
+import {EntityType, PlayerCommand} from "../../comms";
 
 export default class EntityActionList extends Grid {
-    cityGrid: Grid;
-    generatorGrid: Grid;
-    collectorGrid: Grid;
-    unitGrid: Grid;
-    builderGrid: Grid;
-    activeGrid: Grid;
+    selectionTypes: EntityType[] = [];
 
     constructor() {
-        super([1], [1]);
-
-        this.cityGrid = new Grid([40, 50, 50], [1]);
-        let rates = Simul.STATS["city"]["generates"];
-        this.cityGrid.addComponent(new ResourceInfoGrid(rates.energy, rates.matter, "per second"), 0, 0);
-        this.cityGrid.addComponent(new LabelButton("Set Gather Point"), 1, 0, 1, 1, 10, 10);
-        this.cityGrid.addComponent(new Label("Train:", "left"), 2, 0);
-        let i = 3;
-        for (let type of Simul.STATS["city"]["can_train"]) {
-            let e = Simul.STATS[type];
-            this.cityGrid.addComponent(new EntityCreationOption(e.name, e.cost.energy, e.cost.matter, e.cost.time, () => {
-                    Game.socketio.emit("player command", ({
-                        command: "train",
-                        unitType: type,
-                        building: Simul.selectedEntities[0].id,
-                    } as PlayerCommand));
-                    console.log("train");
-                }),
-                i, 0, 1, 1, 10, 10);
-            i++;
-        }
-
-        this.collectorGrid = new Grid([40], [1]);
-        this.collectorGrid.addComponent(new ResourceInfoGrid("0", "1", "per second"), 0, 0);
-
-        this.generatorGrid = new Grid([40], [1]);
-        this.generatorGrid.addComponent(new ResourceInfoGrid("1", "0", "per second"), 0, 0);
-
-        this.unitGrid = new Grid([50], [1]);
-        this.unitGrid.addComponent(new LabelButton("Set Target"), 0, 0, 1, 1, 10, 10);
-        this.unitGrid.addComponent(new LabelButton("Cancel Path"), 1, 0, 1, 1, 10, 10);
-
-        let resetAction = () => {
-            Simul.selectedEntityAction = new TargetAction();
-        };
-
-        this.builderGrid = new Grid([50], [1]);
-        this.builderGrid.addComponent(new LabelButton("Set Target", "center", resetAction), 0, 0, 1, 1, 10, 10);
-        this.builderGrid.addComponent(new LabelButton("Cancel Path", "center", resetAction), 1, 0, 1, 1, 10, 10);
-        this.builderGrid.addComponent(new Label("Build:", "left"), 2, 0);
-        i = 3;
-        for (let type of Simul.STATS["builder"]["can_build"]) {
-            let b = Simul.STATS[type];
-            this.builderGrid.addComponent(new EntityCreationOption(b.name, b.cost.energy, b.cost.matter, 0, () => {
-                Simul.selectedEntityAction = new BuildAction(type);
-                console.log("build");
-            }), i, 0, 1, 1, 10, 10);
-            i++;
-        }
-
-        this.addComponent(this.cityGrid, 0, 0);
-        this.cityGrid.visible = false;
-
-        this.addComponent(this.unitGrid, 0, 0);
-        this.unitGrid.visible = false;
-
-        this.addComponent(this.builderGrid, 0, 0);
-        this.builderGrid.visible = false;
-
-        this.addComponent(this.generatorGrid, 0, 0);
-        this.generatorGrid.visible = false;
-
-        this.addComponent(this.collectorGrid, 0, 0);
-        this.collectorGrid.visible = false;
+        super([40], [1.0]);
     }
 
     render(ctx: CanvasRenderingContext2D): void {
         ctx.fillStyle = Res.col_uibg_secondary;
         ctx.fillRect(this.x, this.y, this.width, this.height);
-        if(this.activeGrid) this.activeGrid.render(ctx);
+        super.render(ctx);
     }
 
     update(dt: number): void {
         super.update(dt);
-        if (this.activeGrid) this.activeGrid.visible = false;
-        if(Simul.selectedEntities.length == 0) {
-            this.activeGrid = null;
-        } else {
-            if(Simul.selectedEntities.length == 1) {
-                let e = Simul.selectedEntities[0];
-                if(e instanceof City) this.activeGrid = this.cityGrid;
-                else if(e instanceof MatterCollector) this.activeGrid = this.collectorGrid;
-                else if(e instanceof EnergyGenerator) this.activeGrid = this.generatorGrid;
-                else if(e instanceof Builder) this.activeGrid = this.builderGrid;
-                else if(e instanceof Unit) this.activeGrid = this.unitGrid;
-            } else {
-                let allBuilders = true;
-                for(let e of Simul.selectedEntities) {
-                    if(!(e instanceof Builder)) allBuilders = false;
-                }
-                if(allBuilders) this.activeGrid = this.builderGrid;
-                else this.activeGrid = this.unitGrid;
+        let newTypes = [];
+        let same = true;
+        for (let i = 0; i < Simul.selectedEntities.length; i++) {
+            newTypes.push(Simul.selectedEntities[i].type);
+            if (this.selectionTypes.length <= i || newTypes[i] != this.selectionTypes[i]) same = false;
+        }
+        if (newTypes.length != this.selectionTypes.length) same = false;
+        if (!same) {
+            this.selectionTypes = newTypes;
+            this.regenerate();
+        }
+    }
+
+    regenerate() {
+        this.clear();
+        this.nRows = 1;
+        this.nCols = 1;
+        let allGenerate = true;
+        let allCanBuild = true;
+        let allCanPath = true;
+        let allCanTrain = true;
+        let sharedType = undefined;
+        for (let t of this.selectionTypes) {
+            if (sharedType == undefined) sharedType = t;
+            else if (sharedType != t) sharedType = null;
+            let d = Simul.STATS[t];
+            allGenerate = allGenerate && d["generates"] != undefined;
+            allCanBuild = allCanBuild && d["can_build"] != undefined;
+            allCanPath = allCanPath && d["movement_speed"] != undefined;
+            allCanTrain = allCanTrain && d["can_train"] != undefined;
+        }
+
+        let row = 0;
+        if (allGenerate && sharedType) {
+            let rates = Simul.STATS[sharedType]["generates"];
+            this.addComponent(new ResourceInfoGrid(rates.energy, rates.matter, "per second"), row++, 0);
+        }
+        if (allCanPath && sharedType != undefined) {
+            this.addComponent(new LabelButton("Set Target"), row++, 0, 1, 1, 10, 10);
+            this.addComponent(new LabelButton("Cancel Path"), row++, 0, 1, 1, 10, 10);
+        }
+        if (allCanBuild && sharedType) {
+            this.addComponent(new Label("Build:"), row++, 0, 1, 1, 10, 10);
+            for (let type of Simul.STATS[sharedType]["can_build"]) {
+                let b = Simul.STATS[type];
+                this.addComponent(new EntityCreationOption(b.name, b.cost.energy, b.cost.matter, 0, () => {
+                    Simul.selectedEntityAction = new BuildAction(type);
+                }), row++, 0, 1, 1, 10, 10);
             }
         }
-        if (this.activeGrid) this.activeGrid.visible = true;
+        if (allCanTrain && sharedType) {
+            this.addComponent(new LabelButton("Set Gather Point"), row++, 0, 1, 1, 10, 10);
+            this.addComponent(new Label("Train:"), row++, 0, 1, 1, 10, 10);
+            for (let type of Simul.STATS[sharedType]["can_train"]) {
+                let e = Simul.STATS[type];
+                this.addComponent(new EntityCreationOption(e.name, e.cost.energy, e.cost.matter, e.cost.time, () => {
+                    Game.socketio.emit("player command", ({
+                        command: "train",
+                        unitType: type,
+                        building: Simul.selectedEntities[0].id,
+                    } as PlayerCommand));
+                }), row++, 0, 1, 1, 10, 10);
+            }
+        }
     }
 }
 
@@ -137,7 +107,7 @@ class ResourceInfoGrid extends Grid {
 
 class EntityCreationOption extends Button {
     constructor(name: string, energy: number, matter: number, time: number, onclick?: () => void) {
-        super(new Grid([1], [1, 30, 30, 30, 30, 50]), onclick);
+        super(new Grid([1], [1, 20, 30, 20, 30, 50]), onclick);
         (this.subComponent as Grid).addComponent(new Label(name), 0, 0);
         (this.subComponent as Grid).addComponent(new Icon("/energy.png"), 0, 1, 1, 1, 0, 10);
         (this.subComponent as Grid).addComponent(new Label(energy.toFixed(0)), 0, 2);
