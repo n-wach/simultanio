@@ -1,9 +1,9 @@
 from server.game.building import City, EnergyGenerator, MatterCollector, Building, BUILDING_TYPES, InConstructionState, \
-    GeneratingState
+    GeneratingState, TrainingState
 from server.game.entity import IdleState
 
 from server.game.terrain import TerrainView
-from server.game.unit import PathingState, PathingToBuildState, UNIT_TYPES, TrainingState
+from server.game.unit import PathingState, PathingToBuildState, UNIT_TYPES
 from server.game.unit import Scout, Unit, Fighter, Builder
 
 

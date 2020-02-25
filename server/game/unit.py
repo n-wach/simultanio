@@ -1,6 +1,5 @@
 import math
 
-from server.game.building import GeneratingState
 from server.game.entity import IdleState
 from server.game.entity import UnalignedEntity
 from server.shared import entity_stats
@@ -90,33 +89,6 @@ class ConstructingState(IdleState):
         return {
             "type": self.TYPE,
             "building": id(self.building)
-        }
-
-
-class TrainingState(IdleState):
-    TYPE = "training"
-
-    def __init__(self, unit, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.unit = unit
-        self.duration = 0
-
-    def tick(self, dt):
-        if self.parent.owner.stored_energy < self.unit.STATS["cost"]["energy"]:
-            self.duration = 0
-            return
-        elif self.parent.owner.stored_matter < self.unit.STATS["cost"]["matter"]:
-            self.duration = 0
-            return
-        self.duration += dt
-        if self.duration > self.unit.STATS["cost"]["time"]:
-            self.parent.owner.train_unit(self.unit, self.parent.grid_x, self.parent.grid_y)
-            self.parent.state = GeneratingState(self.parent)
-
-    def get_self(self):
-        return {
-            "type": self.TYPE,
-            "trainingStatus": self.duration / self.unit.STATS["cost"]["time"]
         }
 
 
