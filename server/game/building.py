@@ -19,7 +19,7 @@ class InConstructionState(IdleState):
 
     def tick(self, dt):
         if self.parent.health >= 1.0:
-            self.parent.state = self.parent.active_state
+            self.parent.reset()
 
 
 class GhostState(IdleState):
@@ -50,7 +50,7 @@ class TrainingState(IdleState):
         self.duration += dt
         if self.duration > self.unit.STATS["cost"]["time"]:
             self.parent.owner.train_unit(self.unit, self.parent.grid_x, self.parent.grid_y)
-            self.parent.state = GeneratingState(self.parent)
+            self.parent.reset()
 
     def get_self(self):
         return {
@@ -72,8 +72,8 @@ class EnergyGenerator(Building):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.active_state = GeneratingState(self)
-        self.state = self.active_state
+        self.default_state = GeneratingState(self)
+        self.reset()
 
 
 class MatterCollector(Building):
@@ -82,8 +82,8 @@ class MatterCollector(Building):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.active_state = GeneratingState(self)
-        self.state = self.active_state
+        self.default_state = GeneratingState(self)
+        self.reset()
 
 
 class City(Building):
@@ -92,8 +92,8 @@ class City(Building):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.active_state = GeneratingState(self)
-        self.state = self.active_state
+        self.default_state = GeneratingState(self)
+        self.reset()
 
 
 BUILDING_TYPES = {cls.TYPE: cls for cls in Building.__subclasses__() if hasattr(cls, "TYPE")}

@@ -1,6 +1,5 @@
 import math
 
-from server.game.building import GhostState, InConstructionState
 from server.game.entity import IdleState
 from server.game.entity import UnalignedEntity
 from server.shared import entity_stats
@@ -67,7 +66,7 @@ class PathingState(IdleState):
         return len(self.path) == 0
 
     def transition(self):
-        self.parent.state = IdleState(self.parent)
+        self.parent.reset()
 
     def get_self(self):
         return {
@@ -116,7 +115,7 @@ class PathingToBuildState(PathingState):
                 self.building.state = InConstructionState(self.building)
             self.parent.state = ConstructingState(self.building, self.parent)
         else:
-            self.parent.state = IdleState(self.parent)
+            self.parent.reset()
 
     def get_self(self):
         return {

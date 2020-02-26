@@ -26,9 +26,10 @@ class Entity:
     def __init__(self, owner, grid_x, grid_y, starting_health=1.0):
         self.owner = owner
         self.terrain_view = owner.terrain_view
+        self.default_state = IdleState(self)
         self.grid_x = self.terrain_view.terrain.align_x(grid_x)
         self.grid_y = self.terrain_view.terrain.align_y(grid_y)
-        self.state = IdleState(self)
+        self.state = self.default_state
         self.health = starting_health
         self.exists = False
 
@@ -53,6 +54,9 @@ class Entity:
             "y": self.grid_y,
             "id": id(self),
         }
+
+    def reset(self):
+        self.state = self.default_state
 
 
 class UnalignedEntity(Entity):
