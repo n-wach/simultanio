@@ -5,6 +5,8 @@ import networkx
 import numpy as np
 from scipy.ndimage.filters import gaussian_filter
 
+from server.game.building import GhostState
+
 
 class Tile:
     LAND = "land"
@@ -146,6 +148,12 @@ class Terrain:
         if y < self.height - 1:
             yield (x, y + 1)
 
+    def align_x(self, x):
+        return min(max(math.floor(x), 0), self.width - 1)
+
+    def align_y(self, y):
+        return min(max(math.floor(y), 0), self.height - 1)
+
 
 class TerrainView:
     def __init__(self, terrain, player, discovered=False):
@@ -176,6 +184,8 @@ class TerrainView:
                 self.visibility_grid[x][y] = False
 
         for entity in self.player.entities:
+            if isinstance(entity.state, GhostState):
+                continue
             x = entity.grid_x
             y = entity.grid_y
             for point in self.terrain.points_near(x, y, entity.STATS["active_sight"]):

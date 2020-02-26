@@ -87,6 +87,10 @@ export type IdleState = {
     type: "idle",
 };
 
+export type GhostState = {
+    type: "ghost",
+};
+
 export type InConstructionState = {
     type: "inConstruction",
 }
@@ -112,7 +116,7 @@ export type ConstructingState = {
 
 export type PathingToBuildState = {
     type: "pathingToBuild",
-    buildingType: BuildingType,
+    ghost: Id,
     path: Path,
 }
 
@@ -122,6 +126,7 @@ export type EntityState = PathingState
     | GeneratingState
     | InConstructionState
     | TrainingState
+    | GhostState
     | IdleState;
 
 export type Match = {

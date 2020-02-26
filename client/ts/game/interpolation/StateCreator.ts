@@ -8,6 +8,7 @@ import GeneratingStateInterpolator from "./states/GeneratingStateInterpolator";
 import IdleStateInterpolator from "./states/IdleStateInterpolator";
 import InConstructionState from "./states/InConstructionStateInterpolator";
 import TrainingStateInterpolator from "./states/TrainingStateInterpolator";
+import GhostStateInterpolator from "./states/GhostStateInterpolator";
 
 export default function getState(s: EntityState, e: EntityInterpolator): StateInterpolator {
     switch (s.type) {
@@ -19,6 +20,8 @@ export default function getState(s: EntityState, e: EntityInterpolator): StateIn
             return new InConstructionState(s, e);
         case "idle":
             return new IdleStateInterpolator(s, e);
+        case "ghost":
+            return new GhostStateInterpolator(s, e);
         case "pathing":
             return new PathingStateInterpolator(s, e);
         case "constructing":

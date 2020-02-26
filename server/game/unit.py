@@ -1,5 +1,6 @@
 import math
 
+from server.game.building import GhostState, InConstructionState
 from server.game.entity import IdleState
 from server.game.entity import UnalignedEntity
 from server.shared import entity_stats
@@ -95,38 +96,32 @@ class ConstructingState(IdleState):
 class PathingToBuildState(PathingState):
     TYPE = "pathingToBuild"
 
-    def __init__(self, building_type, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.building_type = building_type
+    def __init__(self, building, *args, **kwargs):
+        super().__init__(building.grid_x, building.grid_y, *args, **kwargs)
+        self.building = building
 
     def condition(self):
         dx = self.target_x - self.parent.x
         dy = self.target_y - self.parent.y
-        return len(self.path) == 0 or dx * dx + dy * dy < self.parent.STATS["build_range"] ** 2
+        in_range = dx * dx + dy * dy < self.parent.STATS["build_range"] ** 2
+        return self.building.exists and (len(self.path) == 0 or in_range)
 
     def transition(self):
         # check to see if pathing actually terminated nearby / if buildable in location
         dx = self.target_x - self.parent.x
         dy = self.target_y - self.parent.y
-        if not dx * dx + dy * dy < self.parent.STATS["build_range"] ** 2 \
-                or not self.parent.owner.terrain_view.passable(self.target_x, self.target_y):
-            self.parent.state = IdleState(self.parent)
+        in_range = dx * dx + dy * dy < self.parent.STATS["build_range"] ** 2
+        if in_range and self.building.exists:
+            if isinstance(self.building.state, GhostState):
+                self.building.state = InConstructionState(self.building)
+            self.parent.state = ConstructingState(self.building, self.parent)
         else:
-            building_at_location = self.parent.owner.get_building_at(self.target_x, self.target_y)
-            if building_at_location is not None:
-                if isinstance(building_at_location, self.building_type):
-                    self.parent.state = ConstructingState(building_at_location, self.parent)
-                else:
-                    self.parent.state = IdleState(self.parent)
-            else:
-                building = self.parent.owner.construct_building(self.building_type, self.target_x, self.target_y)
-                if building is not None:
-                    self.parent.state = ConstructingState(building, self.parent)
+            self.parent.state = IdleState(self.parent)
 
     def get_self(self):
         return {
             "type": self.TYPE,
-            "buildingType": self.building_type.TYPE,
+            "ghost": id(self.building),
             "path": [{"x": p[0], "y": p[1]} for p in self.path]
         }
 

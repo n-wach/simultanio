@@ -42,7 +42,13 @@ export default abstract class EntityInterpolator extends Interpolated<Entity> im
 
     render(ctx: CanvasRenderingContext2D): void {
         ctx.translate(this.x, this.y);
-        this.draw(ctx);
+        if (this.state.type === "ghost") {
+            ctx.globalAlpha = 0.4;
+            this.draw(ctx);
+            ctx.globalAlpha = 1;
+        } else {
+            this.draw(ctx);
+        }
         this.stateInterpolator.draw(ctx);
         ctx.translate(-this.x, -this.y);
     }
