@@ -1,5 +1,6 @@
 import math
 
+from server.game.building import GhostState, InConstructionState
 from server.game.entity import IdleState
 from server.game.entity import UnalignedEntity
 from server.shared import entity_stats
