@@ -130,4 +130,20 @@ export default class Grid extends Component {
         }
         super.removeHandlers();
     }
+
+    requiredHeight(): number {
+        let my = 0;
+        for (let p of this.positions) {
+            if (my < p[0] + p[2]) my = p[0] + p[2];
+        }
+        return Math.max(this.height, this.getY(my) - this.y);
+    }
+
+    requiredWidth(): number {
+        let mx = 0;
+        for (let p of this.positions) {
+            if (mx < p[1] + p[3]) mx = p[1] + p[3];
+        }
+        return Math.max(this.width, this.getX(mx) - this.x);
+    }
 }

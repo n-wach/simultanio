@@ -23,7 +23,7 @@ export default class EntityActionList extends Grid {
 
     render(ctx: CanvasRenderingContext2D): void {
         ctx.fillStyle = Res.col_uibg_secondary;
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+        ctx.fillRect(this.x, this.y, this.width, this.requiredHeight());
         super.render(ctx);
     }
 
@@ -75,7 +75,7 @@ export default class EntityActionList extends Grid {
         let row = 0;
         if (allGenerate && sharedType && !anyGhost) {
             let rates = Simul.STATS[sharedType]["generates"];
-            this.addComponent(new ResourceInfoGrid(rates.energy, rates.matter, "per second"), row++, 0);
+            this.addComponent(new ResourceInfoGrid(rates.energy, rates.matter, "per second"), row++, 0, 0, 0, 10, 10);
         }
         if (allCanPath && sharedType != undefined && !anyGhost) {
             this.addComponent(new LabelButton("Set Target"), row++, 0, 1, 1, 10, 10);
