@@ -62,6 +62,7 @@ export default class Input {
         for(let handler of handlers) {
             if(handler(event)) return false;
         }
+        console.log("Event passed through all unhandled: ", event);
         return false;
     }
 
@@ -75,6 +76,14 @@ export default class Input {
                 this.handlers[event] = [handler];
             } else {
                 this.handlers[event].unshift(handler);
+            }
+        }
+    }
+
+    removeHandler(handler: (event: any) => boolean) {
+        for (let event of Input.supportedEvents) {
+            if (this.handlers[event] && this.handlers[event].indexOf(handler) != -1) {
+                this.handlers[event].splice(this.handlers[event].indexOf(handler), 1);
             }
         }
     }

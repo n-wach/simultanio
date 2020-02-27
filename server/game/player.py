@@ -46,7 +46,10 @@ class Player:
 
     def delete_entity(self, entity):
         entity.exists = False
-        self.entities.remove(entity)
+        if entity in self.entities:
+            if isinstance(entity.state, GhostState):
+                self.refund(entity)
+            self.entities.remove(entity)
 
     def train_unit(self, unit_type, target_x, target_y):
         if self.can_afford(unit_type):
@@ -65,20 +68,26 @@ class Player:
 
     def process_messages(self):
         for message in self.pending_messages:
-            if message["command"] == "set target":
+            print(message)
+            cmd = message.get("command")
+            if cmd == "set target":
                 for e in self.entities:
-                    if id(e) in message["ids"] and isinstance(e, Unit):
+                    if id(e) in message.get("ids") and isinstance(e, Unit):
                         e.state = PathingState(self.terrain_view.terrain.align_x(message["x"]),
                                                self.terrain_view.terrain.align_y(message["y"]), e)
-            elif message["command"] == "clear target":
+
+            elif cmd == "clear target":
                 for e in self.entities:
-                    if id(e) in message["ids"] and isinstance(e, Unit) and isinstance(e.state, PathingState):
+                    if id(e) in message.get("ids") and isinstance(e, Unit) \
+                            and isinstance(e.state, PathingState):
                         e.state = IdleState(e)
-            elif message["command"] == "build":
+
+            elif cmd == "build":
                 building_type = message["buildingType"]
                 ghost = None
                 for e in self.entities:
-                    if id(e) in message["ids"] and isinstance(e, Builder) and building_type in e.STATS["can_build"]:
+                    if id(e) in message.get("ids") and isinstance(e, Builder) \
+                            and building_type in e.STATS["can_build"]:
                         building_cls = BUILDING_TYPES[building_type]
                         if ghost is None and self.can_afford(building_cls):
                             self.purchase(building_cls)
@@ -87,13 +96,21 @@ class Player:
                             self.add_entity(ghost)
                         if ghost:
                             e.state = PathingToBuildState(ghost, e)
-            elif message["command"] == "train":
+
+            elif cmd == "train":
                 for e in self.entities:
-                    if id(e) == message["building"]:
-                        if isinstance(e, Building) \
-                                and message["unitType"] in e.STATS["can_train"] \
-                                and isinstance(e.state, GeneratingState):
-                            e.state = TrainingState(UNIT_TYPES[message["unitType"]], e)
+                    if id(e) == message.get("building") and isinstance(e, Building) \
+                            and isinstance(e.state, GeneratingState) \
+                            and message["unitType"] in e.STATS["can_train"]:
+                        e.state = TrainingState(UNIT_TYPES[message["unitType"]], e)
+
+            elif cmd == "destroy":
+                # so it turns out removing from a list you're iterating through in python causes weird behavior...
+                # the [:] makes a tmp copy for iterating
+                for e in self.entities[:]:
+                    if id(e) in message["ids"]:
+                        self.delete_entity(e)
+
         self.pending_messages.clear()
 
     def visible_entities_at(self, x, y):

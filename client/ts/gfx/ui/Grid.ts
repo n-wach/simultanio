@@ -73,6 +73,7 @@ export default class Grid extends Component {
     }
 
     clear() {
+        this.removeHandlers();
         this.components = [];
     }
 
@@ -121,5 +122,12 @@ export default class Grid extends Component {
         for(let c of this.components) {
             c.update(dt);
         }
+    }
+
+    removeHandlers() {
+        for (let c of this.components) {
+            c.removeHandlers();
+        }
+        super.removeHandlers();
     }
 }

@@ -7,10 +7,15 @@ import Game from "../../gfx/Game";
 import Icon from "../../gfx/ui/Icon";
 import LabelButton from "../../gfx/ui/LabelButton";
 import {BuildAction} from "./EntityAction";
-import {EntityType, PlayerCommand} from "../../comms";
+import {PlayerCommand} from "../../comms";
+import EntityInterpolator from "../interpolation/EntityInterpolator";
+import PathingStateInterpolator from "../interpolation/states/PathingStateInterpolator";
+import Unit from "../interpolation/entity/Unit";
+import Building from "../interpolation/entity/Building";
+import GhostStateInterpolator from "../interpolation/states/GhostStateInterpolator";
 
 export default class EntityActionList extends Grid {
-    selectionTypes: EntityType[] = [];
+    selection: EntityInterpolator[] = [];
 
     constructor() {
         super([40], [1.0]);
@@ -24,15 +29,15 @@ export default class EntityActionList extends Grid {
 
     update(dt: number): void {
         super.update(dt);
-        let newTypes = [];
+        let newSelection = [];
         let same = true;
         for (let i = 0; i < Simul.selectedEntities.length; i++) {
-            newTypes.push(Simul.selectedEntities[i].type);
-            if (this.selectionTypes.length <= i || newTypes[i] != this.selectionTypes[i]) same = false;
+            newSelection.push(Simul.selectedEntities[i]);
+            if (this.selection.length <= i || newSelection[i] != this.selection[i]) same = false;
         }
-        if (newTypes.length != this.selectionTypes.length) same = false;
+        if (newSelection.length != this.selection.length) same = false;
         if (!same) {
-            this.selectionTypes = newTypes;
+            this.selection = newSelection;
             this.regenerate();
         }
     }
@@ -41,15 +46,26 @@ export default class EntityActionList extends Grid {
         this.clear();
         this.nRows = 1;
         this.nCols = 1;
+        if (this.selection.length == 0) return;
+
+        let sharedType = undefined;
         let allGenerate = true;
         let allCanBuild = true;
         let allCanPath = true;
         let allCanTrain = true;
-        let sharedType = undefined;
-        for (let t of this.selectionTypes) {
+        let allUnits = true;
+        let allBuildings = true;
+        let anyPathing = false;
+        let anyGhost = false;
+        for (let e of this.selection) {
+            let t = e.type;
             if (sharedType == undefined) sharedType = t;
             else if (sharedType != t) sharedType = null;
             let d = Simul.STATS[t];
+            anyPathing = anyPathing || e.stateInterpolator instanceof PathingStateInterpolator;
+            anyGhost = anyGhost || e.stateInterpolator instanceof GhostStateInterpolator;
+            allUnits = allUnits && e instanceof Unit;
+            allBuildings = allBuildings && e instanceof Building;
             allGenerate = allGenerate && d["generates"] != undefined;
             allCanBuild = allCanBuild && d["can_build"] != undefined;
             allCanPath = allCanPath && d["movement_speed"] != undefined;
@@ -57,15 +73,26 @@ export default class EntityActionList extends Grid {
         }
 
         let row = 0;
-        if (allGenerate && sharedType) {
+        if (allGenerate && sharedType && !anyGhost) {
             let rates = Simul.STATS[sharedType]["generates"];
             this.addComponent(new ResourceInfoGrid(rates.energy, rates.matter, "per second"), row++, 0);
         }
-        if (allCanPath && sharedType != undefined) {
+        if (allCanPath && sharedType != undefined && !anyGhost) {
             this.addComponent(new LabelButton("Set Target"), row++, 0, 1, 1, 10, 10);
-            this.addComponent(new LabelButton("Cancel Path"), row++, 0, 1, 1, 10, 10);
         }
-        if (allCanBuild && sharedType) {
+        if (anyPathing && !anyGhost) {
+            this.addComponent(new LabelButton("Cancel Path", "center", () => {
+                let ids = [];
+                for (let e of this.selection) {
+                    ids.push(e.id);
+                }
+                Game.socketio.emit("player command", ({
+                    command: "clear target",
+                    ids: ids,
+                } as PlayerCommand));
+            }), row++, 0, 1, 1, 10, 10);
+        }
+        if (allCanBuild && sharedType && !anyGhost) {
             this.addComponent(new Label("Build:"), row++, 0, 1, 1, 10, 10);
             for (let type of Simul.STATS[sharedType]["can_build"]) {
                 let b = Simul.STATS[type];
@@ -74,7 +101,7 @@ export default class EntityActionList extends Grid {
                 }), row++, 0, 1, 1, 10, 10);
             }
         }
-        if (allCanTrain && sharedType) {
+        if (allCanTrain && sharedType && !anyGhost) {
             this.addComponent(new LabelButton("Set Gather Point"), row++, 0, 1, 1, 10, 10);
             this.addComponent(new Label("Train:"), row++, 0, 1, 1, 10, 10);
             for (let type of Simul.STATS[sharedType]["can_train"]) {
@@ -88,15 +115,23 @@ export default class EntityActionList extends Grid {
                 }), row++, 0, 1, 1, 10, 10);
             }
         }
+        this.addComponent(new LabelButton("Destroy", "center", () => {
+            let ids = [];
+            for (let e of Simul.selectedEntities) {
+                ids.push(e.id);
+            }
+            Game.socketio.emit("player command", ({
+                command: "destroy",
+                ids: ids,
+            } as PlayerCommand));
+            Simul.selectedEntities = [];
+        }), row++, 0, 1, 1, 10, 10);
     }
 }
 
 class ResourceInfoGrid extends Grid {
     constructor(energy: string, matter: string, time: string) {
         super([40], [40, 20, 10, 40, 20, 10, 1.0]);
-        Game.input.addHandler((event) => {
-            return this.hovered;
-        }, "mousedown");
         this.addComponent(new Icon("/energy.png"), 0, 0, 1, 1, 10, 10);
         this.addComponent(new Label(energy, "left"), 0, 1);
         this.addComponent(new Icon("/matter.png"), 0, 3, 1, 1, 10, 10);

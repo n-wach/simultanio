@@ -1,5 +1,5 @@
 import EntityInterpolator from "../EntityInterpolator";
 
-export default abstract class UnitInterpolator extends EntityInterpolator {
+export default abstract class Unit extends EntityInterpolator {
 
 }

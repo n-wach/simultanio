@@ -162,5 +162,10 @@ export type TrainCommand = {
     unitType: UnitType,
 }
 
-export type PlayerCommand = SetTargetCommand | ClearTargetCommand | BuildCommand | TrainCommand;
+export type DestroyCommand = {
+    command: "destroy",
+    ids: Id[],
+}
+
+export type PlayerCommand = SetTargetCommand | ClearTargetCommand | BuildCommand | TrainCommand | DestroyCommand;
 

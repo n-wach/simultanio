@@ -7,7 +7,7 @@ export default class EntitySelection extends Component {
 
     constructor() {
         super();
-        Game.input.addHandler((event) => {
+        let handler = (event) => {
             let es = Simul.selectedEntities;
             if(this.hovered && es.length > 0) {
                 let s = Math.ceil(Math.sqrt(es.length));
@@ -23,7 +23,9 @@ export default class EntitySelection extends Component {
                 return true;
             }
             return false;
-        }, "mouseup");
+        };
+        this.handlers.push(handler);
+        Game.input.addHandler(handler, "mouseup");
     }
 
     render(ctx: CanvasRenderingContext2D): void {

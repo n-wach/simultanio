@@ -11,9 +11,11 @@ export default class SideBar extends Grid {
         this.addComponent(new EntitySelection(), 0, 0, 1, 1, 10);
         this.addComponent(new EntityActionList(), 1, 0, 1, 1, 10, 10);
         this.addComponent(new Minimap(), 2, 0, 1, 1, 10);
-        Game.input.addHandler((event) => {
+        let handle = (event) => {
             return this.hovered;
-        }, "mousedown");
+        };
+        this.handlers.push(handle);
+        Game.input.addHandler(handle, "mousedown");
     }
     render(ctx: CanvasRenderingContext2D): void {
         ctx.fillStyle = Res.col_uibg;
