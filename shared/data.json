@@ -55,8 +55,8 @@
       "active_sight": 10,
       "passive_sight": 12,
       "cost": {
-        "energy": 100,
-        "matter": 100
+        "energy": 10,
+        "matter": 10
       },
       "generates": {
         "energy": 1,

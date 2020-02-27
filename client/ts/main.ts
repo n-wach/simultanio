@@ -4,8 +4,11 @@ import Simul from "./Simul";
 
 function resizeCanvas() {
     let ratio = pixel_ratio();
+    Game.pixelRatio = ratio;
     Game.canvas.width = window.innerWidth * ratio;
     Game.canvas.height = window.innerHeight * ratio;
+    Game.width = window.innerWidth;
+    Game.height = window.innerHeight;
     Game.ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
     if (Game.scene) Game.scene.resize();
 }

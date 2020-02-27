@@ -75,9 +75,9 @@ export default class EntityActionList extends Grid {
         let row = 0;
         if (allGenerate && sharedType && !anyGhost) {
             let rates = Simul.STATS[sharedType]["generates"];
-            this.addComponent(new ResourceInfoGrid(rates.energy, rates.matter, "per second"), row++, 0, 0, 0, 10, 10);
+            this.addComponent(new ResourceInfoGrid(rates.energy, rates.matter, "per second"), row++, 0, 1, 1, 10, 10);
         }
-        if (allCanPath && sharedType != undefined && !anyGhost) {
+        if (allCanPath && sharedType !== undefined && !anyGhost) {
             this.addComponent(new LabelButton("Set Target"), row++, 0, 1, 1, 10, 10);
         }
         if (anyPathing && !anyGhost) {

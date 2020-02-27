@@ -52,7 +52,10 @@ export default class ScrollComponent extends Component {
                 this.verticalOffset = mvo;
             }
         }
-        this.subGrid.y = this.y + this.verticalOffset;
+        if (this.subGrid.y != this.y + this.verticalOffset) {
+            this.subGrid.y = this.y + this.verticalOffset;
+            this.subGrid.resize();
+        }
         this.subGrid.update(dt);
     }
 }

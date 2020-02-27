@@ -12,6 +12,9 @@ export default class Game {
     static frame: number = 0;
     static socketio: SocketIOClient.Socket;
     static clearColor: string = "black";
+    static pixelRatio: number = 1;
+    static width: number = 1;
+    static height: number = 1;
 
     static initialize(): void {
         this.window = window;
@@ -32,7 +35,7 @@ export default class Game {
 
     static render(): void {
         this.ctx.fillStyle = this.clearColor;
-        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctx.fillRect(0, 0, Game.width, Game.height);
         if (this.scene) {
             this.scene.render(this.ctx);
         }

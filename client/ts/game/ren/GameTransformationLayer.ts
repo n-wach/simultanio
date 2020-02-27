@@ -11,10 +11,11 @@ export default class GameTransformationLayer extends TransformableLayer {
     static PAN_SPEED = 5;
     static FAST_PAN_MULT = 5;
     static KBD_ZOOM_DELTA = 48;
-    static EDGE_PAN_PROX = 8;
+    static EDGE_PAN_PROX = 15;
     static ACTION_MAX_LIFETIME = 0.2;
     static ACTION_MAX_RADIUS = 80;
     minZoom: number;
+    maxZoom: number;
     topLeftGrid: Vec2 = new Vec2(0, 0);
     topRightGrid: Vec2 = new Vec2(0, 0);
     bottomLeftGrid: Vec2 = new Vec2(0, 0);
@@ -26,10 +27,6 @@ export default class GameTransformationLayer extends TransformableLayer {
 
     constructor() {
         super();
-
-        let minH = (window.innerWidth - 250) / Simul.match.terrainView.width;
-        let minV = (window.innerHeight - 40) / Simul.match.terrainView.height;
-        this.minZoom = Math.max(minH, minV);
         Game.input.addHandler((event) => {
             if(event.button == 0 && Simul.selectedEntities.length == 0) {
                 let p = this.transformToCanvas(event);
@@ -94,23 +91,31 @@ export default class GameTransformationLayer extends TransformableLayer {
     update(dt: number) {
         super.update(dt);
 
+        let minH = (Game.width - 250) / Simul.match.terrainView.width;
+        let minV = (Game.height - 40) / Simul.match.terrainView.height;
+        this.minZoom = Math.max(minH, minV);
+        this.maxZoom = this.minZoom * Simul.match.terrainView.width / 2;
+
         // - view navigation
         this.updateNavigationInput();
 
         let p = Game.input.mousePos;
         let s = GameTransformationLayer.PAN_SPEED;
-        let prox = GameTransformationLayer.EDGE_PAN_PROX;
-        if (p.x < prox) {
-            this.ctxOrigin.x += s;
-        }
-        if (p.y < prox) {
-            this.ctxOrigin.y += s;
-        }
-        if (p.x > window.innerWidth - prox) {
-            this.ctxOrigin.x -= s;
-        }
-        if (p.y > window.innerHeight - prox) {
-            this.ctxOrigin.y -= s;
+
+        if (Game.input.mouseOnScreen) {
+            let prox = GameTransformationLayer.EDGE_PAN_PROX;
+            if (p.x < prox) {
+                this.ctxOrigin.x += s;
+            }
+            if (p.y < prox) {
+                this.ctxOrigin.y += s;
+            }
+            if (p.x > window.innerWidth - prox) {
+                this.ctxOrigin.x -= s;
+            }
+            if (p.y > window.innerHeight - prox) {
+                this.ctxOrigin.y -= s;
+            }
         }
 
         let o = 0.5 * this.ctxScale;
@@ -184,10 +189,10 @@ export default class GameTransformationLayer extends TransformableLayer {
 
         // keyboard zoom
         if (Game.input.isKeyPressed('-')) {
-            this.zoomOnPoint(GameTransformationLayer.KBD_ZOOM_DELTA, this.center, this.minZoom);
+            this.zoomOnPoint(GameTransformationLayer.KBD_ZOOM_DELTA, this.center, this.minZoom, this.maxZoom);
         }
         if (Game.input.isKeyPressed('=')) {
-            this.zoomOnPoint(-GameTransformationLayer.KBD_ZOOM_DELTA, this.center, this.minZoom);
+            this.zoomOnPoint(-GameTransformationLayer.KBD_ZOOM_DELTA, this.center, this.minZoom, this.maxZoom);
         }
     }
 
