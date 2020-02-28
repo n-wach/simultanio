@@ -16,7 +16,7 @@ class MatchManager:
     def logic_loop(self):
         self.socketio.sleep(0.1)
         while True:
-            if len(self.terrain_queue) < 1:
+            if len(self.terrain_queue) < 5:
                 self.terrain_queue.append(Terrain(150, 150))
             self.socketio.sleep(self.tick_period)
 

@@ -1,4 +1,4 @@
-from server.game.building import City, Building, BUILDING_TYPES, GeneratingState, TrainingState, GhostState
+from server.game.building import City, Building, BUILDING_TYPES, TrainingState, GhostState
 from server.game.entity import IdleState
 
 from server.game.terrain import TerrainView
@@ -100,7 +100,6 @@ class Player:
             elif cmd == "train":
                 for e in self.entities:
                     if id(e) == message.get("building") and isinstance(e, Building) \
-                            and isinstance(e.state, GeneratingState) \
                             and message["unitType"] in e.STATS["can_train"]:
                         e.state = TrainingState(UNIT_TYPES[message["unitType"]], e)
 

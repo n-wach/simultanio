@@ -12,8 +12,6 @@ export default class GameTransformationLayer extends TransformableLayer {
     static FAST_PAN_MULT = 5;
     static KBD_ZOOM_DELTA = 48;
     static EDGE_PAN_PROX = 15;
-    static ACTION_MAX_LIFETIME = 0.2;
-    static ACTION_MAX_RADIUS = 80;
     minZoom: number;
     maxZoom: number;
     topLeftGrid: Vec2 = new Vec2(0, 0);
@@ -21,8 +19,6 @@ export default class GameTransformationLayer extends TransformableLayer {
     bottomLeftGrid: Vec2 = new Vec2(0, 0);
     bottomRightGrid: Vec2 = new Vec2(0, 0);
     center: Vec2 = new Vec2(0, 0);
-    actionLocation: Vec2 = null;
-    actionLifetime: number = 0;
     selectionStart: Vec2 = null;
 
     constructor() {
@@ -56,10 +52,9 @@ export default class GameTransformationLayer extends TransformableLayer {
 
         Game.input.addHandler((event) => {
             let g = this.transformToCanvas(event);
+            let q = new Vec2(Math.floor(g.x + 0.5), Math.floor(g.y + 0.5));
             if (event.button == 2) {
-                this.actionLocation = g;
-                this.actionLifetime = 0;
-                if (Simul.selectedEntityAction) Simul.selectedEntityAction.onuse(new Vec2(g.x + 0.5, g.y + 0.5));
+                if (Simul.selectedEntityAction) Simul.selectedEntityAction.onuse(q);
                 return true;
             } else if (event.button == 0) {
                 this.selectionStart = g;
@@ -144,8 +139,6 @@ export default class GameTransformationLayer extends TransformableLayer {
         this.bottomRightGrid = this.transformVToCanvas(bottomRight);
         this.center = this.transformVToCanvas(center);
 
-        this.actionLifetime += dt;
-
         let px = this.transformVToCanvas(p);
         if (this.selectionStart) {
             // reset entity action to default
@@ -166,7 +159,7 @@ export default class GameTransformationLayer extends TransformableLayer {
             Simul.selectedEntities = s;
         }
 
-        this.actionLifetime += dt;
+        if (Simul.selectedEntityAction) Simul.selectedEntityAction.update(dt);
     }
 
     updateNavigationInput() {
@@ -205,22 +198,14 @@ export default class GameTransformationLayer extends TransformableLayer {
     }
 
     draw(ctx: CanvasRenderingContext2D) {
-        if (this.actionLocation && this.actionLifetime < GameTransformationLayer.ACTION_MAX_LIFETIME) {
-            ctx.fillStyle = Res.map_action;
-            let l = this.actionLifetime / GameTransformationLayer.ACTION_MAX_LIFETIME;
-            ctx.globalAlpha = l / 2;
-            let x = this.actionLocation.x;
-            let y = this.actionLocation.y;
-            let r = GameTransformationLayer.ACTION_MAX_RADIUS * (1 - l) / this.ctxScale;
-            ctx.beginPath();
-            ctx.ellipse(x, y, r, r, 0, 0, Math.PI * 2);
-            ctx.fill();
-        }
+        let p = this.transformVToCanvas(Game.input.mousePos);
+        let q = new Vec2(Math.floor(p.x + 0.5), Math.floor(p.y + 0.5));
+
+        if (Simul.selectedEntityAction) Simul.selectedEntityAction.render(ctx, this.ctxScale, q);
 
         if (this.selectionStart) {
             ctx.fillStyle = Res.map_action;
             ctx.strokeStyle = Res.map_action;
-            let p = this.transformVToCanvas(Game.input.mousePos);
             let w = p.x - this.selectionStart.x;
             let h = p.y - this.selectionStart.y;
             ctx.globalAlpha = 1;

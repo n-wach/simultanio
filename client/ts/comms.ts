@@ -29,6 +29,7 @@ export enum UnitType {
 
 export enum BuildingType {
     CITY = "city",
+    TRAINER = "trainer",
     ENERGY_GENERATOR = "energyGenerator",
     MATTER_COLLECTOR = "matterCollector",
 }

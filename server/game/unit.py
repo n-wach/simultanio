@@ -114,6 +114,7 @@ class PathingToBuildState(PathingState):
         if in_range and self.building.exists:
             if isinstance(self.building.state, GhostState):
                 self.building.state = InConstructionState(self.building)
+                self.parent.owner.terrain_view.discover_single_view(self.building)
             self.parent.state = ConstructingState(self.building, self.parent)
         else:
             self.parent.reset()

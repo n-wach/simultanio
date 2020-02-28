@@ -95,4 +95,14 @@ class City(Building):
         self.reset()
 
 
+class Trainer(Building):
+    TYPE = "trainer"
+    STATS = entity_stats(TYPE)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.default_state = IdleState(self)
+        self.reset()
+
+
 BUILDING_TYPES = {cls.TYPE: cls for cls in Building.__subclasses__() if hasattr(cls, "TYPE")}
