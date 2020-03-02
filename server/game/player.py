@@ -90,9 +90,12 @@ class Player:
                     if id(e) in message.get("ids") and isinstance(e, Builder) \
                             and building_type in e.STATS["can_build"]:
                         building_cls = BUILDING_TYPES[building_type]
-                        if ghost is None and self.can_afford(building_cls):
+                        x = message.get("x", 0)
+                        y = message.get("y", 0)
+                        if ghost is None and self.can_afford(building_cls) \
+                                and len(list(self.visible_buildings_at(x, y))) == 0:
                             self.purchase(building_cls)
-                            ghost = building_cls(self, message.get("x", 0), message.get("y", 0), starting_health=0)
+                            ghost = building_cls(self, x, y, starting_health=0)
                             ghost.state = GhostState(ghost)
                             self.add_entity(ghost)
                         if ghost:
