@@ -96,6 +96,10 @@ export type GuardingState = {
     type: "guarding"
 }
 
+export type WaitingToBuildState = {
+    type: "waitingToBuild"
+}
+
 export type FightingState = {
     type: "fighting",
     target: Id,
@@ -140,7 +144,8 @@ export type EntityState = PathingState
     | InConstructionState
     | TrainingState
     | GhostState
-    | IdleState;
+    | IdleState
+    | WaitingToBuildState;
 
 export type Match = {
     info: MatchListing,

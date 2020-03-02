@@ -63,6 +63,8 @@ class Building(Entity):
         self.health += amount
         if self.health > 1.0:
             self.health = 1.0
+            return True
+        return False
 
 
 class EnergyGenerator(Building):

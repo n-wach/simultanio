@@ -11,9 +11,12 @@ import Training from "./states/Training";
 import Ghost from "./states/Ghost";
 import Fighting from "./states/Fighting";
 import Guarding from "./states/Guarding";
+import WaitingToBuild from "./states/WaitingToBuild";
 
 export default function getState(s: EntityState, e: EntityInterpolator): StateInterpolator {
     switch (s.type) {
+        case "waitingToBuild":
+            return new WaitingToBuild(s, e);
         case "fighting":
             return new Fighting(s, e);
         case "guarding":

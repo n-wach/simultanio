@@ -133,6 +133,20 @@ class Player:
                             nearest_d2 = d2
         return nearest
 
+    def get_nearest_repairable(self, x, y, max_radius=math.inf):
+        nearest = None
+        nearest_d2 = math.inf
+        for entity in self.entities:
+            if isinstance(entity, Building) and entity.health < 1.:
+                dx = entity.grid_x - x
+                dy = entity.grid_y - y
+                d2 = dx * dx + dy * dy
+                if d2 <= max_radius ** 2:
+                    if d2 < nearest_d2:
+                        nearest = entity
+                        nearest_d2 = d2
+        return nearest
+
     def visible_entities_at(self, x, y):
         for player in self.game.players:
             for entity in player.entities:

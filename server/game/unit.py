@@ -19,6 +19,11 @@ class Builder(Unit):
     TYPE = "builder"
     STATS = entity_stats(TYPE)
 
+    def __init__(self, *args, **kwargs):
+        super(Builder, self).__init__(*args, **kwargs)
+        self.default_state = WaitingToBuildState(self)
+        self.reset()
+
 
 class Fighter(Unit):
     TYPE = "fighter"
@@ -27,6 +32,7 @@ class Fighter(Unit):
     def __init__(self, *args, **kwargs):
         super(Fighter, self).__init__(*args, **kwargs)
         self.default_state = GuardingState(self)
+        self.reset()
 
 
 class PathingState(IdleState):
@@ -85,6 +91,16 @@ class GuardingState(IdleState):
             self.parent.state = FightingState(target=nearest, entity=self.parent)
 
 
+class WaitingToBuildState(IdleState):
+    TYPE = "waitingToBuild"
+
+    def tick(self, dt):
+        nearest = self.parent.owner.get_nearest_repairable(self.parent.grid_x,
+                                                           self.parent.grid_y,
+                                                           max_radius=self.parent.STATS["active_sight"])
+        if nearest:
+            self.parent.state = PathingToBuildState(building=nearest, entity=self.parent)
+
 class FightingState(PathingState):
     TYPE = "fighting"
 
@@ -128,7 +144,9 @@ class ConstructingState(IdleState):
         self.building = building
 
     def tick(self, dt):
-        self.building.repair(dt * self.parent.STATS["rebuild_rate"])
+        is_repaired = self.building.repair(dt * self.parent.STATS["rebuild_rate"])
+        if is_repaired:
+            self.parent.reset()
 
     def get_self(self):
         return {
