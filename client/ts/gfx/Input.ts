@@ -12,6 +12,7 @@ type KeyStates = {
 export default class Input {
     public mousePos: Vec2 = Vec2.zero;
     public mouseDown: boolean = false;
+    public mouseOnScreen: boolean = false;
     private keyStates: KeyStates = {};
     private handlers: InputHandlers = {};
     private static supportedEvents: string[] = ["mousemove", "mousedown", "mouseup", "wheel", "click", "contextmenu"];
@@ -20,6 +21,7 @@ export default class Input {
         // mouse events
         Game.canvas.addEventListener("mousemove", (event) => {
             this.mousePos = new Vec2(event.offsetX, event.offsetY);
+            this.mouseOnScreen = true;
         });
 
         Game.canvas.addEventListener("mousedown", (event) => {
@@ -28,6 +30,10 @@ export default class Input {
 
         Game.canvas.addEventListener("mouseup", (event) => {
             this.mouseDown = false;
+        });
+
+        Game.canvas.addEventListener("mouseleave", (event) => {
+            this.mouseOnScreen = false;
         });
 
         for(let supportedEvent of Input.supportedEvents) {
@@ -62,6 +68,7 @@ export default class Input {
         for(let handler of handlers) {
             if(handler(event)) return false;
         }
+        console.log("Event passed through all unhandled: ", event);
         return false;
     }
 
@@ -75,6 +82,14 @@ export default class Input {
                 this.handlers[event] = [handler];
             } else {
                 this.handlers[event].unshift(handler);
+            }
+        }
+    }
+
+    removeHandler(handler: (event: any) => boolean) {
+        for (let event of Input.supportedEvents) {
+            if (this.handlers[event] && this.handlers[event].indexOf(handler) != -1) {
+                this.handlers[event].splice(this.handlers[event].indexOf(handler), 1);
             }
         }
     }

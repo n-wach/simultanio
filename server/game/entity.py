@@ -1,5 +1,3 @@
-from math import floor
-
 from server.shared import entity_stats
 
 
@@ -28,12 +26,12 @@ class Entity:
     def __init__(self, owner, grid_x, grid_y, starting_health=1.0):
         self.owner = owner
         self.terrain_view = owner.terrain_view
-        self.grid_x = grid_x
-        self.grid_y = grid_y
-        self.owner.terrain_view.discover_single_view(self)
         self.default_state = IdleState(self)
-        self.state = IdleState(self)
+        self.grid_x = self.terrain_view.terrain.align_x(grid_x)
+        self.grid_y = self.terrain_view.terrain.align_y(grid_y)
+        self.state = self.default_state
         self.health = starting_health
+        self.exists = False
 
     def tick(self, dt):
         self.state.tick(dt)
@@ -64,8 +62,8 @@ class Entity:
 class UnalignedEntity(Entity):
     def __init__(self, owner, x, y):
         super().__init__(owner, x, y)
-        self.grid_x = self.align_x(x)
-        self.grid_y = self.align_y(y)
+        self.grid_x = self.terrain_view.terrain.align_x(x)
+        self.grid_y = self.terrain_view.terrain.align_y(y)
         self.x = x
         self.y = y
 
@@ -76,7 +74,7 @@ class UnalignedEntity(Entity):
     @x.setter
     def x(self, x):
         self._x = x
-        self.grid_x = self.align_x(x)
+        self.grid_x = self.owner.terrain_view.terrain.align_x(x)
 
     @property
     def y(self):
@@ -85,13 +83,7 @@ class UnalignedEntity(Entity):
     @y.setter
     def y(self, y):
         self._y = y
-        self.grid_y = self.align_y(y)
-
-    def align_x(self, x):
-        return min(max(floor(x), 0), self.owner.terrain_view.terrain.width - 1)
-
-    def align_y(self, y):
-        return min(max(floor(y), 0), self.owner.terrain_view.terrain.height - 1)
+        self.grid_y = self.owner.terrain_view.terrain.align_y(y)
 
     def get_self(self):
         return {

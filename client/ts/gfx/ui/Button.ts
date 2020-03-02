@@ -10,13 +10,15 @@ export default class Button extends Component {
         super();
         this.subComponent = subComponent;
         this.onclick = onclick;
-        Game.input.addHandler((event) => {
+        let handler = (event) => {
             if(this.hovered) {
                 if (this.onclick) this.onclick();
                 return true;
             }
             return false;
-        }, "mouseup");
+        };
+        this.handlers.push(handler);
+        Game.input.addHandler(handler, "mouseup");
     }
     
     render(ctx: CanvasRenderingContext2D): void {

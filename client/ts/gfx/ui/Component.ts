@@ -7,10 +7,18 @@ export default abstract class Component implements Renderable {
     width: number;
     height: number;
     hovered: boolean;
+    handlers: ((event: any) => boolean)[] = [];
 
     resize(): void {}
 
     abstract render(ctx: CanvasRenderingContext2D): void;
+
+    removeHandlers() {
+        for (let handler of this.handlers) {
+            Game.input.removeHandler(handler)
+        }
+    }
+
     update(dt: number): void {
         let ox = Game.input.mousePos.x - this.x;
         let oy = Game.input.mousePos.y - this.y;

@@ -29,6 +29,7 @@ export enum UnitType {
 
 export enum BuildingType {
     CITY = "city",
+    TRAINER = "trainer",
     ENERGY_GENERATOR = "energyGenerator",
     MATTER_COLLECTOR = "matterCollector",
 }
@@ -87,6 +88,10 @@ export type IdleState = {
     type: "idle",
 };
 
+export type GhostState = {
+    type: "ghost",
+};
+
 export type InConstructionState = {
     type: "inConstruction",
 }
@@ -112,7 +117,7 @@ export type ConstructingState = {
 
 export type PathingToBuildState = {
     type: "pathingToBuild",
-    buildingType: BuildingType,
+    ghost: Id,
     path: Path,
 }
 
@@ -122,6 +127,7 @@ export type EntityState = PathingState
     | GeneratingState
     | InConstructionState
     | TrainingState
+    | GhostState
     | IdleState;
 
 export type Match = {
@@ -157,5 +163,10 @@ export type TrainCommand = {
     unitType: UnitType,
 }
 
-export type PlayerCommand = SetTargetCommand | ClearTargetCommand | BuildCommand | TrainCommand;
+export type DestroyCommand = {
+    command: "destroy",
+    ids: Id[],
+}
+
+export type PlayerCommand = SetTargetCommand | ClearTargetCommand | BuildCommand | TrainCommand | DestroyCommand;
 

@@ -9,9 +9,11 @@ import LabelButton from "../../gfx/ui/LabelButton";
 export default class TopBar extends Grid {
     constructor() {
         super([1.0], [40, 60, 40, 60, 100, 1.0, 120]);
-        Game.input.addHandler((event) => {
+        let handle = (event) => {
             return this.hovered;
-        }, "mousedown");
+        };
+        this.handlers.push(handle);
+        Game.input.addHandler(handle, "mousedown");
         this.addComponent(new Icon("/energy.png"), 0, 0, 1, 1, 10, 10);
         this.addComponent(new EnergyLabel(), 0, 1);
         this.addComponent(new Icon("/matter.png"), 0, 2, 1, 1, 10, 10);

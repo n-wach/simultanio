@@ -22,6 +22,15 @@ class InConstructionState(IdleState):
             self.parent.reset()
 
 
+class GhostState(IdleState):
+    TYPE = "ghost"
+
+    def tick(self, dt):
+        if not self.parent.owner.terrain_view.passable(self.parent.grid_x, self.parent.grid_y) \
+                or len(list(self.parent.owner.visible_buildings_at(self.parent.grid_x, self.parent.grid_y))) > 1:
+            self.parent.owner.delete_entity(self.parent)
+
+
 class TrainingState(IdleState):
     TYPE = "training"
 
@@ -83,6 +92,16 @@ class City(Building):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.default_state = GeneratingState(self)
+        self.reset()
+
+
+class Trainer(Building):
+    TYPE = "trainer"
+    STATS = entity_stats(TYPE)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.default_state = IdleState(self)
         self.reset()
 
 

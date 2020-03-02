@@ -36,7 +36,8 @@
       "can_build": [
         "city",
         "matterCollector",
-        "energyGenerator"
+        "energyGenerator",
+        "trainer"
       ]
     },
     "fighter": {
@@ -55,8 +56,8 @@
       "active_sight": 10,
       "passive_sight": 12,
       "cost": {
-        "energy": 100,
-        "matter": 100
+        "energy": 25,
+        "matter": 25
       },
       "generates": {
         "energy": 1,
@@ -67,13 +68,25 @@
         "scout"
       ]
     },
+    "trainer": {
+      "name": "Trainer",
+      "active_sight": 10,
+      "passive_sight": 12,
+      "cost": {
+        "energy": 25,
+        "matter": 25
+      },
+      "can_train": [
+        "fighter"
+      ]
+    },
     "energyGenerator": {
       "name": "Generator",
       "active_sight": 7,
       "passive_sight": 8,
       "cost": {
-        "energy": 25,
-        "matter": 50
+        "energy": 15,
+        "matter": 10
       },
       "generates": {
         "energy": 1,
@@ -85,8 +98,8 @@
       "active_sight": 7,
       "passive_sight": 8,
       "cost": {
-        "energy": 50,
-        "matter": 25
+        "energy": 10,
+        "matter": 15
       },
       "generates": {
         "energy": 0,

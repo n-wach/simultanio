@@ -1,10 +1,9 @@
-from server.game.building import City, EnergyGenerator, MatterCollector, Building, BUILDING_TYPES, InConstructionState, \
-    GeneratingState, TrainingState
+from server.game.building import City, Building, BUILDING_TYPES, TrainingState, GhostState
 from server.game.entity import IdleState
 
 from server.game.terrain import TerrainView
 from server.game.unit import PathingState, PathingToBuildState, UNIT_TYPES
-from server.game.unit import Scout, Unit, Fighter, Builder
+from server.game.unit import Scout, Unit, Builder
 
 
 class Player:
@@ -27,46 +26,119 @@ class Player:
         self.terrain_view = TerrainView(game.terrain, self)
         spawn_pos = game.terrain.spawn_positions[player_id]
 
+        self.entities = []
         self.capital = City(self, spawn_pos[0], spawn_pos[1])
-        self.starting_units = []
-        for c, p in zip([Scout, Builder, Fighter], self.terrain_view.terrain.neighboring_points(*spawn_pos)):
-            unit = c(self, *spawn_pos)
-            unit.state = PathingState(*p, unit)
-            self.starting_units.append(unit)
-        self.starting_units.append(EnergyGenerator(self, spawn_pos[0] + 1, spawn_pos[1] + 1))
-        self.starting_units.append(MatterCollector(self, spawn_pos[0] - 1, spawn_pos[1] - 1))
-        self.entities = [self.capital] + self.starting_units
+        self.starting_scout = Scout(self, spawn_pos[0] - 1, spawn_pos[1])
+        self.starting_builder = Builder(self, spawn_pos[0] + 1, spawn_pos[1])
+        self.add_entity(self.capital)
+        self.add_entity(self.starting_builder)
+        self.add_entity(self.starting_scout)
         self.id = id(self)
         self.player_id = player_id
 
         self.pending_messages = []
 
     def add_entity(self, entity):
+        entity.exists = True
+        if not isinstance(entity.state, GhostState):
+            self.terrain_view.discover_single_view(entity)
         self.entities.append(entity)
 
-    def construct_building(self, building_type, target_x, target_y):
-        mc = building_type.STATS["cost"]["matter"]
-        ec = building_type.STATS["cost"]["energy"]
-        if mc <= self.stored_matter and ec <= self.stored_energy:
-            self.stored_matter -= mc
-            self.stored_energy -= ec
-            building = building_type(self, target_x, target_y)
-            building.health = 0
-            building.state = InConstructionState(building)
-            self.entities.append(building)
-            return building
-        return None
+    def delete_entity(self, entity):
+        entity.exists = False
+        if entity in self.entities:
+            if isinstance(entity.state, GhostState):
+                self.refund(entity)
+            self.entities.remove(entity)
 
     def train_unit(self, unit_type, target_x, target_y):
-        mc = unit_type.STATS["cost"]["matter"]
-        ec = unit_type.STATS["cost"]["energy"]
-        if mc <= self.stored_matter and ec <= self.stored_energy:
-            self.stored_matter -= mc
-            self.stored_energy -= ec
+        if self.can_afford(unit_type):
+            self.purchase(unit_type)
             unit = unit_type(self, target_x, target_y)
             self.entities.append(unit)
             return unit
         return None
+
+    def tick(self, dt):
+        # todo: AI player does AI stuff
+        self.process_messages()
+
+        for entity in self.entities:
+            entity.tick(dt)
+
+    def process_messages(self):
+        for message in self.pending_messages:
+            print(message)
+            cmd = message.get("command")
+            if cmd == "set target":
+                for e in self.entities:
+                    if id(e) in message.get("ids") and isinstance(e, Unit):
+                        e.state = PathingState(self.terrain_view.terrain.align_x(message["x"]),
+                                               self.terrain_view.terrain.align_y(message["y"]), e)
+
+            elif cmd == "clear target":
+                for e in self.entities:
+                    if id(e) in message.get("ids") and isinstance(e, Unit) \
+                            and isinstance(e.state, PathingState):
+                        e.state = IdleState(e)
+
+            elif cmd == "build":
+                building_type = message["buildingType"]
+                ghost = None
+                for e in self.entities:
+                    if id(e) in message.get("ids") and isinstance(e, Builder) \
+                            and building_type in e.STATS["can_build"]:
+                        building_cls = BUILDING_TYPES[building_type]
+                        if ghost is None and self.can_afford(building_cls):
+                            self.purchase(building_cls)
+                            ghost = building_cls(self, message["x"], message["y"], starting_health=0)
+                            ghost.state = GhostState(ghost)
+                            self.add_entity(ghost)
+                        if ghost:
+                            e.state = PathingToBuildState(ghost, e)
+
+            elif cmd == "train":
+                for e in self.entities:
+                    if id(e) == message.get("building") and isinstance(e, Building) \
+                            and message["unitType"] in e.STATS["can_train"]:
+                        e.state = TrainingState(UNIT_TYPES[message["unitType"]], e)
+
+            elif cmd == "destroy":
+                # so it turns out removing from a list you're iterating through in python causes weird behavior...
+                # the [:] makes a tmp copy for iterating
+                for e in self.entities[:]:
+                    if id(e) in message["ids"]:
+                        self.delete_entity(e)
+
+        self.pending_messages.clear()
+
+    def visible_entities_at(self, x, y):
+        for player in self.game.players:
+            for entity in player.entities:
+                if self.terrain_view.entity_visible(entity) and (entity.grid_x == x and entity.grid_y == y):
+                    yield entity
+
+    def visible_buildings_at(self, x, y):
+        for entity in self.visible_entities_at(x, y):
+            if isinstance(entity, Building):
+                yield entity
+
+    def purchase(self, building_type):
+        mc = building_type.STATS["cost"]["matter"]
+        ec = building_type.STATS["cost"]["energy"]
+        self.stored_matter -= mc
+        self.stored_energy -= ec
+
+    def refund(self, building_type):
+        mc = building_type.STATS["cost"]["matter"]
+        ec = building_type.STATS["cost"]["energy"]
+        self.stored_matter += mc
+        self.stored_energy += ec
+
+    def can_afford(self, building_type):
+        mc = building_type.STATS["cost"]["matter"]
+        ec = building_type.STATS["cost"]["energy"]
+        return mc <= self.stored_matter and ec <= self.stored_energy
 
     def get_self(self):
         return {
@@ -104,55 +176,3 @@ class Player:
 
     def broadcast_update(self, socketio):
         socketio.emit("game update", self.get_update(), room=self.sid)
-
-    def tick(self, dt):
-        self.process_messages()
-
-        for entity in self.entities:
-            entity.tick(dt)
-
-        # Human player will act based on WS events received since last call
-        # AI player will act using AI
-
-    def process_messages(self):
-        for message in self.pending_messages:
-            print(message)
-            if message["command"] == "set target":
-                for e in self.entities:
-                    if id(e) in message["ids"]:
-                        if isinstance(e, Unit):
-                            e.state = PathingState(e.align_x(message["x"]), e.align_y(message["y"]), e)
-            elif message["command"] == "clear target":
-                for e in self.entities:
-                    if id(e) in message["ids"]:
-                        if isinstance(e, Unit) \
-                                and isinstance(e.state, PathingState):
-                            e.state = IdleState(e)
-            elif message["command"] == "build":
-                building_type = message["buildingType"]
-                for e in self.entities:
-                    if id(e) in message["ids"]:
-                        if isinstance(e, Builder) \
-                                and building_type in e.STATS["can_build"]:
-                            e.state = PathingToBuildState(BUILDING_TYPES[building_type],
-                                                          e.align_x(message["x"]), e.align_y(message["y"]), e)
-            elif message["command"] == "train":
-                for e in self.entities:
-                    if id(e) == message["building"]:
-                        if isinstance(e, Building) \
-                                and message["unitType"] in e.STATS["can_train"] \
-                                and isinstance(e.state, GeneratingState):
-                            e.state = TrainingState(UNIT_TYPES[message["unitType"]], e)
-        self.pending_messages.clear()
-
-    def get_entities_at(self, x, y):
-        for player in self.game.players:
-            for entity in player.entities:
-                if self.terrain_view.entity_visible(entity) and (entity.grid_x == x and entity.grid_y == y):
-                    yield entity
-
-    def get_building_at(self, x, y):
-        for entity in self.get_entities_at(x, y):
-            if isinstance(entity, Building):
-                return entity
-        return None

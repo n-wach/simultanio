@@ -6,6 +6,7 @@ import Builder from "./entity/Builder";
 import EnergyGenerator from "./entity/EnergyGenerator";
 import MatterCollector from "./entity/MatterCollector";
 import Fighter from "./entity/Fighter";
+import Trainer from "./entity/Trainer";
 
 export default function getEntity(e: Entity): EntityInterpolator {
     switch (e.type) {
@@ -17,6 +18,8 @@ export default function getEntity(e: Entity): EntityInterpolator {
             return new Builder(e);
         case BuildingType.CITY:
             return new City(e);
+        case BuildingType.TRAINER:
+            return new Trainer(e);
         case BuildingType.ENERGY_GENERATOR:
             return new EnergyGenerator(e);
         case BuildingType.MATTER_COLLECTOR:
