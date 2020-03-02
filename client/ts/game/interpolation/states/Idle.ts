@@ -1,5 +1,6 @@
 import StateInterpolator from "../StateInterpolator";
 import Res from "../../Res";
+import Game from "../../../gfx/Game";
 
 export default class Idle extends StateInterpolator {
     draw(ctx: CanvasRenderingContext2D): void {
@@ -10,10 +11,12 @@ export default class Idle extends StateInterpolator {
             ctx.globalAlpha = a;
             ctx.fillRect(-0.4, -0.4, 0.8 * this.parent.health, 0.1);
         }
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.font = "0.3px " + Res.font_face;
-        ctx.fillText(this.parent.state.type, 0, 0.4);
+        if (Game.debug) {
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            ctx.font = "0.3px " + Res.font_face;
+            ctx.fillText(this.parent.state.type, 0, 0.4);
+        }
     }
 
     interpolate(dt: number) {

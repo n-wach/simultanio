@@ -1,9 +1,26 @@
 import {Path, PathingState} from "../../../comms";
 import Simul from "../../../Simul";
 import Idle from "./Idle";
+import Game from "../../../gfx/Game";
 
 export default class Pathing extends Idle {
     path: Path;
+
+    draw(ctx: CanvasRenderingContext2D): void {
+        super.draw(ctx);
+        if (Game.debug) {
+            ctx.beginPath();
+            let x = this.parent.x;
+            let y = this.parent.y;
+            ctx.moveTo(0, 0);
+            for (let p of this.path) {
+                ctx.lineTo(p.x - x, p.y - y);
+            }
+            ctx.lineWidth = 0.1;
+            ctx.strokeStyle = "white";
+            ctx.stroke();
+        }
+    }
 
     sync(ref: PathingState) {
         this.path = ref.path;
