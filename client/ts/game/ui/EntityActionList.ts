@@ -87,7 +87,7 @@ export default class EntityActionList extends Grid {
                     ids.push(e.id);
                 }
                 Game.socketio.emit("player command", ({
-                    command: "clear target",
+                    command: "reset",
                     ids: ids,
                 } as PlayerCommand));
             }), row++, 0, 1, 1, 10, 10);
@@ -114,6 +114,16 @@ export default class EntityActionList extends Grid {
                     } as PlayerCommand));
                 }), row++, 0, 1, 1, 10, 10);
             }
+            this.addComponent(new LabelButton("Clear Queue", "center", () => {
+                let ids = [];
+                for (let e of this.selection) {
+                    ids.push(e.id);
+                }
+                Game.socketio.emit("player command", ({
+                    command: "reset",
+                    ids: ids,
+                } as PlayerCommand));
+            }), row++, 0, 1, 1, 10, 10);
         }
         this.addComponent(new LabelButton("Destroy", "center", () => {
             let ids = [];

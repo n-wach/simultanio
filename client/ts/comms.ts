@@ -117,6 +117,7 @@ export type GeneratingState = {
 export type TrainingState = {
     trainingStatus: number;
     type: "training",
+    queue: UnitType[],
 }
 
 export type PathingState = {
@@ -169,15 +170,15 @@ export type BuildCommand = {
     y: number,
 };
 
-export type ClearTargetCommand = {
-    command: "clear target",
-    ids: Id[],
-}
-
 export type TrainCommand = {
     command: "train",
     building: Id,
     unitType: UnitType,
+}
+
+export type ResetCommand = {
+    command: "reset",
+    ids: Id[],
 }
 
 export type DestroyCommand = {
@@ -185,5 +186,5 @@ export type DestroyCommand = {
     ids: Id[],
 }
 
-export type PlayerCommand = SetTargetCommand | ClearTargetCommand | BuildCommand | TrainCommand | DestroyCommand;
+export type PlayerCommand = SetTargetCommand | ResetCommand | BuildCommand | TrainCommand | DestroyCommand;
 

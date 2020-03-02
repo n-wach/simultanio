@@ -1,7 +1,6 @@
 import math
 
 from server.game.building import City, Building, BUILDING_TYPES, TrainingState, GhostState
-from server.game.entity import IdleState
 from server.game.terrain import TerrainView
 from server.game.unit import PathingState, PathingToBuildState, UNIT_TYPES
 from server.game.unit import Scout, Unit, Builder
@@ -77,12 +76,6 @@ class Player:
                         e.state = PathingState(self.terrain_view.terrain.align_x(message["x"]),
                                                self.terrain_view.terrain.align_y(message["y"]), e)
 
-            elif cmd == "clear target":
-                for e in self.entities:
-                    if id(e) in message.get("ids") and isinstance(e, Unit) \
-                            and isinstance(e.state, PathingState):
-                        e.state = IdleState(e)
-
             elif cmd == "build":
                 building_type = message.get("buildingType")
                 ghost = None
@@ -105,7 +98,16 @@ class Player:
                 for e in self.entities:
                     if id(e) == message.get("building") and isinstance(e, Building) \
                             and message.get("unitType") in e.STATS["can_train"]:
-                        e.state = TrainingState(UNIT_TYPES[message["unitType"]], e)
+                        t = UNIT_TYPES[message["unitType"]]
+                        if isinstance(e.state, TrainingState):
+                            e.state.units.append(t)
+                        else:
+                            e.state = TrainingState(t, e)
+
+            elif cmd == "reset":
+                for e in self.entities:
+                    if id(e) in message.get("ids"):
+                        e.reset()
 
             elif cmd == "destroy":
                 # so it turns out removing from a list you're iterating through in python causes weird behavior...

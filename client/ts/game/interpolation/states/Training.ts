@@ -1,13 +1,15 @@
-import {TrainingState} from "../../../comms";
+import {TrainingState, UnitType} from "../../../comms";
 import Idle from "./Idle";
 
 export default class Training extends Idle {
     trainingStatus: number;
+    queue: UnitType[];
     static MAX_CIRCLE_RADIUS = 1;
     circleRadius: number = 0;
 
     sync(ref: TrainingState) {
         this.trainingStatus = ref.trainingStatus;
+        this.queue = ref.queue;
         super.sync(ref);
     }
 
@@ -20,7 +22,11 @@ export default class Training extends Idle {
         ctx.ellipse(0, 0, this.circleRadius, this.circleRadius, 0, 0, Math.PI * 2);
         ctx.fill();
         ctx.globalAlpha = 0.3;
-        ctx.fillRect(-0.4, -0.4, 0.8, 0.1);
+        let i = 0;
+        for (let type of this.queue) {
+            ctx.fillRect(-0.4, -0.4 - (0.15 * i), 0.8, 0.1);
+            i++;
+        }
         ctx.globalAlpha = a;
         ctx.fillRect(-0.4, -0.4, 0.8 * this.trainingStatus, 0.1);
         ctx.globalAlpha = a;
