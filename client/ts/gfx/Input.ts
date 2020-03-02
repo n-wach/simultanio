@@ -12,6 +12,7 @@ type KeyStates = {
 export default class Input {
     public mousePos: Vec2 = Vec2.zero;
     public mouseDown: boolean = false;
+    public mouseButton: number = null;
     public mouseOnScreen: boolean = false;
     private keyStates: KeyStates = {};
     private handlers: InputHandlers = {};
@@ -26,10 +27,12 @@ export default class Input {
 
         Game.canvas.addEventListener("mousedown", (event) => {
             this.mouseDown = true;
+            this.mouseButton = event.button;
         });
 
         Game.canvas.addEventListener("mouseup", (event) => {
             this.mouseDown = false;
+            this.mouseButton = null;
         });
 
         Game.canvas.addEventListener("mouseleave", (event) => {
