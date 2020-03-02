@@ -1,6 +1,7 @@
+import math
+
 from server.game.building import City, Building, BUILDING_TYPES, TrainingState, GhostState
 from server.game.entity import IdleState
-
 from server.game.terrain import TerrainView
 from server.game.unit import PathingState, PathingToBuildState, UNIT_TYPES
 from server.game.unit import Scout, Unit, Builder
@@ -55,7 +56,7 @@ class Player:
         if self.can_afford(unit_type):
             self.purchase(unit_type)
             unit = unit_type(self, target_x, target_y)
-            self.entities.append(unit)
+            self.add_entity(unit)
             return unit
         return None
 
@@ -83,7 +84,7 @@ class Player:
                         e.state = IdleState(e)
 
             elif cmd == "build":
-                building_type = message["buildingType"]
+                building_type = message.get("buildingType")
                 ghost = None
                 for e in self.entities:
                     if id(e) in message.get("ids") and isinstance(e, Builder) \
@@ -91,7 +92,7 @@ class Player:
                         building_cls = BUILDING_TYPES[building_type]
                         if ghost is None and self.can_afford(building_cls):
                             self.purchase(building_cls)
-                            ghost = building_cls(self, message["x"], message["y"], starting_health=0)
+                            ghost = building_cls(self, message.get("x", 0), message.get("y", 0), starting_health=0)
                             ghost.state = GhostState(ghost)
                             self.add_entity(ghost)
                         if ghost:
@@ -100,7 +101,7 @@ class Player:
             elif cmd == "train":
                 for e in self.entities:
                     if id(e) == message.get("building") and isinstance(e, Building) \
-                            and message["unitType"] in e.STATS["can_train"]:
+                            and message.get("unitType") in e.STATS["can_train"]:
                         e.state = TrainingState(UNIT_TYPES[message["unitType"]], e)
 
             elif cmd == "destroy":
@@ -111,6 +112,23 @@ class Player:
                         self.delete_entity(e)
 
         self.pending_messages.clear()
+
+    def get_nearest_enemy(self, x, y, max_radius=math.inf):
+        nearest = None
+        nearest_d2 = math.inf
+        for player in self.game.players:
+            if player is self:
+                continue
+            for entity in player.entities:
+                if self.terrain_view.entity_visible(entity):
+                    dx = entity.grid_x - x
+                    dy = entity.grid_y - y
+                    d2 = dx * dx + dy * dy
+                    if d2 <= max_radius ** 2:
+                        if d2 < nearest_d2:
+                            nearest = entity
+                            nearest_d2 = d2
+        return nearest
 
     def visible_entities_at(self, x, y):
         for player in self.game.players:

@@ -49,7 +49,9 @@
         "matter": 10,
         "time": 10
       },
-      "movement_speed": 1.5
+      "movement_speed": 1.5,
+      "fighting_range": 5,
+      "fighting_dps": 0.2
     },
     "city": {
       "name": "City",

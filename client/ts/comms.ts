@@ -92,6 +92,16 @@ export type GhostState = {
     type: "ghost",
 };
 
+export type GuardingState = {
+    type: "guarding"
+}
+
+export type FightingState = {
+    type: "fighting",
+    target: Id,
+    path: Path,
+}
+
 export type InConstructionState = {
     type: "inConstruction",
 }
@@ -124,6 +134,8 @@ export type PathingToBuildState = {
 export type EntityState = PathingState
     | ConstructingState
     | PathingToBuildState
+    | FightingState
+    | GuardingState
     | GeneratingState
     | InConstructionState
     | TrainingState

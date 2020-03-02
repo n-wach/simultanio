@@ -1,6 +1,7 @@
-import {Match, MatchListing, TerrainView} from "../../comms";
+import {Id, Match, MatchListing, TerrainView} from "../../comms";
 import Interpolated from "./Interpolated";
 import BasePlayerInterpolator, {YouPlayerInterpolator} from "./PlayerInterpolator";
+import EntityInterpolator from "./EntityInterpolator";
 
 export default class MatchInterpolator extends Interpolated<Match> {
     you: YouPlayerInterpolator;
@@ -49,5 +50,14 @@ export default class MatchInterpolator extends Interpolated<Match> {
             players.push(this.otherPlayers[o])
         }
         return players;
+    }
+
+    getEntity(targetId: Id): EntityInterpolator {
+        for (let p of this.allPlayers()) {
+            if (p.entities[targetId]) {
+                return p.entities[targetId];
+            }
+        }
+        return null;
     }
 }

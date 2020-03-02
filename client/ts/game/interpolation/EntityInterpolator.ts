@@ -2,6 +2,7 @@ import Renderable from "../../gfx/Renderable";
 import {Entity, EntityState, Id} from "../../comms";
 import Interpolated from "./Interpolated";
 import getState from "./StateCreator";
+import Ghost from "./states/Ghost"
 import StateInterpolator from "./StateInterpolator";
 import Simul from "../../Simul";
 
@@ -42,7 +43,7 @@ export default abstract class EntityInterpolator extends Interpolated<Entity> im
 
     render(ctx: CanvasRenderingContext2D): void {
         ctx.translate(this.x, this.y);
-        if (this.state.type === "ghost") {
+        if (this.stateInterpolator instanceof Ghost) {
             ctx.globalAlpha = 0.4;
             this.draw(ctx);
             ctx.globalAlpha = 1;

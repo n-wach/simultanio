@@ -1,32 +1,38 @@
 import {EntityState} from "../../comms";
 import StateInterpolator from "./StateInterpolator";
-import PathingStateInterpolator from "./states/PathingStateInterpolator";
+import Pathing from "./states/Pathing";
 import EntityInterpolator from "./EntityInterpolator";
-import ConstructingStateInterpolator from "./states/ConstructingStateInterpolator";
-import PathingToConstructStateInterpolator from "./states/PathingToConstructStateInterpolator";
-import GeneratingStateInterpolator from "./states/GeneratingStateInterpolator";
-import IdleStateInterpolator from "./states/IdleStateInterpolator";
-import InConstructionState from "./states/InConstructionStateInterpolator";
-import TrainingStateInterpolator from "./states/TrainingStateInterpolator";
-import GhostStateInterpolator from "./states/GhostStateInterpolator";
+import Constructing from "./states/Constructing";
+import PathingToConstruct from "./states/PathingToConstruct";
+import Generating from "./states/Generating";
+import Idle from "./states/Idle";
+import InConstruction from "./states/InConstruction";
+import Training from "./states/Training";
+import Ghost from "./states/Ghost";
+import Fighting from "./states/Fighting";
+import Guarding from "./states/Guarding";
 
 export default function getState(s: EntityState, e: EntityInterpolator): StateInterpolator {
     switch (s.type) {
+        case "fighting":
+            return new Fighting(s, e);
+        case "guarding":
+            return new Guarding(s, e);
         case "training":
-            return new TrainingStateInterpolator(s, e);
+            return new Training(s, e);
         case "generating":
-            return new GeneratingStateInterpolator(s, e);
+            return new Generating(s, e);
         case "inConstruction":
-            return new InConstructionState(s, e);
+            return new InConstruction(s, e);
         case "idle":
-            return new IdleStateInterpolator(s, e);
+            return new Idle(s, e);
         case "ghost":
-            return new GhostStateInterpolator(s, e);
+            return new Ghost(s, e);
         case "pathing":
-            return new PathingStateInterpolator(s, e);
+            return new Pathing(s, e);
         case "constructing":
-            return new ConstructingStateInterpolator(s, e);
+            return new Constructing(s, e);
         case "pathingToBuild":
-            return new PathingToConstructStateInterpolator(s, e);
+            return new PathingToConstruct(s, e);
     }
 }

@@ -1,17 +1,13 @@
-import StateInterpolator from "../StateInterpolator";
 import {Path, PathingState} from "../../../comms";
 import Simul from "../../../Simul";
+import Idle from "./Idle";
 
-export default class PathingStateInterpolator extends StateInterpolator {
+export default class Pathing extends Idle {
     path: Path;
 
     sync(ref: PathingState) {
         this.path = ref.path;
         super.sync(ref);
-    }
-
-    draw(ctx: CanvasRenderingContext2D): void {
-
     }
 
     interpolate(dt: number) {

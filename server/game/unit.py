@@ -24,6 +24,10 @@ class Fighter(Unit):
     TYPE = "fighter"
     STATS = entity_stats(TYPE)
 
+    def __init__(self, *args, **kwargs):
+        super(Fighter, self).__init__(*args, **kwargs)
+        self.default_state = GuardingState(self)
+
 
 class PathingState(IdleState):
     TYPE = "pathing"
@@ -60,19 +64,59 @@ class PathingState(IdleState):
                 self.parent.y += (dy / dd) * remaining_distance
                 remaining_distance = 0
 
-        if self.condition():
-            self.transition()
-
-    def condition(self):
-        return len(self.path) == 0
-
-    def transition(self):
-        self.parent.reset()
+        if len(self.path) == 0:
+            self.parent.reset()
 
     def get_self(self):
         return {
             "type": self.TYPE,
             "path": [{"x": p[0], "y": p[1]} for p in self.path]
+        }
+
+
+class GuardingState(IdleState):
+    TYPE = "guarding"
+
+    def tick(self, dt):
+        nearest = self.parent.owner.get_nearest_enemy(self.parent.grid_x,
+                                                      self.parent.grid_y,
+                                                      max_radius=self.parent.STATS["active_sight"])
+        if nearest:
+            self.parent.state = FightingState(target=nearest, entity=self.parent)
+
+
+class FightingState(PathingState):
+    TYPE = "fighting"
+
+    def __init__(self, target, *args, **kwargs):
+        super().__init__(target.grid_x, target.grid_y, *args, **kwargs)
+        self.target = target
+
+    def tick(self, dt):
+        if not self.parent.owner.terrain_view.entity_visible(self.target):
+            self.parent.reset()
+        else:
+            if (self.target_x, self.target_y) is not (self.target.grid_x, self.target.grid_y):
+                self.target_x = self.target.grid_x
+                self.target_y = self.target.grid_y
+                self.calculate_path()
+            dx = self.parent.grid_x - self.target.grid_x
+            dy = self.parent.grid_y - self.target.grid_y
+            d2 = dx * dx + dy * dy
+            r2 = self.parent.STATS["fighting_range"] ** 2
+            if d2 < r2:
+                self.target.health -= self.parent.STATS["fighting_dps"] * dt
+            if d2 > r2 / 2:
+                # get a little closer
+                super().tick(dt)
+            else:
+                self.path = []
+
+    def get_self(self):
+        return {
+            "type": self.TYPE,
+            "path": [{"x": p[0], "y": p[1]} for p in self.path],
+            "target": id(self.target)
         }
 
 
@@ -99,6 +143,11 @@ class PathingToBuildState(PathingState):
     def __init__(self, building, *args, **kwargs):
         super().__init__(building.grid_x, building.grid_y, *args, **kwargs)
         self.building = building
+
+    def tick(self, dt):
+        super().tick(dt)
+        if self.condition():
+            self.transition()
 
     def condition(self):
         dx = self.target_x - self.parent.x

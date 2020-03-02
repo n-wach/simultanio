@@ -192,7 +192,7 @@ class TerrainView:
                 self.visibility_grid[point[0]][point[1]] = True
 
     def entity_visible(self, entity):
-        return self.visibility_grid[entity.grid_x][entity.grid_y]
+        return entity.exists and self.visibility_grid[entity.grid_x][entity.grid_y]
 
     def discover(self, p):
         self.discovered_grid[p[0]][p[1]] = True
