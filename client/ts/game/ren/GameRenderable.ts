@@ -6,11 +6,8 @@ export default class GameRenderable implements Renderable {
     render(ctx: CanvasRenderingContext2D): void {
         let w = Simul.match.terrainView.width;
         let h = Simul.match.terrainView.height;
-        let smoothing = ctx.imageSmoothingEnabled;
 
-        ctx.imageSmoothingEnabled = false;
         ctx.drawImage(Simul.mapImage.terrainCanvas, -0.5, -0.5, w, h);
-        ctx.imageSmoothingEnabled = smoothing;
 
         ctx.fillStyle = Res.map_action;
         ctx.globalAlpha = 0.5;

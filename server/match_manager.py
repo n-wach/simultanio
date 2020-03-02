@@ -17,12 +17,12 @@ class MatchManager:
         self.socketio.sleep(0.1)
         while True:
             if len(self.terrain_queue) < 5:
-                self.terrain_queue.append(Terrain(150, 150))
+                self.terrain_queue.append(Terrain(50, 50))
             self.socketio.sleep(self.tick_period)
 
     def create_match(self):
         if len(self.terrain_queue) == 0:
-            self.terrain_queue.append(Terrain(150, 150))
+            self.terrain_queue.append(Terrain(50, 50))
         match = Match(self.socketio, self, self.terrain_queue.pop())
         self.matches.append(match)
         match.join()

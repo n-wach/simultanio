@@ -35,6 +35,8 @@ class Entity:
 
     def tick(self, dt):
         self.state.tick(dt)
+        if self.health < 0:
+            self.owner.delete_entity(self)
 
     @property
     def state(self):

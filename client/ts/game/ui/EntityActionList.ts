@@ -9,10 +9,10 @@ import LabelButton from "../../gfx/ui/LabelButton";
 import {BuildAction} from "./EntityAction";
 import {PlayerCommand} from "../../comms";
 import EntityInterpolator from "../interpolation/EntityInterpolator";
-import PathingStateInterpolator from "../interpolation/states/PathingStateInterpolator";
+import Pathing from "../interpolation/states/Pathing";
 import Unit from "../interpolation/entity/Unit";
 import Building from "../interpolation/entity/Building";
-import GhostStateInterpolator from "../interpolation/states/GhostStateInterpolator";
+import Ghost from "../interpolation/states/Ghost";
 
 export default class EntityActionList extends Grid {
     selection: EntityInterpolator[] = [];
@@ -62,8 +62,8 @@ export default class EntityActionList extends Grid {
             if (sharedType == undefined) sharedType = t;
             else if (sharedType != t) sharedType = null;
             let d = Simul.STATS[t];
-            anyPathing = anyPathing || e.stateInterpolator instanceof PathingStateInterpolator;
-            anyGhost = anyGhost || e.stateInterpolator instanceof GhostStateInterpolator;
+            anyPathing = anyPathing || e.stateInterpolator instanceof Pathing;
+            anyGhost = anyGhost || e.stateInterpolator instanceof Ghost;
             allUnits = allUnits && e instanceof Unit;
             allBuildings = allBuildings && e instanceof Building;
             allGenerate = allGenerate && d["generates"] != undefined;
@@ -87,7 +87,7 @@ export default class EntityActionList extends Grid {
                     ids.push(e.id);
                 }
                 Game.socketio.emit("player command", ({
-                    command: "clear target",
+                    command: "reset",
                     ids: ids,
                 } as PlayerCommand));
             }), row++, 0, 1, 1, 10, 10);
@@ -114,6 +114,16 @@ export default class EntityActionList extends Grid {
                     } as PlayerCommand));
                 }), row++, 0, 1, 1, 10, 10);
             }
+            this.addComponent(new LabelButton("Clear Queue", "center", () => {
+                let ids = [];
+                for (let e of this.selection) {
+                    ids.push(e.id);
+                }
+                Game.socketio.emit("player command", ({
+                    command: "reset",
+                    ids: ids,
+                } as PlayerCommand));
+            }), row++, 0, 1, 1, 10, 10);
         }
         this.addComponent(new LabelButton("Destroy", "center", () => {
             let ids = [];

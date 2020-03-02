@@ -1,6 +1,6 @@
-from server.game.building import City, Building, BUILDING_TYPES, TrainingState, GhostState
-from server.game.entity import IdleState
+import math
 
+from server.game.building import City, Building, BUILDING_TYPES, TrainingState, GhostState
 from server.game.terrain import TerrainView
 from server.game.unit import PathingState, PathingToBuildState, UNIT_TYPES
 from server.game.unit import Scout, Unit, Builder
@@ -55,7 +55,7 @@ class Player:
         if self.can_afford(unit_type):
             self.purchase(unit_type)
             unit = unit_type(self, target_x, target_y)
-            self.entities.append(unit)
+            self.add_entity(unit)
             return unit
         return None
 
@@ -76,22 +76,19 @@ class Player:
                         e.state = PathingState(self.terrain_view.terrain.align_x(message["x"]),
                                                self.terrain_view.terrain.align_y(message["y"]), e)
 
-            elif cmd == "clear target":
-                for e in self.entities:
-                    if id(e) in message.get("ids") and isinstance(e, Unit) \
-                            and isinstance(e.state, PathingState):
-                        e.state = IdleState(e)
-
             elif cmd == "build":
-                building_type = message["buildingType"]
+                building_type = message.get("buildingType")
                 ghost = None
                 for e in self.entities:
                     if id(e) in message.get("ids") and isinstance(e, Builder) \
                             and building_type in e.STATS["can_build"]:
                         building_cls = BUILDING_TYPES[building_type]
-                        if ghost is None and self.can_afford(building_cls):
+                        x = message.get("x", 0)
+                        y = message.get("y", 0)
+                        if ghost is None and self.can_afford(building_cls) \
+                                and len(list(self.visible_buildings_at(x, y))) == 0:
                             self.purchase(building_cls)
-                            ghost = building_cls(self, message["x"], message["y"], starting_health=0)
+                            ghost = building_cls(self, x, y, starting_health=0)
                             ghost.state = GhostState(ghost)
                             self.add_entity(ghost)
                         if ghost:
@@ -100,8 +97,17 @@ class Player:
             elif cmd == "train":
                 for e in self.entities:
                     if id(e) == message.get("building") and isinstance(e, Building) \
-                            and message["unitType"] in e.STATS["can_train"]:
-                        e.state = TrainingState(UNIT_TYPES[message["unitType"]], e)
+                            and message.get("unitType") in e.STATS["can_train"]:
+                        t = UNIT_TYPES[message["unitType"]]
+                        if isinstance(e.state, TrainingState):
+                            e.state.units.append(t)
+                        else:
+                            e.state = TrainingState(t, e)
+
+            elif cmd == "reset":
+                for e in self.entities:
+                    if id(e) in message.get("ids"):
+                        e.reset()
 
             elif cmd == "destroy":
                 # so it turns out removing from a list you're iterating through in python causes weird behavior...
@@ -111,6 +117,37 @@ class Player:
                         self.delete_entity(e)
 
         self.pending_messages.clear()
+
+    def get_nearest_enemy(self, x, y, max_radius=math.inf):
+        nearest = None
+        nearest_d2 = math.inf
+        for player in self.game.players:
+            if player is self:
+                continue
+            for entity in player.entities:
+                if self.terrain_view.entity_visible(entity):
+                    dx = entity.grid_x - x
+                    dy = entity.grid_y - y
+                    d2 = dx * dx + dy * dy
+                    if d2 <= max_radius ** 2:
+                        if d2 < nearest_d2:
+                            nearest = entity
+                            nearest_d2 = d2
+        return nearest
+
+    def get_nearest_repairable(self, x, y, max_radius=math.inf):
+        nearest = None
+        nearest_d2 = math.inf
+        for entity in self.entities:
+            if isinstance(entity, Building) and entity.health < 1.:
+                dx = entity.grid_x - x
+                dy = entity.grid_y - y
+                d2 = dx * dx + dy * dy
+                if d2 <= max_radius ** 2:
+                    if d2 < nearest_d2:
+                        nearest = entity
+                        nearest_d2 = d2
+        return nearest
 
     def visible_entities_at(self, x, y):
         for player in self.game.players:
