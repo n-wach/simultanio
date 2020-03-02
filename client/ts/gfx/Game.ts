@@ -15,6 +15,7 @@ export default class Game {
     static pixelRatio: number = 1;
     static width: number = 1;
     static height: number = 1;
+    static debug: boolean = true;
 
     static initialize(): void {
         this.window = window;
@@ -34,6 +35,7 @@ export default class Game {
     }
 
     static render(): void {
+        this.ctx.imageSmoothingEnabled = false;
         this.ctx.fillStyle = this.clearColor;
         this.ctx.fillRect(0, 0, Game.width, Game.height);
         if (this.scene) {
@@ -53,6 +55,6 @@ export default class Game {
     }
 
     static enterFullscreen() {
-        document.body.requestFullscreen().catch();
+        if (!this.debug) document.body.requestFullscreen().catch();
     }
 }

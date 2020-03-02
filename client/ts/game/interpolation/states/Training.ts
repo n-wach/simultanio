@@ -1,7 +1,7 @@
-import StateInterpolator from "../StateInterpolator";
 import {TrainingState} from "../../../comms";
+import Idle from "./Idle";
 
-export default class TrainingStateInterpolator extends StateInterpolator {
+export default class Training extends Idle {
     trainingStatus: number;
     static MAX_CIRCLE_RADIUS = 1;
     circleRadius: number = 0;
@@ -12,8 +12,9 @@ export default class TrainingStateInterpolator extends StateInterpolator {
     }
 
     draw(ctx: CanvasRenderingContext2D): void {
+        super.draw(ctx);
         let a = ctx.globalAlpha;
-        let r = TrainingStateInterpolator.MAX_CIRCLE_RADIUS;
+        let r = Training.MAX_CIRCLE_RADIUS;
         ctx.globalAlpha = 0.3 * (r - this.circleRadius) / r;
         ctx.beginPath();
         ctx.ellipse(0, 0, this.circleRadius, this.circleRadius, 0, 0, Math.PI * 2);
@@ -26,7 +27,7 @@ export default class TrainingStateInterpolator extends StateInterpolator {
     }
 
     interpolate(dt: number) {
-        let r = TrainingStateInterpolator.MAX_CIRCLE_RADIUS;
+        let r = Training.MAX_CIRCLE_RADIUS;
         this.circleRadius += (r * dt);
         while (this.circleRadius > r) this.circleRadius -= r;
     }
