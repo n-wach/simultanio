@@ -43,10 +43,7 @@ class TrainingState(IdleState):
         if len(self.units) == 0:
             self.parent.reset()
             return
-        if self.parent.owner.stored_energy < self.units[0].STATS["cost"]["energy"]:
-            self.duration = 0
-            return
-        elif self.parent.owner.stored_matter < self.units[0].STATS["cost"]["matter"]:
+        if not self.parent.owner.can_afford_building(self.units[0]):
             self.duration = 0
             return
         self.duration += dt
@@ -60,6 +57,31 @@ class TrainingState(IdleState):
             "type": self.TYPE,
             "trainingStatus": self.duration / self.units[0].STATS["cost"]["time"] if len(self.units) != 0 else 1,
             "queue": [unit.TYPE for unit in self.units],
+        }
+
+
+class InfiniteTrainingState(IdleState):
+    TYPE = "infiniteTraining"
+
+    def __init__(self, unit, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.unit = unit
+        self.duration = 0
+
+    def tick(self, dt):
+        if not self.parent.owner.can_afford_unit(self.unit):
+            self.duration = 0
+            return
+        self.duration += dt
+        if self.duration > self.unit.STATS["cost"]["time"]:
+            self.parent.owner.train_unit(self.unit, self.parent.grid_x, self.parent.grid_y)
+            self.duration = 0
+
+    def get_self(self):
+        return {
+            "type": "training",
+            "trainingStatus": self.duration / self.unit.STATS["cost"]["time"],
+            "queue": [self.unit.TYPE],
         }
 
 
