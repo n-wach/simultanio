@@ -172,6 +172,7 @@ export type BuildCommand = {
 
 export type TrainCommand = {
     command: "train",
+    infinite: Boolean,
     building: Id,
     unitType: UnitType,
 }

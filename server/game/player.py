@@ -1,7 +1,7 @@
 import math
 import random
 
-from server.game.building import City, Building, BUILDING_TYPES, TrainingState, GhostState
+from server.game.building import City, Building, BUILDING_TYPES, TrainingState, GhostState, InfiniteTrainingState
 from server.game.terrain import TerrainView
 from server.game.unit import PathingState, PathingToBuildState, UNIT_TYPES
 from server.game.unit import Scout, Unit, Builder
@@ -53,7 +53,7 @@ class Player:
             self.entities.remove(entity)
 
     def train_unit(self, unit_type, target_x, target_y):
-        if self.can_afford(unit_type):
+        if self.can_afford_building(unit_type):
             self.purchase(unit_type)
             unit = unit_type(self, target_x, target_y)
             self.add_entity(unit)
@@ -86,7 +86,7 @@ class Player:
                         building_cls = BUILDING_TYPES[building_type]
                         x = message.get("x", 0)
                         y = message.get("y", 0)
-                        if ghost is None and self.can_afford(building_cls) \
+                        if ghost is None and self.can_afford_building(building_cls) \
                                 and len(list(self.visible_buildings_at(x, y))) == 0:
                             self.purchase(building_cls)
                             ghost = building_cls(self, x, y, starting_health=0)
@@ -100,10 +100,13 @@ class Player:
                     if id(e) == message.get("building") and isinstance(e, Building) \
                             and message.get("unitType") in e.STATS["can_train"]:
                         t = UNIT_TYPES[message["unitType"]]
-                        if isinstance(e.state, TrainingState):
-                            e.state.units.append(t)
+                        if message.get("infinite"):
+                            e.state = InfiniteTrainingState(t, e)
                         else:
-                            e.state = TrainingState(t, e)
+                            if isinstance(e.state, TrainingState):
+                                e.state.units.append(t)
+                            else:
+                                e.state = TrainingState(t, e)
 
             elif cmd == "reset":
                 for e in self.entities:
@@ -174,9 +177,14 @@ class Player:
         self.stored_matter += mc
         self.stored_energy += ec
 
-    def can_afford(self, building_type):
+    def can_afford_building(self, building_type):
         mc = building_type.STATS["cost"]["matter"]
         ec = building_type.STATS["cost"]["energy"]
+        return mc <= self.stored_matter and ec <= self.stored_energy
+
+    def can_afford_unit(self, unit_type):
+        mc = unit_type.STATS["cost"]["matter"]
+        ec = unit_type.STATS["cost"]["energy"]
         return mc <= self.stored_matter and ec <= self.stored_energy
 
     def get_self(self):
