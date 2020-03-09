@@ -15,7 +15,7 @@ export default class Game {
     static pixelRatio: number = 1;
     static width: number = 1;
     static height: number = 1;
-    static debug: boolean = true;
+    static debug: boolean = false;
 
     static initialize(): void {
         this.window = window;

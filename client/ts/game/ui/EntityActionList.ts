@@ -7,7 +7,7 @@ import Game from "../../gfx/Game";
 import Icon from "../../gfx/ui/Icon";
 import LabelButton from "../../gfx/ui/LabelButton";
 import {BuildAction} from "./EntityAction";
-import {PlayerCommand} from "../../comms";
+import {PlayerCommand, TrainCommand} from "../../comms";
 import EntityInterpolator from "../interpolation/EntityInterpolator";
 import Pathing from "../interpolation/states/Pathing";
 import Unit from "../interpolation/entity/Unit";
@@ -109,9 +109,22 @@ export default class EntityActionList extends Grid {
                 this.addComponent(new EntityCreationOption(e.name, e.cost.energy, e.cost.matter, e.cost.time, () => {
                     Game.socketio.emit("player command", ({
                         command: "train",
+                        infinite: false,
                         unitType: type,
                         building: Simul.selectedEntities[0].id,
-                    } as PlayerCommand));
+                    } as TrainCommand));
+                }), row++, 0, 1, 1, 10, 10);
+            }
+            this.addComponent(new Label("Auto Train:"), row++, 0, 1, 1, 10, 10);
+            for (let type of Simul.STATS[sharedType]["can_train"]) {
+                let e = Simul.STATS[type];
+                this.addComponent(new EntityCreationOption(e.name, e.cost.energy, e.cost.matter, e.cost.time, () => {
+                    Game.socketio.emit("player command", ({
+                        command: "train",
+                        infinite: true,
+                        unitType: type,
+                        building: Simul.selectedEntities[0].id,
+                    } as TrainCommand));
                 }), row++, 0, 1, 1, 10, 10);
             }
             this.addComponent(new LabelButton("Clear Queue", "center", () => {
@@ -141,7 +154,7 @@ export default class EntityActionList extends Grid {
 
 class ResourceInfoGrid extends Grid {
     constructor(energy: string, matter: string, time: string) {
-        super([40], [40, 20, 10, 40, 20, 10, 1.0]);
+        super([40], [40, 30, 0, 40, 30, 0, 1.0]);
         this.addComponent(new Icon("/energy.png"), 0, 0, 1, 1, 10, 10);
         this.addComponent(new Label(energy, "left"), 0, 1);
         this.addComponent(new Icon("/matter.png"), 0, 3, 1, 1, 10, 10);

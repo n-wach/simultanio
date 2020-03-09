@@ -15,7 +15,7 @@
       "active_sight": 7,
       "passive_sight": 7,
       "cost": {
-        "energy": 10,
+        "energy": 100,
         "matter": 10,
         "time": 10
       },
@@ -26,8 +26,8 @@
       "active_sight": 5,
       "passive_sight": 5,
       "cost": {
-        "energy": 10,
-        "matter": 10,
+        "energy": 250,
+        "matter": 25,
         "time": 10
       },
       "movement_speed": 1,
@@ -45,7 +45,7 @@
       "active_sight": 5,
       "passive_sight": 5,
       "cost": {
-        "energy": 10,
+        "energy": 100,
         "matter": 10,
         "time": 10
       },
@@ -58,12 +58,12 @@
       "active_sight": 10,
       "passive_sight": 12,
       "cost": {
-        "energy": 25,
+        "energy": 500,
         "matter": 25
       },
       "generates": {
-        "energy": 1,
-        "matter": 1
+        "energy": 10,
+        "matter": 0.5
       },
       "can_train": [
         "builder",
@@ -72,10 +72,10 @@
     },
     "trainer": {
       "name": "Trainer",
-      "active_sight": 10,
-      "passive_sight": 12,
+      "active_sight": 7,
+      "passive_sight": 8,
       "cost": {
-        "energy": 25,
+        "energy": 250,
         "matter": 25
       },
       "can_train": [
@@ -87,11 +87,11 @@
       "active_sight": 7,
       "passive_sight": 8,
       "cost": {
-        "energy": 15,
+        "energy": 100,
         "matter": 10
       },
       "generates": {
-        "energy": 1,
+        "energy": 10,
         "matter": 0
       }
     },
@@ -100,8 +100,8 @@
       "active_sight": 7,
       "passive_sight": 8,
       "cost": {
-        "energy": 10,
-        "matter": 15
+        "energy": 100,
+        "matter": 10
       },
       "generates": {
         "energy": 0,
