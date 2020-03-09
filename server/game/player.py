@@ -1,4 +1,5 @@
 import math
+import random
 
 from server.game.building import City, Building, BUILDING_TYPES, TrainingState, GhostState
 from server.game.terrain import TerrainView
@@ -124,6 +125,7 @@ class Player:
         for player in self.game.players:
             if player is self:
                 continue
+            random.shuffle(player.entities)
             for entity in player.entities:
                 if self.terrain_view.entity_visible(entity):
                     dx = entity.grid_x - x
