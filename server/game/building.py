@@ -27,7 +27,10 @@ class GhostState(IdleState):
 
     def tick(self, dt):
         if not self.parent.owner.terrain_view.passable(self.parent.grid_x, self.parent.grid_y) \
-                or len(list(self.parent.owner.visible_buildings_at(self.parent.grid_x, self.parent.grid_y))) > 1:
+                or len(list(self.parent.owner.visible_buildings_at(self.parent.grid_x, self.parent.grid_y))) > 1 \
+                or (isinstance(self.parent, MatterCollector) and
+                    not self.parent.owner.terrain_view.terrain.tile_at(self.parent.grid_x,
+                                                                       self.parent.grid_y).get_name() == "matter_source"):
             self.parent.owner.delete_entity(self.parent)
 
 
