@@ -141,7 +141,7 @@ export default class EntityActionList extends Grid {
 
 class ResourceInfoGrid extends Grid {
     constructor(energy: string, matter: string, time: string) {
-        super([40], [40, 20, 10, 40, 20, 10, 1.0]);
+        super([40], [40, 30, 0, 40, 30, 0, 1.0]);
         this.addComponent(new Icon("/energy.png"), 0, 0, 1, 1, 10, 10);
         this.addComponent(new Label(energy, "left"), 0, 1);
         this.addComponent(new Icon("/matter.png"), 0, 3, 1, 1, 10, 10);

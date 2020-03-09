@@ -1,5 +1,6 @@
+import random
+
 from server.game.player import Player
-from server.game.terrain import Terrain
 
 
 class Game:
@@ -10,10 +11,14 @@ class Game:
         self.player_slots = [True] * 4
 
     def gen_player_id(self):
-        for i in range(len(self.player_slots)):
+        ids = list(range(len(self.player_slots)))
+        while len(ids) > 0:
+            i = random.choice(ids)
             if self.player_slots[i]:
                 self.player_slots[i] = False
                 return i
+            else:
+                ids.remove(i)
         return None
 
     def add_player(self, sid):
