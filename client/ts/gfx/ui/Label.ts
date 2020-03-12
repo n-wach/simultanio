@@ -4,15 +4,17 @@ import Component from "./Component";
 export default class Label extends Component {
     text: string;
     align: CanvasTextAlign;
+    color: string;
 
-    constructor(text: string, align: CanvasTextAlign="center") {
+    constructor(text: string, align: CanvasTextAlign = "center", color?: string) {
         super();
         this.text = text;
         this.align = align;
+        this.color = color ? color : Res.col_uifg;
     }
 
     render(ctx: CanvasRenderingContext2D): void {
-        ctx.fillStyle = Res.col_uifg;
+        ctx.fillStyle = this.color;
         ctx.font = Math.min(this.height - 10, Res.max_font) + "px " + Res.font_face;
         ctx.textAlign = this.align;
         ctx.textBaseline = "middle";

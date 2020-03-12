@@ -1,12 +1,12 @@
 import Scene from "../gfx/Scene";
 import Game from "../gfx/Game";
 import {Match, MatchList} from "../comms";
-import PlayScene from "./PlayScene";
 import Res from "../game/Res";
 import Simul from "../Simul";
 import MatchInterpolator from "../game/interpolation/MatchInterpolator";
 import Grid from "../gfx/ui/Grid";
 import LabelButton from "../gfx/ui/LabelButton";
+import ReadyScene from "./ReadyScene";
 
 export default class LobbyScene extends Scene {
     initialize() {
@@ -28,12 +28,7 @@ export default class LobbyScene extends Scene {
         });
         Game.socketio.on("join match", (match: Match) => {
             Simul.match = new MatchInterpolator(match);
-            let focal = match.you.entities[0];
-            let play = new PlayScene();
-            Game.setScene(play);
-            play.stage.update(0);
-            play.stage.centerOnGrid(focal.x, focal.y);
-            Game.enterFullscreen();
+            Game.setScene(new ReadyScene());
         });
     }
 

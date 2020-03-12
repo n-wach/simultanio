@@ -1,3 +1,4 @@
+import random
 from time import time
 
 from flask import request
@@ -22,8 +23,10 @@ class Match:
         self.max_players = 4
         self.tick_period = 0.2
         self.status = Match.Status.WAITING
+        self.ready_count = 0
         self.duration = 0
         self.game = Game(self, terrain)
+        print(self.name, "waiting")
 
     def get_info(self):
         return {
@@ -41,28 +44,55 @@ class Match:
         player = self.game.add_player(request.sid)
         join_room(self.room_name)
         emit("join match", player.get_update())
+        self.send_update()
 
     def leave(self):
-        self.game.remove_player(request.sid)
+        player = self.game.remove_player(request.sid)
+        self.unready(player)
         leave_room(self.room_name)
         emit("leave match")
+        self.send_update()
+
+    def ready(self, player):
+        if not player.ready:
+            player.ready = True
+            self.ready_count += 1
+            self.send_update()
+        if self.ready_count == len(self.game.players):
+            self.start()
+
+    def unready(self, player):
+        if player.ready and self.status == Match.Status.WAITING:
+            player.ready = False
+            self.ready_count -= 1
+            self.send_update()
 
     def start(self):
-        self.socketio.start_background_task(self.logic_loop)
+        if self.status != Match.Status.STARTED:
+            self.status = Match.Status.STARTED
+            self.send_update()
+            self.socketio.start_background_task(self.logic_loop)
+
+    def send_update(self):
+        for player in self.game.players:
+            player.broadcast_update(self.socketio)
 
     def logic_loop(self):
         print(self.name, "start")
         last_tick_time = time()
-        while len(self.game.players) > 0:
+        while self.status == Match.Status.STARTED:
             self.socketio.sleep(self.tick_period)
             t = time()
             dt = t - last_tick_time
+            last_tick_time = t
             self.duration += dt
+
+            random.shuffle(self.game.players)
             for player in self.game.players:
                 player.tick(dt)
-            for player in self.game.players:
-                player.broadcast_update(self.socketio)
-            last_tick_time = t
+            self.send_update()
+
+            if len(self.game.players) == 0:
+                self.status = Match.Status.ENDED
         print(self.name, "end")
-        self.manager.matches.remove(self)
 
