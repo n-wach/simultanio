@@ -73,6 +73,20 @@ def leave_match():
     emit_available_matches(True)
 
 
+@socketio.on("unready")
+def player_unready():
+    if "lobby" in rooms(sid=request.sid):
+        return
+    match_manager.unready()
+
+
+@socketio.on("ready")
+def player_ready():
+    if "lobby" in rooms(sid=request.sid):
+        return
+    match_manager.ready()
+
+
 @socketio.on("player command")
 def player_command(command):
     match = match_manager.get_user_match()

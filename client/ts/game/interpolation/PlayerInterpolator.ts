@@ -7,6 +7,7 @@ import getEntity from "./EntityCreator";
 export default class BasePlayerInterpolator extends Interpolated<BasePlayer>{
     color: Color;
     entities: {[id: number]: EntityInterpolator} = {}; // id is of type Id = number
+    ready: boolean;
 
     constructor(ref: BasePlayer) {
         super();
@@ -22,6 +23,7 @@ export default class BasePlayerInterpolator extends Interpolated<BasePlayer>{
 
     sync(ref: BasePlayer) {
         super.sync(ref);
+        this.ready = ref.ready;
         this.color = ref.color;
         for(let e of ref.entities) {
             if(this.entities[e.id]) {

@@ -36,7 +36,7 @@ class Player:
         self.add_entity(self.starting_scout)
         self.id = id(self)
         self.player_id = player_id
-
+        self.ready = False
         self.pending_messages = []
 
     def add_entity(self, entity):
@@ -194,6 +194,7 @@ class Player:
             "entities": [entity.get_self() for entity in self.entities],
             "color": self.color,
             "id": self.id,
+            "ready": self.ready,
         }
 
     def get_self_from_perspective(self, other):
@@ -201,6 +202,7 @@ class Player:
             "entities": [entity.get_self() for entity in self.entities if other.terrain_view.entity_visible(entity)],
             "color": self.color,
             "id": self.id,
+            "ready": self.ready,
         }
 
     def get_terrain_view(self):

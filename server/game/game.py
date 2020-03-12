@@ -33,4 +33,4 @@ class Game:
             if player.sid == sid:
                 self.player_slots[player.player_id] = True
                 self.players.remove(player)
-                return
+                return player

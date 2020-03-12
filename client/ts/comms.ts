@@ -66,6 +66,7 @@ export type BasePlayer = {
     color: Color,
     entities: Entity[]
     id: Id,
+    ready: boolean;
 }
 
 export type YouPlayer = BasePlayer & {
