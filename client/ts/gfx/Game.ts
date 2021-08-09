@@ -23,7 +23,9 @@ export default class Game {
         this.canvas.setAttribute("tabindex", "1");
         this.ctx = this.canvas.getContext("2d");
         this.input = new Input();
-        this.socketio = io();
+        this.socketio = io({
+            path: "/simultanio/socket.io",
+        });
     }
 
     static update(dt: number) {

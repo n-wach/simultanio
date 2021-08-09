@@ -5,20 +5,25 @@ from flask_socketio import SocketIO, emit, rooms, join_room, leave_room
 
 from server.match_manager import MatchManager
 
+print("Starting...")
 app = Flask(__name__,
             static_url_path='',
             static_folder='../client/dist',
             template_folder="../client/templates")
 
+print("Creating SocketIO...")
 socketio = SocketIO(app)
 
 app.secret_key = os.environ.get("SECRET_KEY")
 if os.environ.get("SERVER_NAME") is not None:
     app.config["SERVER_NAME"] = os.environ.get("SERVER_NAME")
 
-
+print("Making matches...")
 match_manager = MatchManager(socketio)
+print("Ready.")
 
+import sys
+sys.stdout.flush()
 
 @app.route("/", methods=["GET"])
 def index():

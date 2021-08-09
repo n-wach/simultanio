@@ -13,11 +13,11 @@
                 DATA = JSON.parse(this.responseText);
                 let script = document.createElement("script");
                 script.type = "text/javascript";
-                script.src = "{{ url_for('js_bundle') }}";
+                script.src = "js/bundle.js";
                 document.head.appendChild(script);
             }
         };
-        data_request.open("GET", "{{ url_for('json_data') }}");
+        data_request.open("GET", "shared/data.json");
         data_request.send();
     </script>
     <link href="https://fonts.googleapis.com/css?family=Share+Tech+Mono&display=swap" rel="stylesheet" />

@@ -14,9 +14,9 @@ export default class TopBar extends Grid {
         };
         this.handlers.push(handle);
         Game.input.addHandler(handle, "mousedown");
-        this.addComponent(new Icon("/energy.png"), 0, 0, 1, 1, 10, 10);
+        this.addComponent(new Icon("energy.png"), 0, 0, 1, 1, 10, 10);
         this.addComponent(new EnergyLabel(), 0, 1);
-        this.addComponent(new Icon("/matter.png"), 0, 2, 1, 1, 10, 10);
+        this.addComponent(new Icon("matter.png"), 0, 2, 1, 1, 10, 10);
         this.addComponent(new MatterLabel(), 0, 3);
         this.addComponent(new TimeLabel(), 0, 4);
         this.addComponent(new LabelButton("Leave Match", "center", () => {
