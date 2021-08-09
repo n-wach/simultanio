@@ -1,5 +1,5 @@
 eventlet==0.25.1
-Flask==0.12.2
+Flask==1.0
 Flask-SocketIO==4.2.1
 gunicorn==20.0.4
 networkx==2.4
