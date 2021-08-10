@@ -9,9 +9,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@types/socket.io-client": "1.4.32",
     "browserify": "16.5.0",
     "typescript": "3.7.2",
-    "socket.io": "2.0.3"
+    "socket.io-client": "4.1.2"
   }
 }

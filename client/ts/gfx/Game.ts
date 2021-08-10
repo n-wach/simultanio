@@ -1,7 +1,7 @@
 import Scene from './Scene'
 import Input from './Input';
 
-import * as io from 'socket.io-client';
+import {io, Socket} from 'socket.io-client';
 
 export default class Game {
     static window: Window;
@@ -10,7 +10,7 @@ export default class Game {
     static scene: Scene;
     static input: Input;
     static frame: number = 0;
-    static socketio: SocketIOClient.Socket;
+    static socketio: Socket;
     static clearColor: string = "black";
     static pixelRatio: number = 1;
     static width: number = 1;
@@ -24,7 +24,7 @@ export default class Game {
         this.ctx = this.canvas.getContext("2d");
         this.input = new Input();
         this.socketio = io({
-            path: "/simultanio/socket.io",
+            path: window.location.pathname + "socket.io",
         });
     }
 
@@ -48,7 +48,7 @@ export default class Game {
     static setScene(scene: Scene) {
         if (this.scene != null) {
             this.scene.destroy();
-            this.socketio.removeAllListeners();
+            this.socketio.off();
             this.input.clearHandlers();
         }
         this.scene = scene;
