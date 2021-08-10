@@ -155,9 +155,9 @@ export default class EntityActionList extends Grid {
 class ResourceInfoGrid extends Grid {
     constructor(energy: string, matter: string, time: string) {
         super([40], [40, 30, 0, 40, 30, 0, 1.0]);
-        this.addComponent(new Icon("/energy.png"), 0, 0, 1, 1, 10, 10);
+        this.addComponent(new Icon("energy.png"), 0, 0, 1, 1, 10, 10);
         this.addComponent(new Label(energy, "left"), 0, 1);
-        this.addComponent(new Icon("/matter.png"), 0, 3, 1, 1, 10, 10);
+        this.addComponent(new Icon("matter.png"), 0, 3, 1, 1, 10, 10);
         this.addComponent(new Label(matter, "left"), 0, 4);
         this.addComponent(new Label(time, "left"), 0, 6);
     }
@@ -167,9 +167,9 @@ class EntityCreationOption extends Button {
     constructor(name: string, energy: number, matter: number, time: number, onclick?: () => void) {
         super(new Grid([1], [1, 20, 30, 20, 30, 50]), onclick);
         (this.subComponent as Grid).addComponent(new Label(name), 0, 0);
-        (this.subComponent as Grid).addComponent(new Icon("/energy.png"), 0, 1, 1, 1, 0, 10);
+        (this.subComponent as Grid).addComponent(new Icon("energy.png"), 0, 1, 1, 1, 0, 10);
         (this.subComponent as Grid).addComponent(new Label(energy.toFixed(0)), 0, 2);
-        (this.subComponent as Grid).addComponent(new Icon("/matter.png"), 0, 3, 1, 1, 0, 10);
+        (this.subComponent as Grid).addComponent(new Icon("matter.png"), 0, 3, 1, 1, 0, 10);
         (this.subComponent as Grid).addComponent(new Label(matter.toFixed(0)), 0, 4);
         (this.subComponent as Grid).addComponent(new Label(time.toFixed(0) + "s"), 0, 5);
     }
