@@ -12,7 +12,7 @@ app = Flask(__name__,
             template_folder="../client/templates")
 
 print("Creating SocketIO...")
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins="*")  # allowing all is okay because we are behind nginx???
 
 app.secret_key = os.environ.get("SECRET_KEY")
 if os.environ.get("SERVER_NAME") is not None:
