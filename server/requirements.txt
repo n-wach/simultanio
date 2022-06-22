@@ -10,7 +10,7 @@ itsdangerous==2.0.1
 Jinja2==3.0.1
 MarkupSafe==2.0.1
 networkx==2.6.2
-numpy==1.21.1
+numpy==1.22.0
 python-engineio==4.2.1
 python-socketio==5.4.0
 scipy==1.7.1
